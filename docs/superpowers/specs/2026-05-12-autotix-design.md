@@ -42,10 +42,10 @@ Autotix 是一个**自托管的开源 AI 工单自动化平台**。
 ```
 autotix/
 ├── autotix-server/              ← Spring Boot 主服务（Java 8 + Spring Boot 3）
-│   ├── integration/             ← Webhook 入口 + 平台适配器
-│   ├── engine/                  ← 工单引擎 + AI 调度
-│   ├── desk/                    ← 人工坐席 REST API
-│   └── admin/                   ← 平台授权配置 + AI 设置 API
+│   ├── domain/                  ← 领域层（核心业务，无外部依赖）
+│   ├── application/             ← 应用层（用例编排）
+│   ├── infrastructure/          ← 基础设施层（平台适配器、DB、AI 客户端）
+│   └── interfaces/              ← 接口层（REST Controller、Webhook 入口）
 ├── autotix-web/                 ← React SPA（UmiJS + antd）
 │   ├── Desk/                    ← 工单管理
 │   ├── Inbox/                   ← AI 对话收件箱
@@ -55,21 +55,72 @@ autotix/
 └── docs/                        ← 接入文档
 ```
 
-### 架构选型：单体 Spring Boot
+### 架构选型：DDD 分层 + 单体 Spring Boot
 
-选择单体而非微服务，原因：
-1. 现有代码（shulex-intelli + Tars）本身是单体，迁移路径最短
-2. Docker Compose 单机部署零门槛，符合"5 分钟跑起来"目标
-3. 基础设施接口抽象保留分布式扩展能力，用户可自行替换组件
+后端采用 DDD 四层架构，便于后续按限界上下文拆分微服务或替换某层实现：
+
+```
+autotix-server/
+├── domain/                          ← 领域层（纯业务逻辑，零外部依赖）
+│   ├── ticket/                      ← Ticket 限界上下文
+│   │   ├── Ticket.java              ← 聚合根（状态机：open/pending/closed）
+│   │   ├── Message.java             ← 值对象
+│   │   ├── TicketStatus.java
+│   │   ├── TicketRepository.java    ← 仓储接口（domain 定义，infra 实现）
+│   │   └── TicketDomainService.java ← 领域服务（跨聚合操作）
+│   ├── channel/                     ← Channel 限界上下文
+│   │   ├── Channel.java             ← 聚合根（平台连接实例）
+│   │   ├── ChannelCredential.java   ← 值对象（OAuth token 等）
+│   │   ├── ChannelType.java         ← 枚举（Email / Chat）
+│   │   └── ChannelRepository.java
+│   └── ai/                          ← AI 调用领域服务
+│       ├── AIReplyPort.java         ← 端口接口（infra 实现）
+│       └── AIResponse.java          ← 值对象（reply / action / tags）
+│
+├── application/                     ← 应用层（用例编排，调用 domain + port）
+│   ├── ticket/
+│   │   ├── ProcessWebhookUseCase.java   ← 接收 Webhook → 创建/更新 Ticket
+│   │   ├── DispatchAIReplyUseCase.java  ← 调用 AI → 回写平台
+│   │   └── CloseTicketUseCase.java
+│   └── channel/
+│       ├── ConnectChannelUseCase.java   ← OAuth 授权流程
+│       └── DisconnectChannelUseCase.java
+│
+├── infrastructure/                  ← 基础设施层（实现 domain 定义的接口）
+│   ├── persistence/                 ← 仓储实现（JPA / MyBatis）
+│   ├── ai/                          ← AIReplyPort 实现（HTTP → OpenAI-compatible）
+│   ├── platform/                    ← 平台适配器（防腐层）
+│   │   ├── zendesk/                 ← ZendeskPlugin（Webhook 解析 + 回写）
+│   │   ├── freshdesk/
+│   │   ├── line/
+│   │   └── wecom/
+│   └── infra/                       ← 可替换基础设施实现
+│       ├── lock/                    ← LockProvider（内存 / Redis）
+│       ├── queue/                   ← QueueProvider（内存 / Kafka）
+│       └── cache/                   ← CacheProvider（Caffeine / Redis）
+│
+└── interfaces/                      ← 接口层（HTTP 入口）
+    ├── webhook/                     ← POST /v2/webhook/{platform}/{token}
+    ├── desk/                        ← 人工坐席 REST API
+    └── admin/                       ← 平台授权配置 + AI 设置 API
+```
+
+**DDD 关键约束**：
+- `domain/` 不依赖任何 Spring Bean、JPA、HTTP 库，可独立单元测试
+- `application/` 只依赖 `domain/`，通过端口接口（Port）调用外部能力
+- `infrastructure/` 实现端口接口，是唯一允许引入第三方 SDK 的层
+- 平台适配器（Plugin）作为**防腐层（ACL）**，隔离三方 API 变化对 domain 的影响
 
 ### 代码来源
 
-| autotix-server 模块 | 来源 |
+| autotix-server 层 | 来源 |
 |---|---|
-| `integration/` | shulex-intelli 集成适配层（去除 Nacos/Feign 依赖） |
-| `engine/` | Tars 工单引擎（去除多租户逻辑，替换 AI 调用） |
-| `desk/` | Tars Desk API（简化为单工作空间） |
-| `admin/` | 新增，OAuth 配置 + AI 设置 |
+| `domain/ticket` | Tars 工单核心模型（去多租户，提取业务规则） |
+| `domain/channel` | shulex-intelli ExternKey/ChannelAuth 领域模型（精简） |
+| `application/` | Tars 服务层（重构为 UseCase 风格） |
+| `infrastructure/platform/` | shulex-intelli 各平台适配器（去 Nacos/Feign） |
+| `infrastructure/ai/` | 新增，替换 Tars 原有 Feign 调用 |
+| `interfaces/` | shulex-intelli + Tars Controller 层（合并简化） |
 
 | autotix-web 模块 | 来源 |
 |---|---|
