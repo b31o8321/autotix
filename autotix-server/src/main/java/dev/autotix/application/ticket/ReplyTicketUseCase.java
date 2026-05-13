@@ -3,12 +3,14 @@ package dev.autotix.application.ticket;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
+import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.infrastructure.formatter.ReplyFormatter;
+import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.platform.PluginRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,8 @@ import java.time.Instant;
  *   3. Resolve TicketPlatformPlugin from PluginRegistry
  *   4. Call plugin.sendReply(channel, ticket, formattedReply)
  *   5. Append outbound message (markdown) to Ticket; persist
+ *   6. If author != "ai": publish AGENT_REPLIED event
+ *      (AI path publishes AI_REPLIED in DispatchAIReplyUseCase to avoid double-publish)
  *
  * The outbound message stores the original markdown so AI history is consistent.
  */
@@ -37,15 +41,18 @@ public class ReplyTicketUseCase {
     private final ChannelRepository channelRepository;
     private final ReplyFormatter replyFormatter;
     private final PluginRegistry pluginRegistry;
+    private final InboxEventPublisher inboxEventPublisher;
 
     public ReplyTicketUseCase(TicketRepository ticketRepository,
                               ChannelRepository channelRepository,
                               ReplyFormatter replyFormatter,
-                              PluginRegistry pluginRegistry) {
+                              PluginRegistry pluginRegistry,
+                              InboxEventPublisher inboxEventPublisher) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.replyFormatter = replyFormatter;
         this.pluginRegistry = pluginRegistry;
+        this.inboxEventPublisher = inboxEventPublisher;
     }
 
     public void reply(TicketId ticketId, String markdownReply, String author) {
@@ -80,6 +87,16 @@ public class ReplyTicketUseCase {
 
         // 5. Persist
         ticketRepository.save(ticket);
+
+        // 6. Publish AGENT_REPLIED only for human authors; AI path publishes AI_REPLIED separately
+        if (!"ai".equals(author)) {
+            inboxEventPublisher.publish(new InboxEvent(
+                    InboxEvent.Kind.AGENT_REPLIED,
+                    ticketId.value(),
+                    channel.id().value(),
+                    "Agent replied",
+                    Instant.now()));
+        }
 
         log.debug("Reply sent for ticket={} via platform={}", ticketId.value(), channel.platform());
     }

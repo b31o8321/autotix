@@ -57,4 +57,13 @@ CREATE TABLE IF NOT EXISTS app_user (
     updated_at TIMESTAMP NOT NULL
 );
 
--- TODO: automation_rule table — defer until domain/automation is implemented
+CREATE TABLE IF NOT EXISTS automation_rule (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(256) NOT NULL,
+    priority INT NOT NULL DEFAULT 100,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    conditions_json CLOB,
+    actions_json CLOB,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);

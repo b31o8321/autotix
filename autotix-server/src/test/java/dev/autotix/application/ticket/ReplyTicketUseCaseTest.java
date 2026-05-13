@@ -11,7 +11,9 @@ import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.infrastructure.formatter.ReplyFormatter;
+import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.platform.PluginRegistry;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,7 @@ class ReplyTicketUseCaseTest {
     @Mock private ReplyFormatter replyFormatter;
     @Mock private PluginRegistry pluginRegistry;
     @Mock private TicketPlatformPlugin plugin;
+    @Mock private InboxEventPublisher inboxPublisher;
 
     private ReplyTicketUseCase useCase;
 
@@ -45,7 +48,7 @@ class ReplyTicketUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new ReplyTicketUseCase(ticketRepository, channelRepository, replyFormatter, pluginRegistry);
+        useCase = new ReplyTicketUseCase(ticketRepository, channelRepository, replyFormatter, pluginRegistry, inboxPublisher);
 
         ticketId = new TicketId("5");
         channel = Channel.rehydrate(
@@ -75,7 +78,7 @@ class ReplyTicketUseCaseTest {
         when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
         when(ticketRepository.save(any())).thenReturn(ticketId);
 
-        useCase.reply(ticketId, "**Hello**", "ai");
+        useCase.reply(ticketId, "**Hello**", "agent-user");
 
         // Plugin was called with the formatted (HTML) reply
         verify(plugin).sendReply(eq(channel), eq(ticket), eq("<b>Hello</b>"));
@@ -87,6 +90,24 @@ class ReplyTicketUseCaseTest {
         assertEquals(2, saved.messages().size());
         assertEquals("**Hello**", saved.messages().get(1).content());
         assertEquals(MessageDirection.OUTBOUND, saved.messages().get(1).direction());
+        // human agent (not "ai") -> AGENT_REPLIED should be published
+        verify(inboxPublisher).publish(argThat(e -> e.kind == InboxEvent.Kind.AGENT_REPLIED));
+    }
+
+    @Test
+    void aiAuthor_doesNotPublishAgentReplied() {
+        // When author == "ai", AGENT_REPLIED must NOT be published
+        // (DispatchAIReplyUseCase handles AI_REPLIED separately)
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
+        when(replyFormatter.format(ChannelType.EMAIL, "AI answer")).thenReturn("AI answer");
+        when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(ticketRepository.save(any())).thenReturn(ticketId);
+
+        useCase.reply(ticketId, "AI answer", "ai");
+
+        verify(plugin).sendReply(eq(channel), eq(ticket), eq("AI answer"));
+        verifyNoInteractions(inboxPublisher);
     }
 
     @Test

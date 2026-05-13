@@ -34,6 +34,7 @@ public final class InboxEvent {
         TICKET_CREATED,
         AI_REPLIED,
         AGENT_REPLIED,
+        NEW_MESSAGE,
         STATUS_CHANGED,
         ASSIGNED
     }

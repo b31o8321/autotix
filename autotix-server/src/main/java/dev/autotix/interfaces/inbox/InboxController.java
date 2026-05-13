@@ -35,9 +35,7 @@ public class InboxController {
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter stream() {
-        // TODO:
-        //   String userId = currentUser.id().value();
-        //   return publisher.register(userId);
-        throw new UnsupportedOperationException("TODO");
+        String userId = currentUser.id().value();
+        return publisher.register(userId);
     }
 }

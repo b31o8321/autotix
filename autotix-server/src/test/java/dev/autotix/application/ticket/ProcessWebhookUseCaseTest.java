@@ -12,6 +12,9 @@ import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketDomainService;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.application.automation.EvaluateRulesUseCase;
+import dev.autotix.domain.ai.AIAction;
+import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.idempotency.IdempotencyStore;
 import dev.autotix.infrastructure.infra.queue.QueueProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -30,11 +35,14 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class ProcessWebhookUseCaseTest {
 
     @Mock private TicketRepository ticketRepository;
     @Mock private IdempotencyStore idempotencyStore;
     @Mock private QueueProvider queueProvider;
+    @Mock private EvaluateRulesUseCase evaluateRules;
+    @Mock private InboxEventPublisher inboxPublisher;
 
     private TicketDomainService ticketDomainService;
     private ProcessWebhookUseCase useCase;
@@ -44,8 +52,9 @@ class ProcessWebhookUseCaseTest {
     @BeforeEach
     void setUp() {
         ticketDomainService = new TicketDomainService();
+        when(evaluateRules.evaluate(any(), any())).thenReturn(EvaluateRulesUseCase.RuleOutcome.noOp());
         useCase = new ProcessWebhookUseCase(ticketRepository, idempotencyStore,
-                queueProvider, ticketDomainService);
+                queueProvider, ticketDomainService, evaluateRules, inboxPublisher);
 
         channel = Channel.rehydrate(
                 new ChannelId("ch-1"),
@@ -147,6 +156,40 @@ class ProcessWebhookUseCaseTest {
         Ticket saved = captor.getValue();
         assertEquals(2, saved.messages().size(), "Existing ticket should have 2 messages after append");
         assertEquals("Follow up message", saved.messages().get(1).content());
+    }
+
+    @Test
+    void automationRule_skipsAi_doesNotEnqueue() {
+        // When automation rule returns skipAi=true, AI queue should not be invoked
+        when(evaluateRules.evaluate(any(), any())).thenReturn(
+                new EvaluateRulesUseCase.RuleOutcome(
+                        java.util.Collections.emptyList(), null, true, AIAction.NONE));
+
+        Instant now = Instant.now();
+        TicketEvent event = new TicketEvent(
+                new ChannelId("ch-1"),
+                EventType.NEW_TICKET,
+                "ext-ticket-skip-ai",
+                "customer@example.com",
+                "Skip",
+                "Subject",
+                "Body",
+                now,
+                Collections.emptyMap());
+
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), any())).thenReturn(Optional.empty());
+        doAnswer(invocation -> {
+            Ticket t = invocation.getArgument(0);
+            t.assignPersistedId(new TicketId("3"));
+            return new TicketId("3");
+        }).when(ticketRepository).save(any(Ticket.class));
+
+        useCase.handle(channel, event);
+
+        verify(ticketRepository).save(any(Ticket.class));
+        // skipAi=true -> queueProvider.publish must NOT be called
+        verifyNoInteractions(queueProvider);
     }
 
     @Test

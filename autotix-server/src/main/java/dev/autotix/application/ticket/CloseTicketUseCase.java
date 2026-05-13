@@ -3,14 +3,18 @@ package dev.autotix.application.ticket;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
+import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
+import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.platform.PluginRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.time.Instant;
 
 /**
  * Close a ticket locally AND remotely (via Plugin.close()).
@@ -27,13 +31,16 @@ public class CloseTicketUseCase {
     private final TicketRepository ticketRepository;
     private final ChannelRepository channelRepository;
     private final PluginRegistry pluginRegistry;
+    private final InboxEventPublisher inboxEventPublisher;
 
     public CloseTicketUseCase(TicketRepository ticketRepository,
                               ChannelRepository channelRepository,
-                              PluginRegistry pluginRegistry) {
+                              PluginRegistry pluginRegistry,
+                              InboxEventPublisher inboxEventPublisher) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.pluginRegistry = pluginRegistry;
+        this.inboxEventPublisher = inboxEventPublisher;
     }
 
     public void close(TicketId ticketId) {
@@ -63,6 +70,14 @@ public class CloseTicketUseCase {
 
         ticket.close();
         ticketRepository.save(ticket);
+
+        // Publish STATUS_CHANGED event
+        inboxEventPublisher.publish(new InboxEvent(
+                InboxEvent.Kind.STATUS_CHANGED,
+                ticketId.value(),
+                channel.id().value(),
+                "ticket closed",
+                Instant.now()));
 
         log.debug("Ticket closed: {}", ticketId.value());
     }

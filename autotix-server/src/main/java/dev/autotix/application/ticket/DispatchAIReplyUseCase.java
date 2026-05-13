@@ -7,17 +7,20 @@ import dev.autotix.domain.ai.AIRequest;
 import dev.autotix.domain.ai.AIResponse;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
+import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.lock.LockProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +36,7 @@ import java.util.List;
  *   5. Pass result to ReplyTicketUseCase
  *   6. Apply optional AI action (close, tag)
  *   7. Release lock (try-with-resources)
+ *   8. Publish InboxEvent (AI_REPLIED on success, ASSIGNED on fallback)
  *
  * Failure handling: on AI error, assign ticket to "ai-fallback-queue" for human review.
  */
@@ -47,19 +51,22 @@ public class DispatchAIReplyUseCase {
     private final ReplyTicketUseCase replyTicketUseCase;
     private final CloseTicketUseCase closeTicketUseCase;
     private final LockProvider lockProvider;
+    private final InboxEventPublisher inboxEventPublisher;
 
     public DispatchAIReplyUseCase(TicketRepository ticketRepository,
                                   ChannelRepository channelRepository,
                                   AIReplyPort aiReplyPort,
                                   ReplyTicketUseCase replyTicketUseCase,
                                   CloseTicketUseCase closeTicketUseCase,
-                                  LockProvider lockProvider) {
+                                  LockProvider lockProvider,
+                                  InboxEventPublisher inboxEventPublisher) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.aiReplyPort = aiReplyPort;
         this.replyTicketUseCase = replyTicketUseCase;
         this.closeTicketUseCase = closeTicketUseCase;
         this.lockProvider = lockProvider;
+        this.inboxEventPublisher = inboxEventPublisher;
     }
 
     public void dispatch(TicketId ticketId) {
@@ -116,11 +123,27 @@ public class DispatchAIReplyUseCase {
                         ticketId.value(), e.getMessage(), e);
                 ticket.assignTo("ai-fallback-queue");
                 ticketRepository.save(ticket);
+                // Publish ASSIGNED event for fallback escalation
+                inboxEventPublisher.publish(new InboxEvent(
+                        InboxEvent.Kind.ASSIGNED,
+                        ticketId.value(),
+                        channel.id().value(),
+                        "AI failed — assigned to fallback queue",
+                        Instant.now()));
                 return;
             }
 
-            // Send reply via platform
+            // Send reply via platform (ReplyTicketUseCase skips publish for "ai" author;
+            // we publish AI_REPLIED here explicitly)
             replyTicketUseCase.reply(ticketId, response.reply(), "ai");
+
+            // Publish AI_REPLIED event
+            inboxEventPublisher.publish(new InboxEvent(
+                    InboxEvent.Kind.AI_REPLIED,
+                    ticketId.value(),
+                    channel.id().value(),
+                    "AI replied",
+                    Instant.now()));
 
             // Apply optional action
             if (response.action() == AIAction.CLOSE) {

@@ -15,6 +15,8 @@ import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
+import dev.autotix.domain.event.InboxEvent;
+import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.lock.InMemoryLockProvider;
 import dev.autotix.infrastructure.infra.lock.LockProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,7 @@ class DispatchAIReplyUseCaseTest {
     @Mock private AIReplyPort aiReplyPort;
     @Mock private ReplyTicketUseCase replyTicketUseCase;
     @Mock private CloseTicketUseCase closeTicketUseCase;
+    @Mock private InboxEventPublisher inboxPublisher;
 
     private LockProvider lockProvider;
     private DispatchAIReplyUseCase useCase;
@@ -57,7 +60,7 @@ class DispatchAIReplyUseCaseTest {
         lockProvider = new InMemoryLockProvider();
         useCase = new DispatchAIReplyUseCase(
                 ticketRepository, channelRepository, aiReplyPort,
-                replyTicketUseCase, closeTicketUseCase, lockProvider);
+                replyTicketUseCase, closeTicketUseCase, lockProvider, inboxPublisher);
 
         ticketId = new TicketId("10");
         channel = Channel.rehydrate(
@@ -91,6 +94,7 @@ class DispatchAIReplyUseCaseTest {
 
         verify(replyTicketUseCase).reply(eq(ticketId), eq("Here is the answer"), eq("ai"));
         verify(closeTicketUseCase, never()).close(any());
+        verify(inboxPublisher).publish(argThat(e -> e.kind == InboxEvent.Kind.AI_REPLIED));
     }
 
     @Test
@@ -111,6 +115,7 @@ class DispatchAIReplyUseCaseTest {
 
         // Reply should NOT have been sent
         verifyNoInteractions(replyTicketUseCase);
+        verify(inboxPublisher).publish(argThat(e -> e.kind == InboxEvent.Kind.ASSIGNED));
     }
 
     @Test
