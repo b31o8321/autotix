@@ -1,21 +1,35 @@
 package dev.autotix.application.channel;
 
+import dev.autotix.domain.AutotixException;
+import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.channel.ChannelRepository;
 import org.springframework.stereotype.Service;
 
 /**
- * TODO: Disconnect a channel.
- *  - Revoke OAuth token if Plugin supports
- *  - Set local Channel.enabled = false (soft disable; preserves history)
- *  - Optionally hard delete (admin choice)
+ * Disconnect a channel.
+ * - Clears credential, sets enabled=false (soft disable; preserves history)
+ * - hardDelete: currently same as soft (deferred to v2 — deleting a channel
+ *   requires cascading ticket cleanup decisions)
  */
 @Service
 public class DisconnectChannelUseCase {
 
-    public DisconnectChannelUseCase() {}
+    private final ChannelRepository channelRepository;
+
+    public DisconnectChannelUseCase(ChannelRepository channelRepository) {
+        this.channelRepository = channelRepository;
+    }
 
     public void disconnect(ChannelId channelId, boolean hardDelete) {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+        Channel channel = channelRepository.findById(channelId)
+                .orElseThrow(() -> new AutotixException.NotFoundException(
+                        "Channel not found: " + channelId.value()));
+
+        channel.disconnect(); // clears credential, sets enabled=false
+        channelRepository.save(channel);
+
+        // hardDelete: deferred to v2 — cascade delete of tickets is a significant operation
+        // For now, soft-disable is equivalent to hard delete from the user's perspective
     }
 }

@@ -1,30 +1,140 @@
 package dev.autotix.application.ticket;
 
+import dev.autotix.domain.AutotixException;
+import dev.autotix.domain.ai.AIAction;
+import dev.autotix.domain.ai.AIReplyPort;
+import dev.autotix.domain.ai.AIRequest;
+import dev.autotix.domain.ai.AIResponse;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelRepository;
+import dev.autotix.domain.ticket.Message;
+import dev.autotix.domain.ticket.MessageDirection;
+import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
+import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.infrastructure.infra.lock.LockProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 /**
- * TODO: Triggered async after a webhook produced a ticket needing AI reply.
+ * Triggered async after a webhook produced a ticket needing AI reply.
  *
- *  Flow:
- *    1. Acquire LockProvider lock on TicketId (prevent concurrent AI calls)
- *    2. Load Ticket
- *    3. Build AIRequest from Ticket's recent messages
- *    4. Call AIReplyPort.generate
- *    5. Pass result to ReplyTicketUseCase (which handles formatting + platform send)
- *    6. Apply optional AI action (close, tag, assign)
- *    7. Release lock
+ * Flow:
+ *   1. Acquire distributed lock on ticketId
+ *   2. Load Ticket
+ *   3. Build AIRequest from conversation history
+ *   4. Call AIReplyPort.generate
+ *   5. Pass result to ReplyTicketUseCase
+ *   6. Apply optional AI action (close, tag)
+ *   7. Release lock (try-with-resources)
  *
- *  Failure handling: on AI error, mark ticket as escalated (ASSIGNED to fallback queue).
+ * Failure handling: on AI error, assign ticket to "ai-fallback-queue" for human review.
  */
 @Service
 public class DispatchAIReplyUseCase {
 
-    // TODO: inject TicketRepository, AIReplyPort, ReplyTicketUseCase, LockProvider
-    public DispatchAIReplyUseCase() {}
+    private static final Logger log = LoggerFactory.getLogger(DispatchAIReplyUseCase.class);
+
+    private final TicketRepository ticketRepository;
+    private final ChannelRepository channelRepository;
+    private final AIReplyPort aiReplyPort;
+    private final ReplyTicketUseCase replyTicketUseCase;
+    private final CloseTicketUseCase closeTicketUseCase;
+    private final LockProvider lockProvider;
+
+    public DispatchAIReplyUseCase(TicketRepository ticketRepository,
+                                  ChannelRepository channelRepository,
+                                  AIReplyPort aiReplyPort,
+                                  ReplyTicketUseCase replyTicketUseCase,
+                                  CloseTicketUseCase closeTicketUseCase,
+                                  LockProvider lockProvider) {
+        this.ticketRepository = ticketRepository;
+        this.channelRepository = channelRepository;
+        this.aiReplyPort = aiReplyPort;
+        this.replyTicketUseCase = replyTicketUseCase;
+        this.closeTicketUseCase = closeTicketUseCase;
+        this.lockProvider = lockProvider;
+    }
 
     public void dispatch(TicketId ticketId) {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+        LockProvider.LockHandle lock = lockProvider.tryAcquire(
+                "ai-dispatch:" + ticketId.value(), Duration.ofMinutes(5));
+        if (lock == null) {
+            log.info("Concurrent AI dispatch skipped for ticket={}", ticketId.value());
+            return;
+        }
+
+        try (LockProvider.LockHandle lockHandle = lock) {
+            // Load ticket
+            Ticket ticket = ticketRepository.findById(ticketId)
+                    .orElseThrow(() -> new AutotixException.NotFoundException(
+                            "Ticket not found: " + ticketId.value()));
+
+            // Load channel
+            Channel channel = channelRepository.findById(ticket.channelId())
+                    .orElseThrow(() -> new AutotixException.NotFoundException(
+                            "Channel not found: " + ticket.channelId().value()));
+
+            // Build history (all messages except the last inbound)
+            List<Message> messages = ticket.messages();
+            List<AIRequest.HistoryTurn> history = new ArrayList<>();
+            String latestMessage = "";
+
+            for (int i = 0; i < messages.size(); i++) {
+                Message msg = messages.get(i);
+                if (i == messages.size() - 1 && msg.direction() == MessageDirection.INBOUND) {
+                    // Last message — this is the latest
+                    latestMessage = msg.content();
+                } else {
+                    String role = msg.direction() == MessageDirection.INBOUND ? "user" : "assistant";
+                    history.add(new AIRequest.HistoryTurn(role, msg.content()));
+                }
+            }
+            if (latestMessage.isEmpty() && !messages.isEmpty()) {
+                latestMessage = messages.get(messages.size() - 1).content();
+            }
+
+            AIRequest request = new AIRequest(
+                    channel.type(),
+                    ticket.customerName() != null ? ticket.customerName() : ticket.customerIdentifier(),
+                    latestMessage,
+                    history,
+                    null); // no per-channel system prompt override yet
+
+            // Call AI — on failure, escalate to human
+            AIResponse response;
+            try {
+                response = aiReplyPort.generate(request);
+            } catch (Exception e) {
+                log.error("AI generation failed for ticket={}, escalating to human: {}",
+                        ticketId.value(), e.getMessage(), e);
+                ticket.assignTo("ai-fallback-queue");
+                ticketRepository.save(ticket);
+                return;
+            }
+
+            // Send reply via platform
+            replyTicketUseCase.reply(ticketId, response.reply(), "ai");
+
+            // Apply optional action
+            if (response.action() == AIAction.CLOSE) {
+                closeTicketUseCase.close(ticketId);
+            }
+
+            // Apply tags if any
+            if (response.tags() != null && !response.tags().isEmpty()) {
+                // Reload ticket after reply (status may have changed)
+                Ticket reloaded = ticketRepository.findById(ticketId).orElse(ticket);
+                reloaded.addTags(new HashSet<>(response.tags()));
+                ticketRepository.save(reloaded);
+            }
+
+        } // lock released here by try-with-resources
     }
 }

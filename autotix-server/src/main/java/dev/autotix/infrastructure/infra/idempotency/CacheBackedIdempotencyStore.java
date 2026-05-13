@@ -6,12 +6,15 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 
 /**
- * TODO: Default idempotency store delegating to CacheProvider.
- *  Implementation note: need atomic putIfAbsent semantics — extend CacheProvider with that,
- *  or use Redis SET NX EX when running in distributed mode.
+ * Default idempotency store delegating to CacheProvider.putIfAbsent.
+ *
+ * Atomicity: CaffeineCacheProvider uses striped ReentrantLocks (JVM-local).
+ * For distributed mode, switch to RedisCacheProvider which should implement SET NX EX.
  */
 @Component
 public class CacheBackedIdempotencyStore implements IdempotencyStore {
+
+    private static final String MARKER = "1";
 
     private final CacheProvider cache;
 
@@ -21,7 +24,6 @@ public class CacheBackedIdempotencyStore implements IdempotencyStore {
 
     @Override
     public boolean tryMark(String key, Duration ttl) {
-        // TODO: atomic putIfAbsent semantics
-        throw new UnsupportedOperationException("TODO");
+        return cache.putIfAbsent(key, MARKER, ttl);
     }
 }

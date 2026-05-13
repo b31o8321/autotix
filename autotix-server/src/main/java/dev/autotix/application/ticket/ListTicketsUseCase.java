@@ -1,21 +1,25 @@
 package dev.autotix.application.ticket;
 
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketSearchQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * TODO: Paginated list for desk UI.
+ * Paginated list for desk UI.
  */
 @Service
 public class ListTicketsUseCase {
 
-    public ListTicketsUseCase() {}
+    private final TicketRepository ticketRepository;
+
+    public ListTicketsUseCase(TicketRepository ticketRepository) {
+        this.ticketRepository = ticketRepository;
+    }
 
     public List<Ticket> list(TicketSearchQuery query) {
-        // TODO: implement
-        throw new UnsupportedOperationException("TODO");
+        return ticketRepository.search(query);
     }
 }

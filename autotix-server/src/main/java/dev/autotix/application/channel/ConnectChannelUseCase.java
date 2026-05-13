@@ -1,40 +1,71 @@
 package dev.autotix.application.channel;
 
+import dev.autotix.domain.AutotixException;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelCredential;
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.channel.ChannelRepository;
 import dev.autotix.domain.channel.ChannelType;
 import dev.autotix.domain.channel.PlatformType;
+import dev.autotix.infrastructure.platform.PluginRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO: Connect a new third-party platform integration.
+ * Connect a new third-party platform integration.
  *
- *  Two-step OAuth flow:
- *    - startOAuth(): build authorize URL, return for redirect
- *    - completeOAuth(code, state): exchange code, persist Channel with credentials
+ * OAuth flow (startOAuth / completeOAuth): deferred to v2 — each platform needs
+ * different redirect URIs and client credentials that require additional setup.
  *
- *  For non-OAuth (API key): use connectWithApiKey().
+ * For non-OAuth (API key / shared secret): use connectWithApiKey().
  */
 @Service
 public class ConnectChannelUseCase {
 
-    // TODO: inject ChannelRepository, PluginRegistry
-    public ConnectChannelUseCase() {}
+    private final ChannelRepository channelRepository;
+    private final PluginRegistry pluginRegistry;
+
+    public ConnectChannelUseCase(ChannelRepository channelRepository,
+                                 PluginRegistry pluginRegistry) {
+        this.channelRepository = channelRepository;
+        this.pluginRegistry = pluginRegistry;
+    }
 
     public String startOAuth(PlatformType platform, ChannelType type, String displayName) {
-        // TODO: ask Plugin for authorize URL; persist a pending Channel with a state token
-        throw new UnsupportedOperationException("TODO");
+        // OAuth flow deferred to v2 — requires per-platform redirect URI & client credentials
+        throw new UnsupportedOperationException("OAuth flow deferred to v2");
     }
 
     public ChannelId completeOAuth(String state, String code) {
-        // TODO: lookup pending Channel by state, exchange code for token via Plugin, persist credentials
-        throw new UnsupportedOperationException("TODO");
+        // OAuth flow deferred to v2
+        throw new UnsupportedOperationException("OAuth flow deferred to v2");
     }
 
     public ChannelId connectWithApiKey(PlatformType platform, ChannelType type,
                                        String displayName, Map<String, String> credentials) {
-        // TODO: validate credentials by calling Plugin.healthCheck; persist Channel
-        throw new UnsupportedOperationException("TODO");
+        // Build channel with generated webhookToken
+        Channel channel = Channel.newInstance(platform, type, displayName);
+
+        // Build credential from map
+        String accessToken = credentials.get("access_token");
+        Map<String, String> attrs = new HashMap<>(credentials);
+        if (accessToken != null) {
+            attrs.remove("access_token");
+        }
+        ChannelCredential credential = new ChannelCredential(accessToken, null, null, attrs);
+
+        // Validate credentials via plugin health check
+        boolean healthy = pluginRegistry.get(platform).healthCheck(credential);
+        if (!healthy) {
+            throw new AutotixException.ValidationException(
+                    "Invalid credentials for platform: " + platform);
+        }
+
+        // Connect and persist
+        channel.connect(credential);
+        ChannelId id = channelRepository.save(channel);
+        return id;
     }
 }

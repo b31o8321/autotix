@@ -121,6 +121,15 @@ public class Channel {
         this.updatedAt = Instant.now();
     }
 
+    /** Rename the channel display name. */
+    public void rename(String newDisplayName) {
+        if (newDisplayName == null || newDisplayName.trim().isEmpty()) {
+            throw new AutotixException.ValidationException("displayName must not be blank");
+        }
+        this.displayName = newDisplayName.trim();
+        this.updatedAt = Instant.now();
+    }
+
     // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------

@@ -1,16 +1,24 @@
 package dev.autotix.interfaces.desk;
 
 import dev.autotix.application.ticket.*;
+import dev.autotix.domain.AutotixException;
+import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketId;
+import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.domain.ticket.TicketSearchQuery;
+import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.interfaces.desk.dto.MessageDTO;
 import dev.autotix.interfaces.desk.dto.ReplyRequest;
 import dev.autotix.interfaces.desk.dto.TicketDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * TODO: REST API for the human agent desk UI.
- *  Auth: TBD (basic auth / JWT; not required in dev).
+ * REST API for the human agent desk UI.
+ * Auth: JWT (enforced by SecurityConfig — ROLE_AGENT or ROLE_ADMIN).
  */
 @RestController
 @RequestMapping("/api/desk/tickets")
@@ -20,13 +28,18 @@ public class DeskController {
     private final ReplyTicketUseCase replyTicket;
     private final AssignTicketUseCase assignTicket;
     private final CloseTicketUseCase closeTicket;
+    private final TicketRepository ticketRepository;
 
-    public DeskController(ListTicketsUseCase listTickets, ReplyTicketUseCase replyTicket,
-                          AssignTicketUseCase assignTicket, CloseTicketUseCase closeTicket) {
+    public DeskController(ListTicketsUseCase listTickets,
+                          ReplyTicketUseCase replyTicket,
+                          AssignTicketUseCase assignTicket,
+                          CloseTicketUseCase closeTicket,
+                          TicketRepository ticketRepository) {
         this.listTickets = listTickets;
         this.replyTicket = replyTicket;
         this.assignTicket = assignTicket;
         this.closeTicket = closeTicket;
+        this.ticketRepository = ticketRepository;
     }
 
     @GetMapping
@@ -36,37 +49,93 @@ public class DeskController {
                                 @RequestParam(required = false) String q,
                                 @RequestParam(defaultValue = "0") int offset,
                                 @RequestParam(defaultValue = "50") int limit) {
-        // TODO: build TicketSearchQuery; call listTickets; map to DTO
-        throw new UnsupportedOperationException("TODO");
+        TicketSearchQuery query = new TicketSearchQuery();
+        if (status != null && !status.isEmpty()) {
+            try {
+                query.status = TicketStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException ignored) {
+                // Invalid status — ignore filter
+            }
+        }
+        if (channelId != null && !channelId.isEmpty()) {
+            query.channelId = new ChannelId(channelId);
+        }
+        query.assigneeId = assignee;
+        query.text = q;
+        query.offset = offset;
+        query.limit = limit;
+
+        return listTickets.list(query).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{ticketId}")
     public TicketDTO get(@PathVariable String ticketId) {
-        // TODO: fetch ticket + messages, map to DTO with full thread
-        throw new UnsupportedOperationException("TODO");
+        Ticket ticket = ticketRepository.findById(new TicketId(ticketId))
+                .orElseThrow(() -> new AutotixException.NotFoundException(
+                        "Ticket not found: " + ticketId));
+        TicketDTO dto = toDTO(ticket);
+        dto.messages = ticket.messages().stream()
+                .map(this::toMessageDTO)
+                .collect(Collectors.toList());
+        return dto;
     }
 
     @GetMapping("/{ticketId}/messages")
     public List<MessageDTO> messages(@PathVariable String ticketId) {
-        // TODO: load full thread
-        throw new UnsupportedOperationException("TODO");
+        Ticket ticket = ticketRepository.findById(new TicketId(ticketId))
+                .orElseThrow(() -> new AutotixException.NotFoundException(
+                        "Ticket not found: " + ticketId));
+        return ticket.messages().stream()
+                .map(this::toMessageDTO)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/{ticketId}/reply")
     public void reply(@PathVariable String ticketId, @RequestBody ReplyRequest req) {
-        // TODO: replyTicket.reply(...)
-        throw new UnsupportedOperationException("TODO");
+        replyTicket.reply(new TicketId(ticketId), req.content, "agent");
+        if (req.closeAfter) {
+            closeTicket.close(new TicketId(ticketId));
+        }
     }
 
     @PostMapping("/{ticketId}/assign")
     public void assign(@PathVariable String ticketId, @RequestParam String agentId) {
-        // TODO: assignTicket.assign(...)
-        throw new UnsupportedOperationException("TODO");
+        assignTicket.assign(new TicketId(ticketId), agentId);
     }
 
     @PostMapping("/{ticketId}/close")
     public void close(@PathVariable String ticketId) {
-        // TODO: closeTicket.close(...)
-        throw new UnsupportedOperationException("TODO");
+        closeTicket.close(new TicketId(ticketId));
+    }
+
+    // -----------------------------------------------------------------------
+    // Mapping helpers
+    // -----------------------------------------------------------------------
+
+    private TicketDTO toDTO(Ticket t) {
+        TicketDTO dto = new TicketDTO();
+        dto.id = t.id() != null ? t.id().value() : null;
+        dto.channelId = t.channelId() != null ? t.channelId().value() : null;
+        dto.externalNativeId = t.externalNativeId();
+        dto.subject = t.subject();
+        dto.customerIdentifier = t.customerIdentifier();
+        dto.customerName = t.customerName();
+        dto.status = t.status() != null ? t.status().name() : null;
+        dto.assigneeId = t.assigneeId();
+        dto.tags = t.tags();
+        dto.createdAt = t.createdAt();
+        dto.updatedAt = t.updatedAt();
+        return dto;
+    }
+
+    private MessageDTO toMessageDTO(dev.autotix.domain.ticket.Message m) {
+        MessageDTO dto = new MessageDTO();
+        dto.direction = m.direction().name();
+        dto.author = m.author();
+        dto.content = m.content();
+        dto.occurredAt = m.occurredAt();
+        return dto;
     }
 }
