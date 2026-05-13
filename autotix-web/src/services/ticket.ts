@@ -1,5 +1,5 @@
-// TODO: ticket REST client - matches DeskController
-import { request } from 'umi';
+// ticket REST client - matches DeskController
+import { request } from '@/utils/request';
 
 export interface TicketDTO {
   id: string;

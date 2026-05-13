@@ -1,5 +1,5 @@
-// TODO: AI config REST client - matches AIConfigController
-import { request } from 'umi';
+// AI config REST client - matches AIConfigController
+import { request } from '@/utils/request';
 
 export interface AIConfigDTO {
   endpoint: string;

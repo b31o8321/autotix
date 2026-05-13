@@ -1,15 +1,51 @@
-// TODO: Umi runtime config — global layout, antd ConfigProvider, error boundary, request interceptor.
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, message } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { ReactNode } from 'react';
+import { history } from 'umi';
+import { clearTokens, getAccessToken } from '@/utils/auth';
 
 export function rootContainer(container: ReactNode) {
-  // TODO: theme tokens, default locale (i18n switch later)
   return <ConfigProvider locale={zhCN}>{container}</ConfigProvider>;
 }
 
-// TODO: export request config for umi-request (auth header, error handling)
 export const request = {
   timeout: 30000,
-  // errorConfig: { ... }
+  requestInterceptors: [
+    (config: { url?: string; headers?: Record<string, string>; [key: string]: unknown }) => {
+      const token = getAccessToken();
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
+      return config;
+    },
+  ],
+  responseInterceptors: [
+    (response: Response) => {
+      return response;
+    },
+  ],
+  errorConfig: {
+    errorHandler(
+      error: { response?: { status?: number; data?: { message?: string } }; message?: string },
+    ) {
+      const status = error?.response?.status;
+      if (status === 401) {
+        clearTokens();
+        history.push('/login');
+        return;
+      }
+      const msg = error?.response?.data?.message || error?.message || 'Request failed';
+      message.error(msg);
+    },
+    errorThrower(res: { success?: boolean; errorMessage?: string }) {
+      if (!res?.success) {
+        const err: Error & { info?: typeof res } = new Error(res?.errorMessage || 'Error');
+        err.info = res;
+        throw err;
+      }
+    },
+  },
 };

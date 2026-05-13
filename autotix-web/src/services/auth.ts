@@ -1,5 +1,5 @@
-// TODO: auth REST client - matches AuthController + UserAdminController
-import { request } from 'umi';
+// auth REST client - matches AuthController + UserAdminController
+import { request } from '@/utils/request';
 
 export interface LoginResponse {
   accessToken: string;

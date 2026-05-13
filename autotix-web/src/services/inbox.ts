@@ -1,10 +1,5 @@
-// TODO: SSE client for /api/inbox/stream.
-//   - Construct EventSource with `?token=<accessToken>` (CORS-safe auth)
-//   - Listen for named events: TICKET_CREATED / AI_REPLIED / AGENT_REPLIED / STATUS_CHANGED / ASSIGNED
-//   - Reconnect with exponential backoff on error
-//   - Expose subscribe(handler) -> unsubscribe
 export interface InboxEvent {
-  kind: 'TICKET_CREATED' | 'AI_REPLIED' | 'AGENT_REPLIED' | 'STATUS_CHANGED' | 'ASSIGNED';
+  kind: 'TICKET_CREATED' | 'AI_REPLIED' | 'AGENT_REPLIED' | 'STATUS_CHANGED' | 'ASSIGNED' | 'NEW_MESSAGE';
   ticketId: string;
   channelId: string;
   summary: string;
@@ -14,11 +9,20 @@ export interface InboxEvent {
 export type InboxHandler = (event: InboxEvent) => void;
 
 export function subscribeInbox(token: string, handler: InboxHandler): () => void {
-  // TODO: implement using EventSource
-  //   const es = new EventSource(`/api/inbox/stream?token=${encodeURIComponent(token)}`);
-  //   ['TICKET_CREATED','AI_REPLIED','AGENT_REPLIED','STATUS_CHANGED','ASSIGNED']
-  //     .forEach(k => es.addEventListener(k, (e: MessageEvent) => handler(JSON.parse(e.data))));
-  //   es.onerror = () => { /* reconnect handled by EventSource */ };
-  //   return () => es.close();
-  throw new Error('TODO');
+  const es = new EventSource(`/api/inbox/stream?token=${encodeURIComponent(token)}`);
+  const kinds: InboxEvent['kind'][] = [
+    'TICKET_CREATED',
+    'AI_REPLIED',
+    'AGENT_REPLIED',
+    'STATUS_CHANGED',
+    'ASSIGNED',
+    'NEW_MESSAGE',
+  ];
+  kinds.forEach((k) =>
+    es.addEventListener(k, (e) => handler(JSON.parse((e as MessageEvent).data) as InboxEvent)),
+  );
+  es.onerror = () => {
+    // EventSource will auto-reconnect; no manual backoff needed for v1
+  };
+  return () => es.close();
 }

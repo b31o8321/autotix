@@ -1,14 +1,47 @@
-// TODO: Settings root — index page with nav cards (Channels / AI / Automation).
-import { Card, Row, Col } from 'antd';
+import { Card, Row, Col, Typography } from 'antd';
 import { Link } from 'umi';
+import { hasRole } from '@/utils/auth';
 
 export default function SettingsIndex() {
-  // TODO: route cards with description; potentially merge Channels/AI/Automation into one sider layout
+  const isAdmin = hasRole('ADMIN');
+
   return (
-    <Row gutter={16}>
-      <Col span={8}><Link to="/settings/channels"><Card title="Channels">{/* TODO */}</Card></Link></Col>
-      <Col span={8}><Link to="/settings/ai"><Card title="AI Config">{/* TODO */}</Card></Link></Col>
-      <Col span={8}><Card title="Automation">{/* TODO */}</Card></Col>
-    </Row>
+    <div>
+      <Typography.Title level={4}>Settings</Typography.Title>
+      <Row gutter={[16, 16]}>
+        <Col span={8}>
+          <Link to="/settings/channels">
+            <Card title="Channels" hoverable>
+              Manage connected support channels
+            </Card>
+          </Link>
+        </Col>
+        <Col span={8}>
+          <Link to="/settings/ai">
+            <Card title="AI Config" hoverable>
+              Configure AI endpoint, model and prompt
+            </Card>
+          </Link>
+        </Col>
+        {isAdmin && (
+          <>
+            <Col span={8}>
+              <Link to="/settings/automation">
+                <Card title="Automation" hoverable>
+                  Manage automation rules and triggers
+                </Card>
+              </Link>
+            </Col>
+            <Col span={8}>
+              <Link to="/settings/users">
+                <Card title="Users" hoverable>
+                  Manage agents and administrators
+                </Card>
+              </Link>
+            </Col>
+          </>
+        )}
+      </Row>
+    </div>
   );
 }

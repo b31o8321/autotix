@@ -1,0 +1,2284 @@
+{
+  "cwd": "/Users/norman/development/autotix/autotix-web",
+  "pkg": {
+    "name": "autotix-web",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Autotix admin & desk SPA",
+    "scripts": {
+      "dev": "umi dev",
+      "build": "umi build",
+      "lint": "eslint src --ext .ts,.tsx",
+      "typecheck": "tsc --noEmit",
+      "test": "vitest run",
+      "test:watch": "vitest"
+    },
+    "dependencies": {
+      "antd": "^5.16.0",
+      "@ant-design/icons": "^5.3.0",
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "umi": "^4.1.0"
+    },
+    "devDependencies": {
+      "@testing-library/jest-dom": "^6.4.0",
+      "@testing-library/react": "^14.2.0",
+      "@testing-library/user-event": "^14.5.0",
+      "@types/react": "^18.2.0",
+      "@types/react-dom": "^18.2.0",
+      "@vitejs/plugin-react": "^4.2.0",
+      "eslint": "^8.57.0",
+      "jsdom": "^24.0.0",
+      "typescript": "^5.4.0",
+      "vitest": "^1.6.0"
+    }
+  },
+  "pkgPath": "/Users/norman/development/autotix/autotix-web/package.json",
+  "plugins": {
+    "./node_modules/.pnpm/@umijs+core@4.6.53/node_modules/@umijs/core/dist/service/servicePlugin": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "preset",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+core@4.6.53/node_modules/@umijs/core/dist/service/servicePlugin.js",
+      "id": "./node_modules/.pnpm/@umijs+core@4.6.53/node_modules/@umijs/core/dist/service/servicePlugin",
+      "key": "servicePlugin",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "@umijs/preset-umi": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "preset",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/index.js",
+      "id": "@umijs/preset-umi",
+      "key": "umi",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 4
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/registerMethods": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/registerMethods.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/registerMethods",
+      "key": "registerMethods",
+      "config": {},
+      "time": {
+        "hooks": {
+          "onStart": [
+            0
+          ]
+        },
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "@umijs/did-you-know": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+did-you-know@1.0.4/node_modules/@umijs/did-you-know/dist/plugin.js",
+      "id": "@umijs/did-you-know",
+      "key": "umijsDidYouKnow",
+      "config": {},
+      "time": {
+        "hooks": {
+          "onStart": [
+            1
+          ]
+        },
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/404/404": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/404/404.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/404/404",
+      "key": "404",
+      "config": {},
+      "time": {
+        "hooks": {
+          "modifyRoutes": [
+            0
+          ]
+        },
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/aiDev/aiDev": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/aiDev/aiDev.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/aiDev/aiDev",
+      "key": "aiDev",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/appData/appData": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/appData/appData.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/appData/appData",
+      "key": "appData",
+      "config": {},
+      "time": {
+        "hooks": {
+          "modifyAppData": [
+            15
+          ]
+        },
+        "register": 12
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/appData/umiInfo": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/appData/umiInfo.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/appData/umiInfo",
+      "key": "umiInfo",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/check/check": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/check/check.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/check/check",
+      "key": "check",
+      "config": {},
+      "time": {
+        "hooks": {
+          "onCheckConfig": [
+            0
+          ],
+          "onCheck": [
+            1
+          ]
+        },
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/check/babel722": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/check/babel722.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/check/babel722",
+      "key": "babel722",
+      "config": {},
+      "time": {
+        "hooks": {
+          "onCheck": [
+            0
+          ]
+        },
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/codeSplitting/codeSplitting": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/codeSplitting/codeSplitting.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/codeSplitting/codeSplitting",
+      "key": "codeSplitting",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/configPlugins/configPlugins": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/configPlugins/configPlugins.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/configPlugins/configPlugins",
+      "key": "configPlugins",
+      "config": {},
+      "time": {
+        "hooks": {
+          "modifyConfig": [
+            0
+          ]
+        },
+        "register": 5
+      },
+      "enableBy": "register"
+    },
+    "virtual: config-title": {
+      "id": "virtual: config-title",
+      "key": "title",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-styles": {
+      "id": "virtual: config-styles",
+      "key": "styles",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-scripts": {
+      "id": "virtual: config-scripts",
+      "key": "scripts",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-routes": {
+      "id": "virtual: config-routes",
+      "key": "routes",
+      "config": {
+        "onChange": "regenerateTmpFiles"
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-routeLoader": {
+      "id": "virtual: config-routeLoader",
+      "key": "routeLoader",
+      "config": {
+        "default": {
+          "moduleType": "esm"
+        }
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-reactRouter5Compat": {
+      "id": "virtual: config-reactRouter5Compat",
+      "key": "reactRouter5Compat",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-presets": {
+      "id": "virtual: config-presets",
+      "key": "presets",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-plugins": {
+      "id": "virtual: config-plugins",
+      "key": "plugins",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-npmClient": {
+      "id": "virtual: config-npmClient",
+      "key": "npmClient",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-mountElementId": {
+      "id": "virtual: config-mountElementId",
+      "key": "mountElementId",
+      "config": {
+        "default": "root"
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-metas": {
+      "id": "virtual: config-metas",
+      "key": "metas",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-links": {
+      "id": "virtual: config-links",
+      "key": "links",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-historyWithQuery": {
+      "id": "virtual: config-historyWithQuery",
+      "key": "historyWithQuery",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-history": {
+      "id": "virtual: config-history",
+      "key": "history",
+      "config": {
+        "default": {
+          "type": "browser"
+        }
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-headScripts": {
+      "id": "virtual: config-headScripts",
+      "key": "headScripts",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-esbuildMinifyIIFE": {
+      "id": "virtual: config-esbuildMinifyIIFE",
+      "key": "esbuildMinifyIIFE",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-conventionRoutes": {
+      "id": "virtual: config-conventionRoutes",
+      "key": "conventionRoutes",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-conventionLayout": {
+      "id": "virtual: config-conventionLayout",
+      "key": "conventionLayout",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-base": {
+      "id": "virtual: config-base",
+      "key": "base",
+      "config": {
+        "default": "/"
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-analyze": {
+      "id": "virtual: config-analyze",
+      "key": "analyze",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-writeToDisk": {
+      "id": "virtual: config-writeToDisk",
+      "key": "writeToDisk",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-transformRuntime": {
+      "id": "virtual: config-transformRuntime",
+      "key": "transformRuntime",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-theme": {
+      "id": "virtual: config-theme",
+      "key": "theme",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-targets": {
+      "id": "virtual: config-targets",
+      "key": "targets",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-svgr": {
+      "id": "virtual: config-svgr",
+      "key": "svgr",
+      "config": {
+        "default": {}
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-svgo": {
+      "id": "virtual: config-svgo",
+      "key": "svgo",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-stylusLoader": {
+      "id": "virtual: config-stylusLoader",
+      "key": "stylusLoader",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-styleLoader": {
+      "id": "virtual: config-styleLoader",
+      "key": "styleLoader",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-srcTranspilerOptions": {
+      "id": "virtual: config-srcTranspilerOptions",
+      "key": "srcTranspilerOptions",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-srcTranspiler": {
+      "id": "virtual: config-srcTranspiler",
+      "key": "srcTranspiler",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-sassLoader": {
+      "id": "virtual: config-sassLoader",
+      "key": "sassLoader",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-runtimePublicPath": {
+      "id": "virtual: config-runtimePublicPath",
+      "key": "runtimePublicPath",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-purgeCSS": {
+      "id": "virtual: config-purgeCSS",
+      "key": "purgeCSS",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-publicPath": {
+      "id": "virtual: config-publicPath",
+      "key": "publicPath",
+      "config": {
+        "default": "/"
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-proxy": {
+      "id": "virtual: config-proxy",
+      "key": "proxy",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-postcssLoader": {
+      "id": "virtual: config-postcssLoader",
+      "key": "postcssLoader",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-outputPath": {
+      "id": "virtual: config-outputPath",
+      "key": "outputPath",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-normalCSSLoaderModules": {
+      "id": "virtual: config-normalCSSLoaderModules",
+      "key": "normalCSSLoaderModules",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-mfsu": {
+      "id": "virtual: config-mfsu",
+      "key": "mfsu",
+      "config": {
+        "default": {
+          "strategy": "eager"
+        }
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-mdx": {
+      "id": "virtual: config-mdx",
+      "key": "mdx",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-manifest": {
+      "id": "virtual: config-manifest",
+      "key": "manifest",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-lessLoader": {
+      "id": "virtual: config-lessLoader",
+      "key": "lessLoader",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-jsMinifierOptions": {
+      "id": "virtual: config-jsMinifierOptions",
+      "key": "jsMinifierOptions",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-jsMinifier": {
+      "id": "virtual: config-jsMinifier",
+      "key": "jsMinifier",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-inlineLimit": {
+      "id": "virtual: config-inlineLimit",
+      "key": "inlineLimit",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-ignoreMomentLocale": {
+      "id": "virtual: config-ignoreMomentLocale",
+      "key": "ignoreMomentLocale",
+      "config": {
+        "default": true
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-https": {
+      "id": "virtual: config-https",
+      "key": "https",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-hash": {
+      "id": "virtual: config-hash",
+      "key": "hash",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-forkTSChecker": {
+      "id": "virtual: config-forkTSChecker",
+      "key": "forkTSChecker",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-fastRefresh": {
+      "id": "virtual: config-fastRefresh",
+      "key": "fastRefresh",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-extraPostCSSPlugins": {
+      "id": "virtual: config-extraPostCSSPlugins",
+      "key": "extraPostCSSPlugins",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-extraBabelPresets": {
+      "id": "virtual: config-extraBabelPresets",
+      "key": "extraBabelPresets",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-extraBabelPlugins": {
+      "id": "virtual: config-extraBabelPlugins",
+      "key": "extraBabelPlugins",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-extraBabelIncludes": {
+      "id": "virtual: config-extraBabelIncludes",
+      "key": "extraBabelIncludes",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-externals": {
+      "id": "virtual: config-externals",
+      "key": "externals",
+      "config": {
+        "default": {}
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-esm": {
+      "id": "virtual: config-esm",
+      "key": "esm",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-devtool": {
+      "id": "virtual: config-devtool",
+      "key": "devtool",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-depTranspiler": {
+      "id": "virtual: config-depTranspiler",
+      "key": "depTranspiler",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-define": {
+      "id": "virtual: config-define",
+      "key": "define",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-deadCode": {
+      "id": "virtual: config-deadCode",
+      "key": "deadCode",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-cssPublicPath": {
+      "id": "virtual: config-cssPublicPath",
+      "key": "cssPublicPath",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-cssMinifierOptions": {
+      "id": "virtual: config-cssMinifierOptions",
+      "key": "cssMinifierOptions",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-cssMinifier": {
+      "id": "virtual: config-cssMinifier",
+      "key": "cssMinifier",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-cssLoaderModules": {
+      "id": "virtual: config-cssLoaderModules",
+      "key": "cssLoaderModules",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-cssLoader": {
+      "id": "virtual: config-cssLoader",
+      "key": "cssLoader",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-copy": {
+      "id": "virtual: config-copy",
+      "key": "copy",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-checkDepCssModules": {
+      "id": "virtual: config-checkDepCssModules",
+      "key": "checkDepCssModules",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-chainWebpack": {
+      "id": "virtual: config-chainWebpack",
+      "key": "chainWebpack",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-cacheDirectoryPath": {
+      "id": "virtual: config-cacheDirectoryPath",
+      "key": "cacheDirectoryPath",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-babelLoaderCustomize": {
+      "id": "virtual: config-babelLoaderCustomize",
+      "key": "babelLoaderCustomize",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-autoprefixer": {
+      "id": "virtual: config-autoprefixer",
+      "key": "autoprefixer",
+      "config": {},
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-autoCSSModules": {
+      "id": "virtual: config-autoCSSModules",
+      "key": "autoCSSModules",
+      "config": {
+        "default": true
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "virtual: config-alias": {
+      "id": "virtual: config-alias",
+      "key": "alias",
+      "config": {
+        "default": {
+          "umi": "@@/exports",
+          "react": "/Users/norman/development/autotix/autotix-web/node_modules/react",
+          "react-dom": "/Users/norman/development/autotix/autotix-web/node_modules/react-dom",
+          "react-router": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/react-router@6.3.0_react@18.3.1/node_modules/react-router",
+          "react-router-dom": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/react-router-dom@6.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/react-router-dom"
+        }
+      },
+      "type": "plugin",
+      "enableBy": "register",
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/crossorigin/crossorigin": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/crossorigin/crossorigin.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/crossorigin/crossorigin",
+      "key": "crossorigin",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/depsOnDemand/depsOnDemand": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/depsOnDemand/depsOnDemand.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/depsOnDemand/depsOnDemand",
+      "key": "depsOnDemand",
+      "config": {},
+      "time": {
+        "hooks": {
+          "onStart": [
+            0
+          ]
+        },
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/devTool/devTool": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/devTool/devTool.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/devTool/devTool",
+      "key": "devTool",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/esbuildHelperChecker/esbuildHelperChecker": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/esbuildHelperChecker/esbuildHelperChecker.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/esbuildHelperChecker/esbuildHelperChecker",
+      "key": "esbuildHelperChecker",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 39
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/esmi/esmi": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/esmi/esmi.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/esmi/esmi",
+      "key": "esmi",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 17
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/exportStatic/exportStatic": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/exportStatic/exportStatic.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/exportStatic/exportStatic",
+      "key": "exportStatic",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 11
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/favicons/favicons": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/favicons/favicons.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/favicons/favicons",
+      "key": "favicons",
+      "config": {},
+      "time": {
+        "hooks": {
+          "modifyAppData": [
+            0
+          ]
+        },
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/helmet/helmet": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/helmet/helmet.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/helmet/helmet",
+      "key": "helmet",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/icons/icons": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/icons/icons.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/icons/icons",
+      "key": "icons",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mock/mock": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mock/mock.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mock/mock",
+      "key": "mock",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 17
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa",
+      "key": "mpa",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/okam/okam": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/okam/okam.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/okam/okam",
+      "key": "okam",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/overrides/overrides": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/overrides/overrides.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/overrides/overrides",
+      "key": "overrides",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/phantomDependency/phantomDependency": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/phantomDependency/phantomDependency.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/phantomDependency/phantomDependency",
+      "key": "phantomDependency",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/polyfill/polyfill": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/polyfill/polyfill.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/polyfill/polyfill",
+      "key": "polyfill",
+      "config": {},
+      "time": {
+        "hooks": {
+          "modifyConfig": [
+            0
+          ]
+        },
+        "register": 0
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/polyfill/publicPathPolyfill": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/polyfill/publicPathPolyfill.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/polyfill/publicPathPolyfill",
+      "key": "publicPathPolyfill",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/prepare/prepare": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/prepare/prepare.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/prepare/prepare",
+      "key": "prepare",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routePrefetch/routePrefetch": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routePrefetch/routePrefetch.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routePrefetch/routePrefetch",
+      "key": "routePrefetch",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/stagewise/stagewise": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/stagewise/stagewise.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/stagewise/stagewise",
+      "key": "stagewise",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/terminal/terminal": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/terminal/terminal.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/terminal/terminal",
+      "key": "terminal",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/tmpFiles/tmpFiles": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/tmpFiles/tmpFiles.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/tmpFiles/tmpFiles",
+      "key": "tmpFiles",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 2
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clientLoader/clientLoader": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clientLoader/clientLoader.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clientLoader/clientLoader",
+      "key": "clientLoader",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routeProps/routeProps": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routeProps/routeProps.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routeProps/routeProps",
+      "key": "routeProps",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ssr/ssr": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ssr/ssr.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ssr/ssr",
+      "key": "ssr",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/tmpFiles/configTypes": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/tmpFiles/configTypes.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/tmpFiles/configTypes",
+      "key": "configTypes",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/transform/transform": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/transform/transform.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/transform/transform",
+      "key": "transform",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/lowImport/lowImport": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/lowImport/lowImport.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/lowImport/lowImport",
+      "key": "lowImport",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 3
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/vite/vite": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/vite/vite.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/vite/vite",
+      "key": "vite",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/apiRoute/apiRoute": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/apiRoute/apiRoute.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/apiRoute/apiRoute",
+      "key": "apiRoute",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 2
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/monorepo/redirect": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/monorepo/redirect.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/monorepo/redirect",
+      "key": "monorepoRedirect",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 10
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/test/test": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/test/test.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/test/test",
+      "key": "test",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clickToComponent/clickToComponent": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clickToComponent/clickToComponent.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clickToComponent/clickToComponent",
+      "key": "clickToComponent",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/legacy/legacy": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/legacy/legacy.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/legacy/legacy",
+      "key": "legacy",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/classPropertiesLoose/classPropertiesLoose": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/classPropertiesLoose/classPropertiesLoose.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/classPropertiesLoose/classPropertiesLoose",
+      "key": "classPropertiesLoose",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/webpack/webpack": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/webpack/webpack.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/webpack/webpack",
+      "key": "preset-umi:webpack",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/swc/swc": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/swc/swc.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/swc/swc",
+      "key": "swc",
+      "config": {},
+      "time": {
+        "hooks": {
+          "addOnDemandDeps": [
+            0
+          ]
+        },
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ui/ui": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ui/ui.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ui/ui",
+      "key": "ui",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mako/mako": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mako/mako.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mako/mako",
+      "key": "mako",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/utoopack/utoopack": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/utoopack/utoopack.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/utoopack/utoopack",
+      "key": "utoopack",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/hmrGuardian/hmrGuardian": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/hmrGuardian/hmrGuardian.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/hmrGuardian/hmrGuardian",
+      "key": "hmrGuardian",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routePreloadOnLoad/routePreloadOnLoad": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routePreloadOnLoad/routePreloadOnLoad.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/routePreloadOnLoad/routePreloadOnLoad",
+      "key": "routePreloadOnLoad",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 14
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/forget/forget": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/forget/forget.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/forget/forget",
+      "key": "forget",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "config"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/bundler/bundler": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/bundler/bundler.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/bundler/bundler",
+      "key": "preset-umi:bundler",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/build": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/build.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/build",
+      "key": "build",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 2
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/config/config": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/config/config.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/config/config",
+      "key": "config",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 17
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/dev/dev": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/dev/dev.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/dev/dev",
+      "key": "dev",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 16
+      }
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help",
+      "key": "help",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/lint": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/lint.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/lint",
+      "key": "lint",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/setup": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/setup.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/setup",
+      "key": "setup",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/deadcode": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/deadcode.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/deadcode",
+      "key": "deadcode",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/version": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/version.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/version",
+      "key": "version",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/page": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/page.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/page",
+      "key": "generator:page",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 4
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/prettier": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/prettier.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/prettier",
+      "key": "generator:prettier",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/tsconfig": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/tsconfig.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/tsconfig",
+      "key": "generator:tsconfig",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/jest": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/jest.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/jest",
+      "key": "generator:jest",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/tailwindcss": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/tailwindcss.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/tailwindcss",
+      "key": "generator:tailwindcss",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/dva": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/dva.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/dva",
+      "key": "generator:dva",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/component": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/component.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/component",
+      "key": "generator:component",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/mock": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/mock.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/mock",
+      "key": "generator:mock",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/cypress": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/cypress.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/cypress",
+      "key": "generator:cypress",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/api": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/api.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/api",
+      "key": "generator:api",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/precommit": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/precommit.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/generators/precommit",
+      "key": "generator:precommit",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/plugin": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/plugin.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/plugin",
+      "key": "command:plugin",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/verify-commit": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/verify-commit.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/verify-commit",
+      "key": "verifyCommit",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 1
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/preview": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/preview.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/preview",
+      "key": "preview",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 11
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/mfsu/mfsu": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/mfsu/mfsu.js",
+      "id": "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/mfsu/mfsu",
+      "key": "mfsu-cli",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    },
+    "@umijs/plugin-run": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+plugin-run@4.6.53/node_modules/@umijs/plugin-run/dist/index.js",
+      "id": "@umijs/plugin-run",
+      "key": "run",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 2
+      },
+      "enableBy": "register"
+    },
+    "./node_modules/.pnpm/@umijs+core@4.6.53/node_modules/@umijs/core/dist/service/generatePlugin": {
+      "cwd": "/Users/norman/development/autotix/autotix-web",
+      "type": "plugin",
+      "path": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/@umijs+core@4.6.53/node_modules/@umijs/core/dist/service/generatePlugin.js",
+      "id": "./node_modules/.pnpm/@umijs+core@4.6.53/node_modules/@umijs/core/dist/service/generatePlugin",
+      "key": "generatePlugin",
+      "config": {},
+      "time": {
+        "hooks": {},
+        "register": 0
+      },
+      "enableBy": "register"
+    }
+  },
+  "presets": [],
+  "name": "setup",
+  "args": {
+    "_": []
+  },
+  "userConfig": {
+    "title": "Autotix",
+    "npmClient": "pnpm",
+    "history": {
+      "type": "browser"
+    },
+    "routes": [
+      {
+        "path": "/login",
+        "component": "@/pages/Login"
+      },
+      {
+        "path": "/",
+        "component": "@/layouts/AppLayout",
+        "routes": [
+          {
+            "path": "/",
+            "redirect": "/desk"
+          },
+          {
+            "path": "desk",
+            "component": "@/pages/Desk"
+          },
+          {
+            "path": "desk/:ticketId",
+            "component": "@/pages/Desk/Detail"
+          },
+          {
+            "path": "inbox",
+            "component": "@/pages/Inbox"
+          },
+          {
+            "path": "reports",
+            "component": "@/pages/Reports"
+          },
+          {
+            "path": "settings",
+            "component": "@/pages/Settings"
+          },
+          {
+            "path": "settings/channels",
+            "component": "@/pages/Settings/Channels"
+          },
+          {
+            "path": "settings/ai",
+            "component": "@/pages/Settings/AIConfig"
+          },
+          {
+            "path": "settings/users",
+            "component": "@/pages/Settings/Users"
+          },
+          {
+            "path": "settings/automation",
+            "component": "@/pages/Settings/Automation"
+          }
+        ]
+      }
+    ],
+    "proxy": {
+      "/api": {
+        "target": "http://localhost:8080",
+        "changeOrigin": true
+      },
+      "/v2/webhook": {
+        "target": "http://localhost:8080",
+        "changeOrigin": true
+      }
+    }
+  },
+  "mainConfigFile": "/Users/norman/development/autotix/autotix-web/.umirc.ts",
+  "config": {
+    "routeLoader": {
+      "moduleType": "esm"
+    },
+    "mountElementId": "root",
+    "history": {
+      "type": "browser"
+    },
+    "base": "/",
+    "svgr": {},
+    "publicPath": "/",
+    "mfsu": {
+      "strategy": "eager"
+    },
+    "ignoreMomentLocale": true,
+    "externals": {},
+    "autoCSSModules": true,
+    "alias": {
+      "umi": "@@/exports",
+      "react": "/Users/norman/development/autotix/autotix-web/node_modules/react",
+      "react-dom": "/Users/norman/development/autotix/autotix-web/node_modules/react-dom",
+      "react-router": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/react-router@6.3.0_react@18.3.1/node_modules/react-router",
+      "react-router-dom": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/react-router-dom@6.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/react-router-dom",
+      "@": "/Users/norman/development/autotix/autotix-web/src",
+      "@@": "/Users/norman/development/autotix/autotix-web/src/.umi",
+      "regenerator-runtime": "/Users/norman/development/autotix/autotix-web/node_modules/.pnpm/regenerator-runtime@0.13.11/node_modules/regenerator-runtime"
+    },
+    "title": "Autotix",
+    "npmClient": "pnpm",
+    "routes": [
+      {
+        "path": "/login",
+        "component": "@/pages/Login"
+      },
+      {
+        "path": "/",
+        "component": "@/layouts/AppLayout",
+        "routes": [
+          {
+            "path": "/",
+            "redirect": "/desk"
+          },
+          {
+            "path": "desk",
+            "component": "@/pages/Desk"
+          },
+          {
+            "path": "desk/:ticketId",
+            "component": "@/pages/Desk/Detail"
+          },
+          {
+            "path": "inbox",
+            "component": "@/pages/Inbox"
+          },
+          {
+            "path": "reports",
+            "component": "@/pages/Reports"
+          },
+          {
+            "path": "settings",
+            "component": "@/pages/Settings"
+          },
+          {
+            "path": "settings/channels",
+            "component": "@/pages/Settings/Channels"
+          },
+          {
+            "path": "settings/ai",
+            "component": "@/pages/Settings/AIConfig"
+          },
+          {
+            "path": "settings/users",
+            "component": "@/pages/Settings/Users"
+          },
+          {
+            "path": "settings/automation",
+            "component": "@/pages/Settings/Automation"
+          }
+        ]
+      }
+    ],
+    "proxy": {
+      "/api": {
+        "target": "http://localhost:8080",
+        "changeOrigin": true
+      },
+      "/v2/webhook": {
+        "target": "http://localhost:8080",
+        "changeOrigin": true
+      }
+    },
+    "targets": {
+      "chrome": 80
+    }
+  },
+  "routes": {
+    "1": {
+      "path": "/login",
+      "file": "@/pages/Login/index.tsx",
+      "id": "1",
+      "absPath": "/login",
+      "__content": "import { useState } from 'react';\nimport { Card, Form, Input, Button, message } from 'antd';\nimport { history } from 'umi';\nimport { login, me } from '@/services/auth';\nimport { setTokens, getCurrentUser } from '@/utils/auth';\n\ninterface LoginForm {\n  email: string;\n  password: string;\n}\n\nexport default function LoginPage() {\n  const [loading, setLoading] = useState(false);\n\n  async function handleSubmit(values: LoginForm) {\n    setLoading(true);\n    try {\n      const resp = await login(values.email, values.password);\n      setTokens(resp);\n      // Fetch full user info to populate localStorage\n      try {\n        const userInfo = await me();\n        setTokens({ ...resp, user: userInfo });\n      } catch {\n        // ignore; token already set\n      }\n      history.push('/desk');\n    } catch (err: unknown) {\n      const e = err as { message?: string };\n      message.error(e?.message || 'Login failed');\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  return (\n    <div\n      style={{\n        minHeight: '100vh',\n        display: 'flex',\n        alignItems: 'center',\n        justifyContent: 'center',\n        background: '#f0f2f5',\n      }}\n    >\n      <Card title=\"Autotix Login\" style={{ width: 400 }}>\n        <Form<LoginForm> layout=\"vertical\" onFinish={handleSubmit} autoComplete=\"off\">\n          <Form.Item\n            label=\"Email\"\n            name=\"email\"\n            rules={[\n              { required: true, message: 'Please enter your email' },\n              { type: 'email', message: 'Please enter a valid email' },\n            ]}\n          >\n            <Input placeholder=\"agent@example.com\" />\n          </Form.Item>\n          <Form.Item\n            label=\"Password\"\n            name=\"password\"\n            rules={[{ required: true, message: 'Please enter your password' }]}\n          >\n            <Input.Password placeholder=\"Password\" />\n          </Form.Item>\n          <Form.Item>\n            <Button type=\"primary\" htmlType=\"submit\" block loading={loading}>\n              Login\n            </Button>\n          </Form.Item>\n        </Form>\n      </Card>\n    </div>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Login/index.tsx"
+    },
+    "2": {
+      "path": "/",
+      "file": "@/layouts/AppLayout.tsx",
+      "id": "2",
+      "absPath": "/",
+      "__content": "import { useEffect, useState } from 'react';\nimport { Outlet, history, useLocation } from 'umi';\nimport { Layout, Menu, Button, Avatar, Space, Typography, theme } from 'antd';\nimport {\n  InboxOutlined,\n  BarChartOutlined,\n  SettingOutlined,\n  CustomerServiceOutlined,\n  UserOutlined,\n  LogoutOutlined,\n  ApiOutlined,\n  TeamOutlined,\n  ThunderboltOutlined,\n} from '@ant-design/icons';\nimport { clearTokens, getAccessToken, getCurrentUser } from '@/utils/auth';\n\nconst { Sider, Header, Content } = Layout;\nconst { Text } = Typography;\n\nexport default function AppLayout() {\n  const location = useLocation();\n  const user = getCurrentUser();\n  const { token: designToken } = theme.useToken();\n\n  useEffect(() => {\n    if (!getAccessToken()) {\n      history.replace('/login');\n    }\n  }, []);\n\n  const isAdmin = user?.role === 'ADMIN';\n\n  function handleLogout() {\n    clearTokens();\n    history.push('/login');\n  }\n\n  const pathKey = location.pathname;\n\n  const menuItems = [\n    {\n      key: '/desk',\n      icon: <CustomerServiceOutlined />,\n      label: 'Desk',\n      onClick: () => history.push('/desk'),\n    },\n    {\n      key: '/inbox',\n      icon: <InboxOutlined />,\n      label: 'Inbox',\n      onClick: () => history.push('/inbox'),\n    },\n    {\n      key: '/reports',\n      icon: <BarChartOutlined />,\n      label: 'Reports',\n      onClick: () => history.push('/reports'),\n    },\n    {\n      key: '/settings',\n      icon: <SettingOutlined />,\n      label: 'Settings',\n      children: [\n        {\n          key: '/settings/channels',\n          icon: <ApiOutlined />,\n          label: 'Channels',\n          onClick: () => history.push('/settings/channels'),\n        },\n        {\n          key: '/settings/ai',\n          icon: <ThunderboltOutlined />,\n          label: 'AI Config',\n          onClick: () => history.push('/settings/ai'),\n        },\n        ...(isAdmin\n          ? [\n              {\n                key: '/settings/automation',\n                icon: <ThunderboltOutlined />,\n                label: 'Automation',\n                onClick: () => history.push('/settings/automation'),\n              },\n              {\n                key: '/settings/users',\n                icon: <TeamOutlined />,\n                label: 'Users',\n                onClick: () => history.push('/settings/users'),\n              },\n            ]\n          : []),\n      ],\n    },\n  ];\n\n  const selectedKeys = [pathKey];\n  const openKeys = pathKey.startsWith('/settings') ? ['/settings'] : [];\n\n  return (\n    <Layout style={{ minHeight: '100vh' }}>\n      <Sider width={220} theme=\"dark\">\n        <div\n          style={{\n            height: 48,\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'center',\n            color: '#fff',\n            fontWeight: 700,\n            fontSize: 18,\n            letterSpacing: 1,\n          }}\n        >\n          Autotix\n        </div>\n        <Menu\n          theme=\"dark\"\n          mode=\"inline\"\n          selectedKeys={selectedKeys}\n          defaultOpenKeys={openKeys}\n          items={menuItems}\n        />\n      </Sider>\n      <Layout>\n        <Header\n          style={{\n            background: designToken.colorBgContainer,\n            padding: '0 24px',\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'flex-end',\n            borderBottom: `1px solid ${designToken.colorBorderSecondary}`,\n          }}\n        >\n          <Space>\n            <Avatar icon={<UserOutlined />} />\n            <Text>{user?.displayName || user?.email || 'User'}</Text>\n            <Button\n              icon={<LogoutOutlined />}\n              type=\"text\"\n              onClick={handleLogout}\n            >\n              Logout\n            </Button>\n          </Space>\n        </Header>\n        <Content style={{ margin: 24, background: designToken.colorBgContainer, borderRadius: designToken.borderRadius, padding: 24 }}>\n          <Outlet />\n        </Content>\n      </Layout>\n    </Layout>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/layouts/AppLayout.tsx"
+    },
+    "3": {
+      "path": "/",
+      "redirect": "/desk",
+      "parentId": "2",
+      "id": "3",
+      "absPath": "/"
+    },
+    "4": {
+      "path": "desk",
+      "file": "@/pages/Desk/index.tsx",
+      "parentId": "2",
+      "id": "4",
+      "absPath": "/desk",
+      "__content": "import { useEffect, useState } from 'react';\nimport { Table, Select, Input, Button, Tag, Space, Row, Col } from 'antd';\nimport { history } from 'umi';\nimport type { ColumnsType } from 'antd/es/table';\nimport { listTickets, type TicketDTO } from '@/services/ticket';\nimport { listChannels, type ChannelDTO } from '@/services/channel';\n\nconst STATUS_COLORS: Record<string, string> = {\n  OPEN: 'blue',\n  PENDING: 'orange',\n  ASSIGNED: 'purple',\n  CLOSED: 'default',\n};\n\nconst PAGE_SIZE = 20;\n\nexport default function DeskPage() {\n  const [tickets, setTickets] = useState<TicketDTO[]>([]);\n  const [channels, setChannels] = useState<ChannelDTO[]>([]);\n  const [loading, setLoading] = useState(false);\n  const [status, setStatus] = useState<string | undefined>(undefined);\n  const [channelId, setChannelId] = useState<string | undefined>(undefined);\n  const [search, setSearch] = useState('');\n  const [offset, setOffset] = useState(0);\n\n  async function fetchTickets() {\n    setLoading(true);\n    try {\n      const data = await listTickets({\n        status,\n        channelId,\n        q: search || undefined,\n        offset,\n        limit: PAGE_SIZE,\n      });\n      setTickets(data);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => {\n    listChannels()\n      .then(setChannels)\n      .catch(() => {});\n  }, []);\n\n  useEffect(() => {\n    fetchTickets();\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n  }, [status, channelId, offset]);\n\n  const columns: ColumnsType<TicketDTO> = [\n    {\n      title: 'Subject',\n      dataIndex: 'subject',\n      key: 'subject',\n      ellipsis: true,\n    },\n    {\n      title: 'Customer',\n      key: 'customer',\n      render: (_: unknown, r: TicketDTO) => r.customerName || r.customerIdentifier,\n    },\n    {\n      title: 'Channel',\n      key: 'channel',\n      render: (_: unknown, r: TicketDTO) => {\n        const ch = channels.find((c) => c.id === r.channelId);\n        return ch?.displayName || r.channelId;\n      },\n    },\n    {\n      title: 'Status',\n      dataIndex: 'status',\n      key: 'status',\n      render: (s: string) => <Tag color={STATUS_COLORS[s] || 'default'}>{s}</Tag>,\n    },\n    {\n      title: 'Assignee',\n      dataIndex: 'assigneeId',\n      key: 'assigneeId',\n      render: (v: string | undefined) => v || '-',\n    },\n    {\n      title: 'Updated',\n      dataIndex: 'updatedAt',\n      key: 'updatedAt',\n      render: (v: string) => new Date(v).toLocaleString(),\n      width: 160,\n    },\n  ];\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }} size=\"middle\">\n      <Row gutter={8} align=\"middle\">\n        <Col>\n          <Select\n            placeholder=\"Status\"\n            allowClear\n            style={{ width: 130 }}\n            value={status}\n            onChange={(v) => { setStatus(v); setOffset(0); }}\n            options={[\n              { label: 'Open', value: 'OPEN' },\n              { label: 'Pending', value: 'PENDING' },\n              { label: 'Assigned', value: 'ASSIGNED' },\n              { label: 'Closed', value: 'CLOSED' },\n            ]}\n          />\n        </Col>\n        <Col>\n          <Select\n            placeholder=\"Channel\"\n            allowClear\n            style={{ width: 180 }}\n            value={channelId}\n            onChange={(v) => { setChannelId(v); setOffset(0); }}\n            options={channels.map((c) => ({ label: c.displayName, value: c.id }))}\n          />\n        </Col>\n        <Col flex=\"auto\">\n          <Input.Search\n            placeholder=\"Search tickets...\"\n            value={search}\n            onChange={(e) => setSearch(e.target.value)}\n            onSearch={() => { setOffset(0); fetchTickets(); }}\n            allowClear\n          />\n        </Col>\n        <Col>\n          <Button onClick={() => { setOffset(0); fetchTickets(); }}>Refresh</Button>\n        </Col>\n      </Row>\n\n      <Table<TicketDTO>\n        rowKey=\"id\"\n        loading={loading}\n        columns={columns}\n        dataSource={tickets}\n        pagination={{\n          pageSize: PAGE_SIZE,\n          current: Math.floor(offset / PAGE_SIZE) + 1,\n          onChange: (page) => setOffset((page - 1) * PAGE_SIZE),\n          showSizeChanger: false,\n        }}\n        onRow={(r) => ({\n          onClick: () => history.push(`/desk/${r.id}`),\n          style: { cursor: 'pointer' },\n        })}\n      />\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Desk/index.tsx"
+    },
+    "5": {
+      "path": "desk/:ticketId",
+      "file": "@/pages/Desk/Detail.tsx",
+      "parentId": "2",
+      "id": "5",
+      "absPath": "/desk/:ticketId",
+      "__content": "import { useEffect, useState } from 'react';\nimport { Card, Tag, Space, Descriptions, Button, Input, message, Spin, Divider, Typography } from 'antd';\nimport { useParams } from 'umi';\nimport { getTicket, replyTicket, closeTicket, assignTicket, type TicketDTO, type MessageDTO } from '@/services/ticket';\nimport { getCurrentUser } from '@/utils/auth';\n\nconst { TextArea } = Input;\nconst { Text } = Typography;\n\nconst STATUS_COLORS: Record<string, string> = {\n  OPEN: 'blue',\n  PENDING: 'orange',\n  ASSIGNED: 'purple',\n  CLOSED: 'default',\n};\n\nexport default function TicketDetail() {\n  const { ticketId } = useParams<{ ticketId: string }>();\n  const [ticket, setTicket] = useState<TicketDTO | null>(null);\n  const [loading, setLoading] = useState(false);\n  const [replyContent, setReplyContent] = useState('');\n  const [closeAfter, setCloseAfter] = useState(false);\n  const [replying, setReplying] = useState(false);\n\n  const currentUser = getCurrentUser();\n\n  async function fetchTicket() {\n    if (!ticketId) return;\n    setLoading(true);\n    try {\n      const data = await getTicket(ticketId);\n      setTicket(data);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => {\n    fetchTicket();\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n  }, [ticketId]);\n\n  async function handleReply() {\n    if (!ticketId || !replyContent.trim()) return;\n    setReplying(true);\n    try {\n      await replyTicket(ticketId, replyContent, closeAfter);\n      setReplyContent('');\n      message.success(closeAfter ? 'Replied and closed' : 'Replied');\n      await fetchTicket();\n    } catch {\n      message.error('Reply failed');\n    } finally {\n      setReplying(false);\n    }\n  }\n\n  async function handleClose() {\n    if (!ticketId) return;\n    try {\n      await closeTicket(ticketId);\n      message.success('Ticket closed');\n      await fetchTicket();\n    } catch {\n      message.error('Close failed');\n    }\n  }\n\n  async function handleAssignToMe() {\n    if (!ticketId || !currentUser) return;\n    try {\n      await assignTicket(ticketId, currentUser.id);\n      message.success('Assigned to you');\n      await fetchTicket();\n    } catch {\n      message.error('Assign failed');\n    }\n  }\n\n  if (loading) return <Spin size=\"large\" />;\n  if (!ticket) return <Text type=\"secondary\">Ticket not found</Text>;\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }} size=\"middle\">\n      <Card>\n        <Descriptions title={ticket.subject} column={2} size=\"small\">\n          <Descriptions.Item label=\"Status\">\n            <Tag color={STATUS_COLORS[ticket.status] || 'default'}>{ticket.status}</Tag>\n          </Descriptions.Item>\n          <Descriptions.Item label=\"Channel\">{ticket.platform} / {ticket.channelType}</Descriptions.Item>\n          <Descriptions.Item label=\"Customer\">{ticket.customerName || ticket.customerIdentifier}</Descriptions.Item>\n          <Descriptions.Item label=\"Assignee\">{ticket.assigneeId || '-'}</Descriptions.Item>\n          <Descriptions.Item label=\"Created\">{new Date(ticket.createdAt).toLocaleString()}</Descriptions.Item>\n          <Descriptions.Item label=\"Updated\">{new Date(ticket.updatedAt).toLocaleString()}</Descriptions.Item>\n        </Descriptions>\n      </Card>\n\n      {/* Message thread */}\n      <Card title=\"Messages\">\n        <Space direction=\"vertical\" style={{ width: '100%' }} size=\"small\">\n          {(ticket.messages || []).map((msg: MessageDTO, idx: number) => {\n            const isOutbound = msg.direction === 'OUTBOUND';\n            const isAI = msg.author === 'ai';\n            return (\n              <div\n                key={idx}\n                style={{\n                  display: 'flex',\n                  justifyContent: isOutbound ? 'flex-end' : 'flex-start',\n                }}\n              >\n                <Card\n                  size=\"small\"\n                  style={{\n                    maxWidth: '70%',\n                    background: isOutbound\n                      ? isAI\n                        ? '#e6f4ff'\n                        : '#f0f5ff'\n                      : '#fafafa',\n                    border: isAI ? '1px solid #91caff' : undefined,\n                  }}\n                  bodyStyle={{ padding: '8px 12px' }}\n                >\n                  <Space size=\"small\">\n                    {isAI && <Tag color=\"blue\" style={{ fontSize: 10 }}>AI</Tag>}\n                    <Text type=\"secondary\" style={{ fontSize: 11 }}>{msg.author}</Text>\n                    <Text type=\"secondary\" style={{ fontSize: 11 }}>\n                      {new Date(msg.occurredAt).toLocaleString()}\n                    </Text>\n                  </Space>\n                  <div style={{ marginTop: 4, whiteSpace: 'pre-wrap' }}>{msg.content}</div>\n                </Card>\n              </div>\n            );\n          })}\n        </Space>\n      </Card>\n\n      {/* Action bar */}\n      {ticket.status !== 'CLOSED' && (\n        <Card title=\"Reply\">\n          <Space direction=\"vertical\" style={{ width: '100%' }}>\n            <TextArea\n              rows={4}\n              placeholder=\"Type your reply here...\"\n              value={replyContent}\n              onChange={(e) => setReplyContent(e.target.value)}\n            />\n            <Space wrap>\n              <Button\n                type=\"primary\"\n                loading={replying}\n                onClick={() => { setCloseAfter(false); handleReply(); }}\n                disabled={!replyContent.trim()}\n              >\n                Reply\n              </Button>\n              <Button\n                loading={replying}\n                onClick={() => { setCloseAfter(true); handleReply(); }}\n                disabled={!replyContent.trim()}\n              >\n                Reply & Close\n              </Button>\n              <Divider type=\"vertical\" />\n              <Button onClick={handleAssignToMe}>Assign to Me</Button>\n              <Button danger onClick={handleClose}>Close Ticket</Button>\n            </Space>\n          </Space>\n        </Card>\n      )}\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Desk/Detail.tsx"
+    },
+    "6": {
+      "path": "inbox",
+      "file": "@/pages/Inbox/index.tsx",
+      "parentId": "2",
+      "id": "6",
+      "absPath": "/inbox",
+      "__content": "import { useEffect, useState } from 'react';\nimport { Card, List, Tag, Button, Typography, Space, Badge } from 'antd';\nimport { history } from 'umi';\nimport { subscribeInbox, type InboxEvent } from '@/services/inbox';\nimport { getAccessToken } from '@/utils/auth';\n\nconst { Text } = Typography;\n\nconst MAX_EVENTS = 100;\n\nconst KIND_COLORS: Record<string, string> = {\n  TICKET_CREATED: 'green',\n  AI_REPLIED: 'blue',\n  AGENT_REPLIED: 'purple',\n  STATUS_CHANGED: 'orange',\n  ASSIGNED: 'cyan',\n  NEW_MESSAGE: 'default',\n};\n\nexport default function InboxPage() {\n  const [events, setEvents] = useState<InboxEvent[]>([]);\n\n  useEffect(() => {\n    const token = getAccessToken();\n    if (!token) return;\n    const unsubscribe = subscribeInbox(token, (event) => {\n      setEvents((prev) => [event, ...prev].slice(0, MAX_EVENTS));\n    });\n    return unsubscribe;\n  }, []);\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }}>\n      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>\n        <Typography.Title level={4} style={{ margin: 0 }}>Live Inbox</Typography.Title>\n        <Badge count={events.length} showZero color=\"blue\" />\n      </div>\n      <List<InboxEvent>\n        dataSource={events}\n        rowKey={(e) => `${e.kind}-${e.ticketId}-${e.occurredAt}`}\n        renderItem={(event) => (\n          <List.Item\n            style={{\n              background: event.kind === 'AI_REPLIED'\n                ? '#e6f4ff'\n                : event.kind === 'AGENT_REPLIED'\n                ? '#f0f5ff'\n                : undefined,\n              borderRadius: 4,\n              marginBottom: 4,\n              padding: '8px 12px',\n            }}\n            actions={[\n              <Button\n                size=\"small\"\n                type=\"link\"\n                key=\"open\"\n                onClick={() => history.push(`/desk/${event.ticketId}`)}\n              >\n                Open ticket\n              </Button>,\n            ]}\n          >\n            <List.Item.Meta\n              title={\n                <Space size=\"small\">\n                  <Tag color={KIND_COLORS[event.kind] || 'default'}>{event.kind}</Tag>\n                  <Text type=\"secondary\" style={{ fontSize: 12 }}>\n                    {new Date(event.occurredAt).toLocaleString()}\n                  </Text>\n                </Space>\n              }\n              description={\n                <Space direction=\"vertical\" size={0}>\n                  <Text>{event.summary}</Text>\n                  <Text type=\"secondary\" style={{ fontSize: 11 }}>Ticket: {event.ticketId}</Text>\n                </Space>\n              }\n            />\n          </List.Item>\n        )}\n        locale={{ emptyText: 'No events yet. Waiting for live updates...' }}\n      />\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Inbox/index.tsx"
+    },
+    "7": {
+      "path": "reports",
+      "file": "@/pages/Reports/index.tsx",
+      "parentId": "2",
+      "id": "7",
+      "absPath": "/reports",
+      "__content": "import { Card, Col, Row, Statistic, Typography } from 'antd';\n\n// TODO: Backend does not yet have a /api/reports endpoint (planned for Slice 7).\n// These statistics are placeholder zeros until that endpoint is implemented.\n\nexport default function ReportsPage() {\n  return (\n    <div>\n      <Typography.Title level={4}>Reports</Typography.Title>\n      <Row gutter={[16, 16]}>\n        <Col span={8}>\n          <Card>\n            <Statistic\n              title=\"Open Tickets\"\n              value={0}\n            />\n          </Card>\n        </Col>\n        <Col span={8}>\n          <Card>\n            <Statistic\n              title=\"Tickets Today\"\n              value={0}\n            />\n          </Card>\n        </Col>\n        <Col span={8}>\n          <Card>\n            <Statistic\n              title=\"AI Auto-Resolved (24h)\"\n              value={0}\n            />\n          </Card>\n        </Col>\n      </Row>\n    </div>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Reports/index.tsx"
+    },
+    "8": {
+      "path": "settings",
+      "file": "@/pages/Settings/index.tsx",
+      "parentId": "2",
+      "id": "8",
+      "absPath": "/settings",
+      "__content": "import { Card, Row, Col, Typography } from 'antd';\nimport { Link } from 'umi';\nimport { hasRole } from '@/utils/auth';\n\nexport default function SettingsIndex() {\n  const isAdmin = hasRole('ADMIN');\n\n  return (\n    <div>\n      <Typography.Title level={4}>Settings</Typography.Title>\n      <Row gutter={[16, 16]}>\n        <Col span={8}>\n          <Link to=\"/settings/channels\">\n            <Card title=\"Channels\" hoverable>\n              Manage connected support channels\n            </Card>\n          </Link>\n        </Col>\n        <Col span={8}>\n          <Link to=\"/settings/ai\">\n            <Card title=\"AI Config\" hoverable>\n              Configure AI endpoint, model and prompt\n            </Card>\n          </Link>\n        </Col>\n        {isAdmin && (\n          <>\n            <Col span={8}>\n              <Link to=\"/settings/automation\">\n                <Card title=\"Automation\" hoverable>\n                  Manage automation rules and triggers\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/users\">\n                <Card title=\"Users\" hoverable>\n                  Manage agents and administrators\n                </Card>\n              </Link>\n            </Col>\n          </>\n        )}\n      </Row>\n    </div>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/index.tsx"
+    },
+    "9": {
+      "path": "settings/channels",
+      "file": "@/pages/Settings/Channels.tsx",
+      "parentId": "2",
+      "id": "9",
+      "absPath": "/settings/channels",
+      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Table, Button, Switch, Tag, Space, Modal, Form, Select, Input,\n  message, Popconfirm, Typography, Tooltip,\n} from 'antd';\nimport { CopyOutlined, ReloadOutlined } from '@ant-design/icons';\nimport type { ColumnsType } from 'antd/es/table';\nimport {\n  listChannels, connectWithApiKey, disconnectChannel, setAutoReply, rotateWebhook,\n  type ChannelDTO,\n} from '@/services/channel';\n\nconst { Text } = Typography;\n\nconst PLATFORM_OPTIONS = [\n  'ZENDESK', 'FRESHDESK', 'INTERCOM', 'HUBSPOT', 'SALESFORCE',\n  'EMAIL_IMAP', 'SLACK', 'WHATSAPP', 'TELEGRAM', 'CUSTOM',\n].map((p) => ({ label: p, value: p }));\n\ninterface CredentialRow {\n  key: string;\n  value: string;\n}\n\nexport default function ChannelsPage() {\n  const [channels, setChannels] = useState<ChannelDTO[]>([]);\n  const [loading, setLoading] = useState(false);\n  const [modalOpen, setModalOpen] = useState(false);\n  const [submitting, setSubmitting] = useState(false);\n  const [credentials, setCredentials] = useState<CredentialRow[]>([{ key: '', value: '' }]);\n  const [form] = Form.useForm();\n\n  async function fetchChannels() {\n    setLoading(true);\n    try {\n      const data = await listChannels();\n      setChannels(data);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => { fetchChannels(); }, []);\n\n  async function handleAutoReply(channelId: string, enabled: boolean) {\n    try {\n      await setAutoReply(channelId, enabled);\n      setChannels((prev) =>\n        prev.map((c) => (c.id === channelId ? { ...c, autoReplyEnabled: enabled } : c)),\n      );\n    } catch {\n      message.error('Failed to update auto-reply');\n    }\n  }\n\n  async function handleRotate(channelId: string) {\n    try {\n      const result = await rotateWebhook(channelId) as { webhookToken?: string } | undefined;\n      message.success(`New token: ${result?.webhookToken ?? '(see channel list)'}`);\n      await fetchChannels();\n    } catch {\n      message.error('Failed to rotate webhook');\n    }\n  }\n\n  async function handleDisconnect(channelId: string) {\n    try {\n      await disconnectChannel(channelId);\n      message.success('Channel disconnected');\n      await fetchChannels();\n    } catch {\n      message.error('Failed to disconnect channel');\n    }\n  }\n\n  async function handleAdd() {\n    const values = await form.validateFields();\n    const creds: Record<string, string> = {};\n    credentials.forEach((r) => { if (r.key) creds[r.key] = r.value; });\n    setSubmitting(true);\n    try {\n      await connectWithApiKey({\n        platform: values.platform,\n        channelType: values.channelType,\n        displayName: values.displayName,\n        credentials: creds,\n      });\n      message.success('Channel connected');\n      setModalOpen(false);\n      form.resetFields();\n      setCredentials([{ key: '', value: '' }]);\n      await fetchChannels();\n    } catch {\n      message.error('Failed to connect channel');\n    } finally {\n      setSubmitting(false);\n    }\n  }\n\n  const columns: ColumnsType<ChannelDTO> = [\n    { title: 'Platform', dataIndex: 'platform', key: 'platform' },\n    { title: 'Type', dataIndex: 'channelType', key: 'channelType' },\n    { title: 'Name', dataIndex: 'displayName', key: 'displayName' },\n    {\n      title: 'Webhook Token',\n      dataIndex: 'webhookToken',\n      key: 'webhookToken',\n      render: (token: string) => (\n        <Space size=\"small\">\n          <Text code style={{ fontSize: 11 }}>{token?.slice(0, 12)}...</Text>\n          <Tooltip title=\"Copy token\">\n            <Button\n              size=\"small\"\n              icon={<CopyOutlined />}\n              onClick={() => { navigator.clipboard.writeText(token); message.success('Copied'); }}\n            />\n          </Tooltip>\n        </Space>\n      ),\n    },\n    {\n      title: 'Auto Reply',\n      key: 'autoReply',\n      render: (_: unknown, r: ChannelDTO) => (\n        <Switch\n          checked={r.autoReplyEnabled}\n          onChange={(v) => handleAutoReply(r.id, v)}\n        />\n      ),\n    },\n    {\n      title: 'Enabled',\n      dataIndex: 'enabled',\n      key: 'enabled',\n      render: (v: boolean) => <Tag color={v ? 'green' : 'red'}>{v ? 'Yes' : 'No'}</Tag>,\n    },\n    {\n      title: 'Actions',\n      key: 'actions',\n      render: (_: unknown, r: ChannelDTO) => (\n        <Space>\n          <Tooltip title=\"Rotate webhook token\">\n            <Button\n              size=\"small\"\n              icon={<ReloadOutlined />}\n              onClick={() => handleRotate(r.id)}\n            />\n          </Tooltip>\n          <Popconfirm\n            title=\"Disconnect this channel?\"\n            onConfirm={() => handleDisconnect(r.id)}\n            okText=\"Yes\"\n            cancelText=\"No\"\n          >\n            <Button size=\"small\" danger>Disconnect</Button>\n          </Popconfirm>\n        </Space>\n      ),\n    },\n  ];\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }}>\n      <div style={{ display: 'flex', justifyContent: 'space-between' }}>\n        <Typography.Title level={4} style={{ margin: 0 }}>Channels</Typography.Title>\n        <Button type=\"primary\" onClick={() => setModalOpen(true)}>Add Channel</Button>\n      </div>\n\n      <Table<ChannelDTO>\n        rowKey=\"id\"\n        loading={loading}\n        columns={columns}\n        dataSource={channels}\n        pagination={false}\n      />\n\n      <Modal\n        title=\"Add Channel\"\n        open={modalOpen}\n        onCancel={() => { setModalOpen(false); form.resetFields(); }}\n        onOk={handleAdd}\n        confirmLoading={submitting}\n        okText=\"Connect\"\n      >\n        <Form form={form} layout=\"vertical\">\n          <Form.Item\n            name=\"platform\"\n            label=\"Platform\"\n            rules={[{ required: true }]}\n          >\n            <Select options={PLATFORM_OPTIONS} placeholder=\"Select platform\" />\n          </Form.Item>\n          <Form.Item\n            name=\"channelType\"\n            label=\"Channel Type\"\n            rules={[{ required: true }]}\n          >\n            <Select\n              options={[\n                { label: 'Email', value: 'EMAIL' },\n                { label: 'Chat', value: 'CHAT' },\n              ]}\n              placeholder=\"Select type\"\n            />\n          </Form.Item>\n          <Form.Item\n            name=\"displayName\"\n            label=\"Display Name\"\n            rules={[{ required: true }]}\n          >\n            <Input placeholder=\"e.g. Support Mailbox\" />\n          </Form.Item>\n          <Form.Item label=\"Credentials\">\n            <Space direction=\"vertical\" style={{ width: '100%' }}>\n              {credentials.map((row, idx) => (\n                <Space key={idx}>\n                  <Input\n                    placeholder=\"Key (e.g. apiKey)\"\n                    value={row.key}\n                    onChange={(e) => {\n                      const next = [...credentials];\n                      next[idx] = { ...row, key: e.target.value };\n                      setCredentials(next);\n                    }}\n                  />\n                  <Input\n                    placeholder=\"Value\"\n                    value={row.value}\n                    onChange={(e) => {\n                      const next = [...credentials];\n                      next[idx] = { ...row, value: e.target.value };\n                      setCredentials(next);\n                    }}\n                  />\n                  {credentials.length > 1 && (\n                    <Button\n                      danger\n                      size=\"small\"\n                      onClick={() => setCredentials(credentials.filter((_, i) => i !== idx))}\n                    >\n                      Remove\n                    </Button>\n                  )}\n                </Space>\n              ))}\n              <Button\n                size=\"small\"\n                onClick={() => setCredentials([...credentials, { key: '', value: '' }])}\n              >\n                Add Row\n              </Button>\n            </Space>\n          </Form.Item>\n        </Form>\n      </Modal>\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/Channels.tsx"
+    },
+    "10": {
+      "path": "settings/ai",
+      "file": "@/pages/Settings/AIConfig.tsx",
+      "parentId": "2",
+      "id": "10",
+      "absPath": "/settings/ai",
+      "__content": "import { useEffect, useState, useRef } from 'react';\nimport {\n  Form, Input, InputNumber, Button, Card, Space, message, Alert, Typography, Spin,\n} from 'antd';\nimport { getAIConfig, updateAIConfig, testAIConfig, type AIConfigDTO, type AITestResult } from '@/services/ai';\n\nconst { TextArea } = Input;\nconst { Text } = Typography;\n\nconst MASKED_KEY_PATTERN = /^sk-\\*+/;\n\nexport default function AIConfigPage() {\n  const [form] = Form.useForm<AIConfigDTO>();\n  const [loading, setLoading] = useState(false);\n  const [saving, setSaving] = useState(false);\n  const [testing, setTesting] = useState(false);\n  const [testResult, setTestResult] = useState<AITestResult | null>(null);\n  const originalApiKey = useRef<string>('');\n\n  useEffect(() => {\n    setLoading(true);\n    getAIConfig()\n      .then((cfg) => {\n        originalApiKey.current = cfg.apiKey;\n        form.setFieldsValue(cfg);\n      })\n      .catch(() => message.error('Failed to load AI config'))\n      .finally(() => setLoading(false));\n  }, [form]);\n\n  async function handleSave() {\n    const values = await form.validateFields();\n    // Don't send masked key back; only send if user typed a new one\n    const apiKey = MASKED_KEY_PATTERN.test(values.apiKey)\n      ? originalApiKey.current\n      : values.apiKey;\n    setSaving(true);\n    try {\n      await updateAIConfig({ ...values, apiKey });\n      message.success('AI config saved');\n    } catch {\n      message.error('Failed to save AI config');\n    } finally {\n      setSaving(false);\n    }\n  }\n\n  async function handleTest() {\n    const values = await form.validateFields();\n    const apiKey = MASKED_KEY_PATTERN.test(values.apiKey)\n      ? originalApiKey.current\n      : values.apiKey;\n    setTesting(true);\n    setTestResult(null);\n    try {\n      const result = await testAIConfig({ ...values, apiKey });\n      setTestResult(result);\n    } catch {\n      message.error('Test failed');\n    } finally {\n      setTesting(false);\n    }\n  }\n\n  if (loading) return <Spin size=\"large\" />;\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }}>\n      <Typography.Title level={4} style={{ margin: 0 }}>AI Configuration</Typography.Title>\n\n      <Card>\n        <Form<AIConfigDTO> form={form} layout=\"vertical\">\n          <Form.Item name=\"endpoint\" label=\"Endpoint\" rules={[{ required: true }]}>\n            <Input placeholder=\"https://api.openai.com/v1\" />\n          </Form.Item>\n          <Form.Item name=\"apiKey\" label=\"API Key\" rules={[{ required: true }]}>\n            <Input.Password placeholder=\"sk-...\" />\n          </Form.Item>\n          <Form.Item name=\"model\" label=\"Model\" rules={[{ required: true }]}>\n            <Input placeholder=\"gpt-4o\" />\n          </Form.Item>\n          <Form.Item name=\"systemPrompt\" label=\"System Prompt\" rules={[{ required: true }]}>\n            <TextArea rows={6} placeholder=\"You are a helpful customer support agent...\" />\n          </Form.Item>\n          <Form.Item name=\"timeoutSeconds\" label=\"Timeout (seconds)\" rules={[{ required: true }]}>\n            <InputNumber min={1} max={120} style={{ width: 120 }} />\n          </Form.Item>\n          <Form.Item name=\"maxRetries\" label=\"Max Retries\" rules={[{ required: true }]}>\n            <InputNumber min={0} max={10} style={{ width: 120 }} />\n          </Form.Item>\n\n          <Space>\n            <Button type=\"primary\" onClick={handleSave} loading={saving}>Save</Button>\n            <Button onClick={handleTest} loading={testing}>Test Connection</Button>\n          </Space>\n        </Form>\n      </Card>\n\n      {testResult && (\n        <Alert\n          type={testResult.ok ? 'success' : 'error'}\n          message={\n            testResult.ok\n              ? `Connection OK — ${testResult.latencyMs}ms`\n              : `Connection failed: ${testResult.error}`\n          }\n          description={\n            testResult.sampleReply ? (\n              <Space direction=\"vertical\">\n                <Text strong>Sample reply:</Text>\n                <Text>{testResult.sampleReply}</Text>\n              </Space>\n            ) : undefined\n          }\n          showIcon\n        />\n      )}\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/AIConfig.tsx"
+    },
+    "11": {
+      "path": "settings/users",
+      "file": "@/pages/Settings/Users.tsx",
+      "parentId": "2",
+      "id": "11",
+      "absPath": "/settings/users",
+      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Table, Button, Select, Space, Modal, Form, Input, message, Tag, Typography,\n} from 'antd';\nimport type { ColumnsType } from 'antd/es/table';\nimport {\n  listUsers, createUser, changeUserRole, disableUser, type UserDTO,\n} from '@/services/auth';\n\nconst ROLES = [\n  { label: 'Admin', value: 'ADMIN' },\n  { label: 'Agent', value: 'AGENT' },\n  { label: 'Viewer', value: 'VIEWER' },\n];\n\nconst ROLE_COLORS: Record<string, string> = {\n  ADMIN: 'red',\n  AGENT: 'blue',\n  VIEWER: 'default',\n};\n\ninterface CreateUserForm {\n  email: string;\n  displayName: string;\n  password: string;\n  role: string;\n}\n\nexport default function UsersPage() {\n  const [users, setUsers] = useState<UserDTO[]>([]);\n  const [loading, setLoading] = useState(false);\n  const [modalOpen, setModalOpen] = useState(false);\n  const [submitting, setSubmitting] = useState(false);\n  const [form] = Form.useForm<CreateUserForm>();\n\n  async function fetchUsers() {\n    setLoading(true);\n    try {\n      const data = await listUsers();\n      setUsers(data);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => { fetchUsers(); }, []);\n\n  async function handleRoleChange(userId: string, role: string) {\n    try {\n      await changeUserRole(userId, role);\n      setUsers((prev) =>\n        prev.map((u) => (u.id === userId ? { ...u, role: role as UserDTO['role'] } : u)),\n      );\n      message.success('Role updated');\n    } catch {\n      message.error('Failed to update role');\n    }\n  }\n\n  async function handleDisable(userId: string) {\n    try {\n      await disableUser(userId);\n      setUsers((prev) =>\n        prev.map((u) => (u.id === userId ? { ...u, enabled: false } : u)),\n      );\n      message.success('User disabled');\n    } catch {\n      message.error('Failed to disable user');\n    }\n  }\n\n  async function handleCreate() {\n    const values = await form.validateFields();\n    setSubmitting(true);\n    try {\n      await createUser(values);\n      message.success('User created');\n      setModalOpen(false);\n      form.resetFields();\n      await fetchUsers();\n    } catch {\n      message.error('Failed to create user');\n    } finally {\n      setSubmitting(false);\n    }\n  }\n\n  const columns: ColumnsType<UserDTO> = [\n    { title: 'Email', dataIndex: 'email', key: 'email' },\n    { title: 'Display Name', dataIndex: 'displayName', key: 'displayName' },\n    {\n      title: 'Role',\n      key: 'role',\n      render: (_: unknown, r: UserDTO) => (\n        <Select\n          value={r.role}\n          size=\"small\"\n          style={{ width: 100 }}\n          options={ROLES}\n          onChange={(v) => handleRoleChange(r.id, v)}\n        />\n      ),\n    },\n    {\n      title: 'Status',\n      dataIndex: 'enabled',\n      key: 'enabled',\n      render: (v: boolean) => <Tag color={v ? 'green' : 'red'}>{v ? 'Active' : 'Disabled'}</Tag>,\n    },\n    {\n      title: 'Last Login',\n      dataIndex: 'lastLoginAt',\n      key: 'lastLoginAt',\n      render: (v?: string) => v ? new Date(v).toLocaleString() : '-',\n    },\n    {\n      title: 'Actions',\n      key: 'actions',\n      render: (_: unknown, r: UserDTO) => (\n        r.enabled ? (\n          <Button size=\"small\" danger onClick={() => handleDisable(r.id)}>Disable</Button>\n        ) : null\n      ),\n    },\n  ];\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }}>\n      <div style={{ display: 'flex', justifyContent: 'space-between' }}>\n        <Typography.Title level={4} style={{ margin: 0 }}>Users</Typography.Title>\n        <Button type=\"primary\" onClick={() => setModalOpen(true)}>Add User</Button>\n      </div>\n\n      <Table<UserDTO>\n        rowKey=\"id\"\n        loading={loading}\n        columns={columns}\n        dataSource={users}\n        pagination={{ pageSize: 20 }}\n      />\n\n      <Modal\n        title=\"Add User\"\n        open={modalOpen}\n        onCancel={() => { setModalOpen(false); form.resetFields(); }}\n        onOk={handleCreate}\n        confirmLoading={submitting}\n        okText=\"Create\"\n      >\n        <Form<CreateUserForm> form={form} layout=\"vertical\">\n          <Form.Item\n            name=\"email\"\n            label=\"Email\"\n            rules={[{ required: true }, { type: 'email' }]}\n          >\n            <Input placeholder=\"agent@example.com\" />\n          </Form.Item>\n          <Form.Item\n            name=\"displayName\"\n            label=\"Display Name\"\n            rules={[{ required: true }]}\n          >\n            <Input />\n          </Form.Item>\n          <Form.Item\n            name=\"password\"\n            label=\"Password\"\n            rules={[{ required: true, min: 8 }]}\n          >\n            <Input.Password />\n          </Form.Item>\n          <Form.Item\n            name=\"role\"\n            label=\"Role\"\n            rules={[{ required: true }]}\n          >\n            <Select options={ROLES} />\n          </Form.Item>\n        </Form>\n      </Modal>\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/Users.tsx"
+    },
+    "12": {
+      "path": "settings/automation",
+      "file": "@/pages/Settings/Automation.tsx",
+      "parentId": "2",
+      "id": "12",
+      "absPath": "/settings/automation",
+      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Table, Button, Switch, Space, Modal, Form, Input, InputNumber,\n  message, Popconfirm, Typography,\n} from 'antd';\nimport { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';\nimport type { ColumnsType } from 'antd/es/table';\nimport {\n  listRules, createRule, deleteRule, setRuleEnabled,\n  type AutomationRuleDTO, type CreateRulePayload,\n} from '@/services/automation';\n\ninterface RuleFormValues {\n  name: string;\n  priority: number;\n  enabled: boolean;\n  conditions: Array<{ field: string; op: string; value: string }>;\n  actions: Array<{ type: string; paramKey: string; paramValue: string }>;\n}\n\nexport default function AutomationPage() {\n  const [rules, setRules] = useState<AutomationRuleDTO[]>([]);\n  const [loading, setLoading] = useState(false);\n  const [modalOpen, setModalOpen] = useState(false);\n  const [submitting, setSubmitting] = useState(false);\n  const [form] = Form.useForm<RuleFormValues>();\n\n  async function fetchRules() {\n    setLoading(true);\n    try {\n      const data = await listRules();\n      setRules(data);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => { fetchRules(); }, []);\n\n  async function handleToggle(id: string, enabled: boolean) {\n    try {\n      await setRuleEnabled(id, enabled);\n      setRules((prev) =>\n        prev.map((r) => (r.id === id ? { ...r, enabled } : r)),\n      );\n    } catch {\n      message.error('Failed to update rule');\n    }\n  }\n\n  async function handleDelete(id: string) {\n    try {\n      await deleteRule(id);\n      setRules((prev) => prev.filter((r) => r.id !== id));\n      message.success('Rule deleted');\n    } catch {\n      message.error('Failed to delete rule');\n    }\n  }\n\n  async function handleCreate() {\n    const values = await form.validateFields();\n    const payload: CreateRulePayload = {\n      name: values.name,\n      priority: values.priority,\n      enabled: values.enabled ?? true,\n      conditions: (values.conditions || []).map((c) => ({\n        field: c.field,\n        op: c.op,\n        value: c.value,\n      })),\n      actions: (values.actions || []).map((a) => ({\n        type: a.type,\n        params: a.paramKey ? { [a.paramKey]: a.paramValue } : {},\n      })),\n    };\n    setSubmitting(true);\n    try {\n      await createRule(payload);\n      message.success('Rule created');\n      setModalOpen(false);\n      form.resetFields();\n      await fetchRules();\n    } catch {\n      message.error('Failed to create rule');\n    } finally {\n      setSubmitting(false);\n    }\n  }\n\n  const columns: ColumnsType<AutomationRuleDTO> = [\n    { title: 'Name', dataIndex: 'name', key: 'name' },\n    { title: 'Priority', dataIndex: 'priority', key: 'priority', width: 90 },\n    {\n      title: 'Enabled',\n      key: 'enabled',\n      width: 90,\n      render: (_: unknown, r: AutomationRuleDTO) => (\n        <Switch checked={r.enabled} onChange={(v) => handleToggle(r.id, v)} />\n      ),\n    },\n    {\n      title: 'Conditions',\n      key: 'conditions',\n      render: (_: unknown, r: AutomationRuleDTO) => r.conditions.length,\n      width: 100,\n    },\n    {\n      title: 'Actions',\n      key: 'actions',\n      render: (_: unknown, r: AutomationRuleDTO) => r.actions.length,\n      width: 80,\n    },\n    {\n      title: '',\n      key: 'ops',\n      render: (_: unknown, r: AutomationRuleDTO) => (\n        <Popconfirm\n          title=\"Delete this rule?\"\n          onConfirm={() => handleDelete(r.id)}\n          okText=\"Yes\"\n          cancelText=\"No\"\n        >\n          <Button size=\"small\" danger>Delete</Button>\n        </Popconfirm>\n      ),\n    },\n  ];\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%' }}>\n      <div style={{ display: 'flex', justifyContent: 'space-between' }}>\n        <Typography.Title level={4} style={{ margin: 0 }}>Automation Rules</Typography.Title>\n        <Button type=\"primary\" onClick={() => setModalOpen(true)}>Add Rule</Button>\n      </div>\n\n      <Table<AutomationRuleDTO>\n        rowKey=\"id\"\n        loading={loading}\n        columns={columns}\n        dataSource={rules}\n        pagination={{ pageSize: 20 }}\n      />\n\n      <Modal\n        title=\"Add Automation Rule\"\n        open={modalOpen}\n        onCancel={() => { setModalOpen(false); form.resetFields(); }}\n        onOk={handleCreate}\n        confirmLoading={submitting}\n        okText=\"Create\"\n        width={640}\n      >\n        <Form<RuleFormValues> form={form} layout=\"vertical\" initialValues={{ priority: 10, enabled: true }}>\n          <Form.Item name=\"name\" label=\"Name\" rules={[{ required: true }]}>\n            <Input />\n          </Form.Item>\n          <Form.Item name=\"priority\" label=\"Priority\">\n            <InputNumber min={1} max={1000} style={{ width: 120 }} />\n          </Form.Item>\n\n          <Typography.Text strong>Conditions</Typography.Text>\n          <Form.List name=\"conditions\">\n            {(fields, { add, remove }) => (\n              <>\n                {fields.map(({ key, name }) => (\n                  <Space key={key} align=\"baseline\" style={{ display: 'flex', marginBottom: 4 }}>\n                    <Form.Item name={[name, 'field']} rules={[{ required: true }]}>\n                      <Input placeholder=\"field (e.g. status)\" style={{ width: 140 }} />\n                    </Form.Item>\n                    <Form.Item name={[name, 'op']} rules={[{ required: true }]}>\n                      <Input placeholder=\"op (e.g. equals)\" style={{ width: 100 }} />\n                    </Form.Item>\n                    <Form.Item name={[name, 'value']} rules={[{ required: true }]}>\n                      <Input placeholder=\"value\" style={{ width: 120 }} />\n                    </Form.Item>\n                    <MinusCircleOutlined onClick={() => remove(name)} />\n                  </Space>\n                ))}\n                <Button\n                  type=\"dashed\"\n                  onClick={() => add()}\n                  icon={<PlusOutlined />}\n                  size=\"small\"\n                >\n                  Add Condition\n                </Button>\n              </>\n            )}\n          </Form.List>\n\n          <Typography.Text strong style={{ display: 'block', marginTop: 12 }}>Actions</Typography.Text>\n          <Form.List name=\"actions\">\n            {(fields, { add, remove }) => (\n              <>\n                {fields.map(({ key, name }) => (\n                  <Space key={key} align=\"baseline\" style={{ display: 'flex', marginBottom: 4 }}>\n                    <Form.Item name={[name, 'type']} rules={[{ required: true }]}>\n                      <Input placeholder=\"type (e.g. ASSIGN)\" style={{ width: 140 }} />\n                    </Form.Item>\n                    <Form.Item name={[name, 'paramKey']}>\n                      <Input placeholder=\"param key\" style={{ width: 100 }} />\n                    </Form.Item>\n                    <Form.Item name={[name, 'paramValue']}>\n                      <Input placeholder=\"param value\" style={{ width: 120 }} />\n                    </Form.Item>\n                    <MinusCircleOutlined onClick={() => remove(name)} />\n                  </Space>\n                ))}\n                <Button\n                  type=\"dashed\"\n                  onClick={() => add()}\n                  icon={<PlusOutlined />}\n                  size=\"small\"\n                >\n                  Add Action\n                </Button>\n              </>\n            )}\n          </Form.List>\n        </Form>\n      </Modal>\n    </Space>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/Automation.tsx"
+    }
+  },
+  "apiRoutes": {},
+  "hasSrcDir": true,
+  "npmClient": "pnpm",
+  "umi": {
+    "version": "4.6.53",
+    "name": "Umi",
+    "importSource": "umi",
+    "cliName": "umi"
+  },
+  "bundleStatus": {
+    "done": false
+  },
+  "mfsuBundleStatus": {
+    "done": false
+  },
+  "react": {
+    "version": "18.3.1",
+    "path": "/Users/norman/development/autotix/autotix-web/node_modules/react"
+  },
+  "react-dom": {
+    "version": "18.3.1",
+    "path": "/Users/norman/development/autotix/autotix-web/node_modules/react-dom"
+  },
+  "appJS": {
+    "path": "/Users/norman/development/autotix/autotix-web/src/app.tsx",
+    "exports": [
+      "request",
+      "rootContainer"
+    ]
+  },
+  "locale": "zh-CN",
+  "globalCSS": [],
+  "globalJS": [],
+  "overridesCSS": [],
+  "bundler": "webpack",
+  "git": {
+    "originUrl": "git@github.com:b31o8321/autotix.git"
+  },
+  "framework": "react",
+  "typescript": {
+    "tsVersion": "5.9.3",
+    "tslibVersion": "2.8.1"
+  },
+  "faviconFiles": []
+}

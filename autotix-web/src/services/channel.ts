@@ -1,5 +1,5 @@
-// TODO: channel admin REST client - matches ChannelAdminController
-import { request } from 'umi';
+// channel admin REST client - matches ChannelAdminController
+import { request } from '@/utils/request';
 
 export interface ChannelDTO {
   id: string;

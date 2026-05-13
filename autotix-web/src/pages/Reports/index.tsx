@@ -1,8 +1,38 @@
-// TODO: Reports page (basic dashboard).
-//   Cards: totals (open/closed today), AI auto-resolution rate, per-channel volume,
-//          avg first-response time. Use antd Statistic + lightweight chart lib later.
-import { Card } from 'antd';
+import { Card, Col, Row, Statistic, Typography } from 'antd';
+
+// TODO: Backend does not yet have a /api/reports endpoint (planned for Slice 7).
+// These statistics are placeholder zeros until that endpoint is implemented.
 
 export default function ReportsPage() {
-  return <Card title="Reports">{/* TODO */}</Card>;
+  return (
+    <div>
+      <Typography.Title level={4}>Reports</Typography.Title>
+      <Row gutter={[16, 16]}>
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="Open Tickets"
+              value={0}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="Tickets Today"
+              value={0}
+            />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+            <Statistic
+              title="AI Auto-Resolved (24h)"
+              value={0}
+            />
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
 }
