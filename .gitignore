@@ -1,0 +1,25 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Build
+target/
+build/
+out/
+dist/
+node_modules/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
+.env.local
+application-local.yml
+application-secrets.yml

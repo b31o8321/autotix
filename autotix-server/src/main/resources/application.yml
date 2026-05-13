@@ -1,0 +1,51 @@
+# TODO: finalize config; env-var overrides via ${AUTOTIX_*}
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: ${AUTOTIX_PROFILE:dev}
+  datasource:
+    # TODO: switch by profile (h2 dev / mysql prod)
+    url: jdbc:h2:mem:autotix;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
+autotix:
+  # TODO: infra provider switches (see infrastructure.infra.*)
+  lock: memory       # memory | redis
+  queue: memory      # memory | kafka | rabbitmq
+  cache: caffeine    # caffeine | redis
+  storage: h2        # h2 | mysql | postgres
+
+  # TODO: auth — JWT secret should be loaded from env in prod
+  auth:
+    jwt-secret: ${AUTOTIX_JWT_SECRET:dev-change-me-in-prod-must-be-32+chars-or-longer}
+    access-ttl-minutes: 60
+    refresh-ttl-days: 30
+    # bootstrap admin auto-created on first run if no users exist
+    bootstrap-admin-email: ${AUTOTIX_ADMIN_EMAIL:admin@autotix.local}
+    bootstrap-admin-password: ${AUTOTIX_ADMIN_PASSWORD:admin}
+
+  # TODO: AI default config; overridable from admin UI (persisted in DB)
+  ai:
+    endpoint: https://api.openai.com/v1
+    api-key: ${AUTOTIX_AI_KEY:}
+    model: gpt-4o
+    system-prompt: |
+      You are a professional customer support assistant.
+      Reply politely and concisely in the customer's language.

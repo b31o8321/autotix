@@ -41,19 +41,35 @@ Autotix 是一个**自托管的开源 AI 工单自动化平台**。
 
 ```
 autotix/
-├── autotix-server/              ← Spring Boot 主服务（Java 8 + Spring Boot 3）
+├── autotix-server/              ← Spring Boot 主服务（JDK 8 + Spring Boot 2.4.13，对齐 shulex-intelli）
 │   ├── domain/                  ← 领域层（核心业务，无外部依赖）
 │   ├── application/             ← 应用层（用例编排）
-│   ├── infrastructure/          ← 基础设施层（平台适配器、DB、AI 客户端）
-│   └── interfaces/              ← 接口层（REST Controller、Webhook 入口）
-├── autotix-web/                 ← React SPA（UmiJS + antd）
+│   ├── infrastructure/          ← 基础设施层（平台适配器、DB、AI 客户端、auth）
+│   └── interfaces/              ← 接口层（REST Controller、Webhook 入口、SSE）
+├── autotix-web/                 ← React SPA（UmiJS + antd v5）
+│   ├── Login/                   ← 登录
 │   ├── Desk/                    ← 工单管理
-│   ├── Inbox/                   ← AI 对话收件箱
-│   ├── Settings/                ← 渠道连接 + AI 配置
+│   ├── Inbox/                   ← AI 对话收件箱（SSE 实时）
+│   ├── Settings/                ← 渠道连接 + AI 配置 + 用户管理
 │   └── Reports/                 ← 数据看板
 ├── docker-compose.yml           ← 一键启动（app + db）
 └── docs/                        ← 接入文档
 ```
+
+### 技术栈（对齐 shulex-intelli `com.shulex:parent:2.0.2-RELEASE`）
+
+| 项 | 版本 / 选型 |
+|---|---|
+| JDK | 1.8 |
+| Spring Boot | 2.4.13 |
+| Spring Framework | 5.3.27 |
+| 持久化 | MyBatis Plus 3.5.3.1（不用 JPA） |
+| 工具库 | Lombok 1.18.22 / Fastjson 1.2.83 / Hutool 5.8.18 / OkHttp 4.9.3 |
+| 安全 | Spring Security 5.x + jjwt 0.11.5（JWT 无状态） |
+| Markdown | flexmark 0.62.x（Java 8 兼容线） |
+| 缓存 | Caffeine 2.9.x（Java 8 兼容线） |
+
+> ⚠️ 开源版不依赖 shulex 私有 nexus；parent 用 `spring-boot-starter-parent:2.4.13`。所有版本与 intelli 对齐，便于代码迁移。
 
 ### 架构选型：DDD 分层 + 单体 Spring Boot
 
@@ -73,9 +89,16 @@ autotix-server/
 │   │   ├── ChannelCredential.java   ← 值对象（OAuth token 等）
 │   │   ├── ChannelType.java         ← 枚举（Email / Chat）
 │   │   └── ChannelRepository.java
-│   └── ai/                          ← AI 调用领域服务
-│       ├── AIReplyPort.java         ← 端口接口（infra 实现）
-│       └── AIResponse.java          ← 值对象（reply / action / tags）
+│   ├── ai/                          ← AI 调用领域服务
+│   │   ├── AIReplyPort.java         ← 端口接口（infra 实现）
+│   │   └── AIResponse.java          ← 值对象（reply / action / tags）
+│   ├── user/                        ← User 限界上下文
+│   │   ├── User.java                ← 聚合根
+│   │   ├── UserRole.java            ← 枚举（ADMIN / AGENT / VIEWER）
+│   │   └── UserRepository.java
+│   └── event/                       ← 跨上下文事件
+│       ├── TicketEvent.java         ← Webhook 标准化事件
+│       └── InboxEvent.java          ← SSE 推送事件
 │
 ├── application/                     ← 应用层（用例编排，调用 domain + port）
 │   ├── ticket/
@@ -87,22 +110,28 @@ autotix-server/
 │       └── DisconnectChannelUseCase.java
 │
 ├── infrastructure/                  ← 基础设施层（实现 domain 定义的接口）
-│   ├── persistence/                 ← 仓储实现（JPA / MyBatis）
+│   ├── persistence/                 ← 仓储实现（MyBatis Plus，对齐 intelli）
 │   ├── ai/                          ← AIReplyPort 实现（HTTP → OpenAI-compatible）
+│   ├── auth/                        ← JWT + Spring Security + 密码哈希 + Bootstrap admin
+│   ├── inbox/                       ← InboxEventPublisher（SSE 扇出）
 │   ├── platform/                    ← 平台适配器（防腐层）
 │   │   ├── zendesk/                 ← ZendeskPlugin（Webhook 解析 + 回写）
 │   │   ├── freshdesk/
 │   │   ├── line/
+│   │   ├── shopify/
 │   │   └── wecom/
 │   └── infra/                       ← 可替换基础设施实现
 │       ├── lock/                    ← LockProvider（内存 / Redis）
 │       ├── queue/                   ← QueueProvider（内存 / Kafka）
-│       └── cache/                   ← CacheProvider（Caffeine / Redis）
+│       ├── cache/                   ← CacheProvider（Caffeine / Redis）
+│       └── idempotency/             ← IdempotencyStore（基于 CacheProvider）
 │
 └── interfaces/                      ← 接口层（HTTP 入口）
     ├── webhook/                     ← POST /v2/webhook/{platform}/{token}
     ├── desk/                        ← 人工坐席 REST API
-    └── admin/                       ← 平台授权配置 + AI 设置 API
+    ├── inbox/                       ← GET /api/inbox/stream（SSE）
+    ├── auth/                        ← /api/auth/login | refresh | me | password
+    └── admin/                       ← 平台授权 + AI 设置 + 用户管理 API
 ```
 
 **DDD 关键约束**：
@@ -251,6 +280,83 @@ Platform Adapter.sendReply()  ← 各平台处理最终 API 调用
 
 ---
 
+## 五点五、用户体系 & 鉴权
+
+### 角色
+
+| 角色 | 权限 |
+|---|---|
+| `ADMIN` | 全部：渠道、AI、用户、Automation Rule、Reports |
+| `AGENT` | Desk + Inbox + Reports；可处理 / 回复 / 接管 / 关闭工单 |
+| `VIEWER` | 只读：可看工单和报表，不可变更 |
+
+### 鉴权
+
+- **JWT 无状态**：登录返回 `accessToken`（默认 60 分钟）+ `refreshToken`（30 天）
+- **Spring Security 5.x** + 自定义 `JwtAuthenticationFilter`
+- **路由权限**：
+  ```
+  /v2/webhook/**       permitAll（依赖签名验证）
+  /api/auth/**         permitAll
+  /api/admin/**        ROLE_ADMIN
+  /api/desk/**         ROLE_ADMIN | ROLE_AGENT
+  /api/inbox/**        ROLE_ADMIN | ROLE_AGENT
+  /api/reports/**      ROLE_ADMIN | ROLE_AGENT | ROLE_VIEWER
+  ```
+- **Bootstrap Admin**：首次启动若库内无任何 ADMIN，按 `autotix.auth.bootstrap-admin-*` 自动建一个，日志 WARN 提示改密
+- **不可降级最后一位管理员**：`UpdateUserRoleUseCase` 和 `DisableUserUseCase` 强制校验 `countByRole(ADMIN) > 1`
+
+---
+
+## 五点六、Inbox 实时推送：SSE
+
+### 为什么选 SSE 而不是 WebSocket
+
+| 维度 | Inbox 实际情况 | 选型结论 |
+|---|---|---|
+| 流向 | 主要服务端推送（新工单 / AI 回复完成 / 客户回复 / 状态变更） | 单向流 SSE 更合身 |
+| 客户端动作 | 接管、回复、关闭都是离散命令 | 走普通 REST POST 即可 |
+| 协议复杂度 | 不需要双向、不需要二进制 | SSE 是 HTTP/1.1 原生，零运维负担 |
+| 重连 | EventSource 内置自动重连 | 无需自己实现 |
+| 反代 | Nginx/CloudFront 都默认支持 | 不用特殊配置 |
+
+### 流程
+
+```
+[Application Layer]
+  any UseCase that mutates ticket state
+        │
+        │  publish(InboxEvent)
+        ▼
+[InboxEventPublisher] ←─── (kafka topic "inbox.events" in distributed mode)
+        │
+        │  fan out to local SseEmitter instances
+        ▼
+[Browser EventSource] /api/inbox/stream?token=...
+        │
+        ▼
+  React Inbox 页面 onmessage → setState
+```
+
+### 协议
+
+```
+GET /api/inbox/stream
+Accept: text/event-stream
+
+event: TICKET_CREATED
+data: {"ticketId":"123","channelId":"ch_1","summary":"...","occurredAt":"..."}
+
+event: AI_REPLIED
+data: {...}
+
+: ping        ← 每 25s 心跳（注释行），保活
+```
+
+事件种类：`TICKET_CREATED / AI_REPLIED / AGENT_REPLIED / STATUS_CHANGED / ASSIGNED`。
+
+---
+
 ## 六、基础设施扩展架构
 
 所有基础设施能力通过接口抽象，内置轻量实现，用户可替换为分布式组件：
@@ -313,6 +419,27 @@ autotix:
 | 平台覆盖 | 20 个，亚洲平台弱 | 20+，含 LINE/WeCom/国内 ERP |
 | AI 接入 | 需自己写集成 | 3 个字段，OpenAI-compatible |
 | 部署 | Docker Compose | Docker Compose |
+
+---
+
+## 八点五、测试
+
+### 后端
+
+- **JUnit 5 + Mockito**（Spring Boot 2.4 默认带）
+- **分层测试**：
+  - `domain/**Test` — 纯 JUnit，无 Spring，零 IO
+  - `application/**Test` — JUnit + Mockito，所有 port 都 mock
+  - `infrastructure/**Test` — `@SpringBootTest` + `@ActiveProfiles("test")` + H2
+  - `interfaces/**Test` — `@WebMvcTest`（切片）或 `@SpringBootTest` + `TestRestTemplate`
+- **Webhook 解析测试**：用 `src/test/resources/fixtures/{platform}/*.json` 真实抓包样本（脱敏后）
+- 配置：`src/test/resources/application.yml`（H2 + 测试 JWT secret + 随机端口）
+
+### 前端
+
+- **Vitest + @testing-library/react + jsdom**
+- 页面 smoke test + service 函数 unit test
+- 配置：`vitest.config.ts`、setup：`src/test/setup.ts`
 
 ---
 

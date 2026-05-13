@@ -1,0 +1,35 @@
+# TODO: complete docker-compose for one-command bootstrap
+#   - autotix-server (Spring Boot)
+#   - autotix-web (Nginx serving React build)
+#   - mysql / postgres (default storage)
+#   - optional: redis, kafka (commented out, enable for distributed mode)
+version: "3.9"
+
+services:
+  autotix-server:
+    # TODO: build context, port mapping, env vars, depends_on
+    image: autotix/server:dev
+    ports:
+      - "8080:8080"
+    environment:
+      AUTOTIX_PROFILE: dev
+    depends_on:
+      - db
+
+  autotix-web:
+    # TODO: build static SPA and serve via nginx
+    image: autotix/web:dev
+    ports:
+      - "80:80"
+
+  db:
+    # TODO: choose mysql or postgres; persist volume
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: autotix
+      MYSQL_DATABASE: autotix
+    ports:
+      - "3306:3306"
+
+# volumes:
+#   db-data:
