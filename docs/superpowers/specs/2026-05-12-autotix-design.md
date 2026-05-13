@@ -465,3 +465,36 @@ autotix:
 - Demo 网站（autotix.dev）
 - GitHub README + 快速开始指南
 - 开源发布
+
+---
+
+## Running locally
+
+Default admin credentials: email `admin@autotix.local`, password `admin` (set via `AUTOTIX_ADMIN_EMAIL` / `AUTOTIX_ADMIN_PASSWORD`).
+
+**1. Native (no Docker) — H2 in-memory**
+
+```bash
+# Terminal 1 — backend (data lost on restart)
+cd autotix-server
+JAVA_HOME=/path/to/jdk8 mvn spring-boot:run
+
+# Terminal 2 — frontend dev server (proxies /api to localhost:8080)
+cd autotix-web
+pnpm install && pnpm dev
+```
+
+**2. SQLite quick start — `docker compose up`**
+
+```bash
+docker compose up --build
+# Backend: http://localhost:8080  Frontend: http://localhost:80
+# SQLite file persists in Docker volume autotix-data (/data/autotix.db inside container)
+```
+
+**3. MySQL production — `docker compose --profile mysql up`**
+
+```bash
+AUTOTIX_PROFILE=mysql docker compose --profile mysql up --build
+# Spins up mysql:8.0 container, waits for health check, then starts server
+```

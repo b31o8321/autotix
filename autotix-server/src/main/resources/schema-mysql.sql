@@ -1,0 +1,68 @@
+-- MySQL DDL — used by application-mysql.yml
+-- CLOB -> LONGTEXT; BOOLEAN -> TINYINT(1); TIMESTAMP stays
+
+CREATE TABLE IF NOT EXISTS ticket (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    channel_id VARCHAR(64) NOT NULL,
+    external_native_id VARCHAR(128) NOT NULL,
+    subject VARCHAR(512),
+    customer_identifier VARCHAR(256),
+    customer_name VARCHAR(256),
+    status VARCHAR(16) NOT NULL,
+    assignee_id VARCHAR(64),
+    tags_csv VARCHAR(512),
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    UNIQUE KEY uq_ticket_channel_native (channel_id, external_native_id)
+);
+CREATE INDEX idx_ticket_status_updated ON ticket(status, updated_at);
+
+CREATE TABLE IF NOT EXISTS ticket_message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id BIGINT NOT NULL,
+    direction VARCHAR(16) NOT NULL,
+    author VARCHAR(128) NOT NULL,
+    content LONGTEXT NOT NULL,
+    occurred_at TIMESTAMP NOT NULL
+);
+CREATE INDEX idx_msg_ticket ON ticket_message(ticket_id, occurred_at);
+
+CREATE TABLE IF NOT EXISTS channel (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    platform VARCHAR(32) NOT NULL,
+    channel_type VARCHAR(16) NOT NULL,
+    display_name VARCHAR(256) NOT NULL,
+    webhook_token VARCHAR(128) NOT NULL UNIQUE,
+    access_token LONGTEXT,
+    refresh_token LONGTEXT,
+    expires_at TIMESTAMP NULL,
+    attributes_json LONGTEXT,
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    auto_reply_enabled TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    UNIQUE KEY uq_channel_platform_token (platform, webhook_token)
+);
+
+CREATE TABLE IF NOT EXISTS app_user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(256) NOT NULL UNIQUE,
+    display_name VARCHAR(128) NOT NULL,
+    password_hash VARCHAR(256) NOT NULL,
+    role VARCHAR(16) NOT NULL,
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    last_login_at TIMESTAMP NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS automation_rule (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(256) NOT NULL,
+    priority INT NOT NULL DEFAULT 100,
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    conditions_json LONGTEXT,
+    actions_json LONGTEXT,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);

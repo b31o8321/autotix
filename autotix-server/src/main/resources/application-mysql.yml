@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/${MYSQL_DB:autotix}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER:autotix}
+    password: ${MYSQL_PASSWORD:autotix}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-mysql.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true

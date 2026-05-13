@@ -1,35 +1,51 @@
-# TODO: complete docker-compose for one-command bootstrap
-#   - autotix-server (Spring Boot)
-#   - autotix-web (Nginx serving React build)
-#   - mysql / postgres (default storage)
-#   - optional: redis, kafka (commented out, enable for distributed mode)
-version: "3.9"
-
 services:
   autotix-server:
-    # TODO: build context, port mapping, env vars, depends_on
-    image: autotix/server:dev
+    build: ./autotix-server
     ports:
       - "8080:8080"
     environment:
-      AUTOTIX_PROFILE: dev
+      AUTOTIX_PROFILE: ${AUTOTIX_PROFILE:-sqlite}
+      AUTOTIX_JWT_SECRET: ${AUTOTIX_JWT_SECRET:-dev-secret-must-be-at-least-32-characters-long}
+      AUTOTIX_ADMIN_EMAIL: ${AUTOTIX_ADMIN_EMAIL:-admin@autotix.local}
+      AUTOTIX_ADMIN_PASSWORD: ${AUTOTIX_ADMIN_PASSWORD:-admin}
+      # MySQL profile only — ignored when AUTOTIX_PROFILE=sqlite or h2
+      MYSQL_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER:-autotix}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-autotix}
+      MYSQL_DB: ${MYSQL_DB:-autotix}
+    volumes:
+      - autotix-data:/data
     depends_on:
-      - db
+      mysql:
+        condition: service_healthy
+        required: false
 
   autotix-web:
-    # TODO: build static SPA and serve via nginx
-    image: autotix/web:dev
+    build: ./autotix-web
     ports:
       - "80:80"
+    depends_on:
+      - autotix-server
 
-  db:
-    # TODO: choose mysql or postgres; persist volume
+  mysql:
     image: mysql:8.0
+    profiles:
+      - mysql
     environment:
       MYSQL_ROOT_PASSWORD: autotix
-      MYSQL_DATABASE: autotix
+      MYSQL_DATABASE: ${MYSQL_DB:-autotix}
+      MYSQL_USER: ${MYSQL_USER:-autotix}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-autotix}
+    volumes:
+      - mysql-data:/var/lib/mysql
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-# volumes:
-#   db-data:
+volumes:
+  autotix-data:
+  mysql-data:
