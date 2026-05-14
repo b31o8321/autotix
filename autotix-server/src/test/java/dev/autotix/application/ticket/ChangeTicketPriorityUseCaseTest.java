@@ -1,5 +1,6 @@
 package dev.autotix.application.ticket;
 
+import dev.autotix.application.sla.ApplySlaPolicyUseCase;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelId;
 import dev.autotix.domain.ticket.Message;
@@ -30,6 +31,7 @@ class ChangeTicketPriorityUseCaseTest {
 
     @Mock private TicketRepository ticketRepository;
     @Mock private TicketActivityRepository activityRepository;
+    @Mock private ApplySlaPolicyUseCase applySlaPolicyUseCase;
 
     private ChangeTicketPriorityUseCase useCase;
     private Ticket ticket;
@@ -37,7 +39,7 @@ class ChangeTicketPriorityUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new ChangeTicketPriorityUseCase(ticketRepository, activityRepository);
+        useCase = new ChangeTicketPriorityUseCase(ticketRepository, activityRepository, applySlaPolicyUseCase);
         ticketId = new TicketId("1");
         ticket = Ticket.openFromInbound(new ChannelId("ch-1"), "ext-1", "Sub", "c",
                 new Message(MessageDirection.INBOUND, "customer", "hi", Instant.now()));

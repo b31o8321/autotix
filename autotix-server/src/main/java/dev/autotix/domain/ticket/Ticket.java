@@ -46,6 +46,13 @@ public class Ticket {
     private TicketPriority priority = TicketPriority.NORMAL;
     private TicketType type = TicketType.QUESTION;
 
+    // Slice 10: SLA fields
+    private Instant firstResponseAt;        // stamped on first OUTBOUND message
+    private Instant firstHumanResponseAt;   // stamped on first OUTBOUND by non-"ai" author
+    private Instant firstResponseDueAt;     // SLA target for first response
+    private Instant resolutionDueAt;        // SLA target for resolution
+    private boolean slaBreached;            // sticky once true
+
     /** Private constructor — use factory methods or rehydration. */
     private Ticket() {}
 
@@ -85,6 +92,7 @@ public class Ticket {
         t.reopenCount = 0;
         t.priority = TicketPriority.NORMAL;
         t.type = TicketType.QUESTION;
+        t.slaBreached = false;
         return t;
     }
 
@@ -123,6 +131,22 @@ public class Ticket {
                                    Instant solvedAt, Instant closedAt,
                                    TicketId parentTicketId, int reopenCount,
                                    TicketPriority priority, TicketType type) {
+        return rehydrate(id, channelId, externalNativeId, subject, customerIdentifier, customerName,
+                assigneeId, status, messages, tags, createdAt, updatedAt,
+                solvedAt, closedAt, parentTicketId, reopenCount, priority, type,
+                null, null, null, null, false);
+    }
+
+    public static Ticket rehydrate(TicketId id, ChannelId channelId, String externalNativeId,
+                                   String subject, String customerIdentifier, String customerName,
+                                   String assigneeId, TicketStatus status, List<Message> messages,
+                                   Set<String> tags, Instant createdAt, Instant updatedAt,
+                                   Instant solvedAt, Instant closedAt,
+                                   TicketId parentTicketId, int reopenCount,
+                                   TicketPriority priority, TicketType type,
+                                   Instant firstResponseAt, Instant firstHumanResponseAt,
+                                   Instant firstResponseDueAt, Instant resolutionDueAt,
+                                   boolean slaBreached) {
         Ticket t = new Ticket();
         t.id = id;
         t.channelId = channelId;
@@ -142,6 +166,11 @@ public class Ticket {
         t.reopenCount = reopenCount;
         t.priority = priority != null ? priority : TicketPriority.NORMAL;
         t.type = type != null ? type : TicketType.QUESTION;
+        t.firstResponseAt = firstResponseAt;
+        t.firstHumanResponseAt = firstHumanResponseAt;
+        t.firstResponseDueAt = firstResponseDueAt;
+        t.resolutionDueAt = resolutionDueAt;
+        t.slaBreached = slaBreached;
         return t;
     }
 
@@ -201,6 +230,14 @@ public class Ticket {
         if (status == TicketStatus.NEW || status == TicketStatus.OPEN
                 || status == TicketStatus.WAITING_ON_INTERNAL) {
             status = TicketStatus.WAITING_ON_CUSTOMER;
+        }
+        // SLA: stamp first response timestamps
+        Instant msgTime = message.occurredAt() != null ? message.occurredAt() : Instant.now();
+        if (firstResponseAt == null) {
+            firstResponseAt = msgTime;
+        }
+        if (firstHumanResponseAt == null && !"ai".equals(message.author())) {
+            firstHumanResponseAt = msgTime;
         }
         updatedAt = Instant.now();
     }
@@ -362,6 +399,42 @@ public class Ticket {
         updatedAt = Instant.now();
     }
 
+    // -----------------------------------------------------------------------
+    // SLA behaviors (Slice 10)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Set SLA due timestamps. Called once at ticket creation (and again on priority change or reopen).
+     * Anchored at createdAt so changing priority doesn't reset the clock start.
+     */
+    public void applySlaDeadlines(Instant firstResponseDue, Instant resolutionDue) {
+        this.firstResponseDueAt = firstResponseDue;
+        this.resolutionDueAt = resolutionDue;
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Mark SLA as breached. Idempotent — calling twice is safe.
+     */
+    public void markSlaBreached() {
+        this.slaBreached = true;
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Derived view of current SLA state.
+     * Positive remainingMs = time still left. Negative = overdue.
+     */
+    public SlaState currentSlaState(Instant now) {
+        long firstResponseRemainingMs = firstResponseDueAt != null
+                ? firstResponseDueAt.toEpochMilli() - now.toEpochMilli()
+                : Long.MAX_VALUE;
+        long resolutionRemainingMs = resolutionDueAt != null
+                ? resolutionDueAt.toEpochMilli() - now.toEpochMilli()
+                : Long.MAX_VALUE;
+        return new SlaState(firstResponseRemainingMs, resolutionRemainingMs, slaBreached);
+    }
+
     /** Add tags (idempotent). */
     public void addTags(Set<String> newTags) {
         if (newTags == null) {
@@ -411,4 +484,10 @@ public class Ticket {
     public int reopenCount() { return reopenCount; }
     public TicketPriority priority() { return priority; }
     public TicketType type() { return type; }
+    // Slice 10: SLA accessors
+    public Instant firstResponseAt() { return firstResponseAt; }
+    public Instant firstHumanResponseAt() { return firstHumanResponseAt; }
+    public Instant firstResponseDueAt() { return firstResponseDueAt; }
+    public Instant resolutionDueAt() { return resolutionDueAt; }
+    public boolean slaBreached() { return slaBreached; }
 }

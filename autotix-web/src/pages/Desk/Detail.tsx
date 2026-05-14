@@ -62,8 +62,19 @@ function actionIcon(action: string): string {
     MARKED_SPAM: '🚫',
     SPAWNED: '🌿',
     TAGS_CHANGED: '🏷',
+    SLA_BREACHED: '⏰',
   };
   return icons[action] || '•';
+}
+
+function formatSlaRemaining(ms: number | undefined): string {
+  if (ms === undefined || ms === null) return 'N/A';
+  const absMs = Math.abs(ms);
+  const mins = Math.floor(absMs / 60000);
+  const hrs = Math.floor(mins / 60);
+  const remMins = mins % 60;
+  const label = hrs > 0 ? `${hrs}h ${remMins}m` : `${mins}m`;
+  return ms >= 0 ? `due in ${label}` : `overdue by ${label}`;
 }
 
 export default function TicketDetail() {
@@ -339,6 +350,37 @@ export default function TicketDetail() {
           )}
           {ticket.reopenCount !== undefined && ticket.reopenCount > 0 && (
             <Descriptions.Item label="Reopened">{ticket.reopenCount}x</Descriptions.Item>
+          )}
+          {(ticket.firstResponseDueAt || ticket.resolutionDueAt) && (
+            <Descriptions.Item label="SLA" span={2}>
+              <Space wrap>
+                {ticket.slaBreached && <Tag color="red">Breached</Tag>}
+                {ticket.firstResponseDueAt && (
+                  <Text type={
+                    ticket.firstResponseAt ? 'secondary' : (
+                      (ticket.firstResponseRemainingMs !== undefined && ticket.firstResponseRemainingMs < 0)
+                        ? 'danger' : undefined
+                    )
+                  }>
+                    1st response: {ticket.firstResponseAt
+                      ? 'responded'
+                      : formatSlaRemaining(ticket.firstResponseRemainingMs)}
+                  </Text>
+                )}
+                {ticket.resolutionDueAt && (
+                  <Text type={
+                    ticket.solvedAt ? 'secondary' : (
+                      (ticket.resolutionRemainingMs !== undefined && ticket.resolutionRemainingMs < 0)
+                        ? 'danger' : undefined
+                    )
+                  }>
+                    Resolution: {ticket.solvedAt
+                      ? 'resolved'
+                      : formatSlaRemaining(ticket.resolutionRemainingMs)}
+                  </Text>
+                )}
+              </Space>
+            </Descriptions.Item>
           )}
         </Descriptions>
       </Card>

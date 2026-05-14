@@ -27,6 +27,14 @@ export interface TicketDTO {
   // Slice 9: priority + type
   priority?: TicketPriority;
   type?: TicketType;
+  // Slice 10: SLA fields
+  firstResponseAt?: string;
+  firstHumanResponseAt?: string;
+  firstResponseDueAt?: string;
+  resolutionDueAt?: string;
+  slaBreached?: boolean;
+  firstResponseRemainingMs?: number;
+  resolutionRemainingMs?: number;
 }
 
 export interface MessageDTO {

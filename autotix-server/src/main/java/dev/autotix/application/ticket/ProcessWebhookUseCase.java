@@ -1,6 +1,7 @@
 package dev.autotix.application.ticket;
 
 import dev.autotix.application.automation.EvaluateRulesUseCase;
+import dev.autotix.application.sla.ApplySlaPolicyUseCase;
 import dev.autotix.domain.ai.AIAction;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.event.InboxEvent;
@@ -59,6 +60,7 @@ public class ProcessWebhookUseCase {
     private final EvaluateRulesUseCase evaluateRulesUseCase;
     private final InboxEventPublisher inboxEventPublisher;
     private final TicketActivityRepository activityRepository;
+    private final ApplySlaPolicyUseCase applySlaPolicyUseCase;
 
     @Value("${autotix.ticket.reopen-window-days:7}")
     private int reopenWindowDays;
@@ -69,7 +71,8 @@ public class ProcessWebhookUseCase {
                                  TicketDomainService ticketDomainService,
                                  EvaluateRulesUseCase evaluateRulesUseCase,
                                  InboxEventPublisher inboxEventPublisher,
-                                 TicketActivityRepository activityRepository) {
+                                 TicketActivityRepository activityRepository,
+                                 ApplySlaPolicyUseCase applySlaPolicyUseCase) {
         this.ticketRepository = ticketRepository;
         this.idempotencyStore = idempotencyStore;
         this.queueProvider = queueProvider;
@@ -77,6 +80,7 @@ public class ProcessWebhookUseCase {
         this.evaluateRulesUseCase = evaluateRulesUseCase;
         this.inboxEventPublisher = inboxEventPublisher;
         this.activityRepository = activityRepository;
+        this.applySlaPolicyUseCase = applySlaPolicyUseCase;
     }
 
     public void handle(Channel channel, TicketEvent event) {
@@ -141,6 +145,8 @@ public class ProcessWebhookUseCase {
                     log.info("Reopening ticket id={} (within {}d window)", found.id().value(), reopenWindowDays);
                     found.reopen(now);
                     found.appendInbound(inbound);
+                    // Apply fresh SLA on reopen (reset firstResponseDueAt)
+                    applySlaPolicyUseCase.apply(found, now);
                     ticket = found;
                     isNewTicket = false;
                 } else {
@@ -162,6 +168,11 @@ public class ProcessWebhookUseCase {
                 ticket = found;
                 isNewTicket = false;
             }
+        }
+
+        // 3f. Apply SLA deadlines to new tickets (spawned and brand-new)
+        if (isNewTicket) {
+            applySlaPolicyUseCase.apply(ticket, now);
         }
 
         // 4. Evaluate automation rules

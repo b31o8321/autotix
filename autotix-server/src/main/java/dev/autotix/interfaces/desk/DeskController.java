@@ -9,6 +9,7 @@ import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketPriority;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketSearchQuery;
+import dev.autotix.domain.ticket.SlaState;
 import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.domain.ticket.TicketType;
 import dev.autotix.interfaces.desk.dto.MessageDTO;
@@ -212,6 +213,19 @@ public class DeskController {
         dto.reopenCount = t.reopenCount();
         dto.priority = t.priority() != null ? t.priority().name() : null;
         dto.type = t.type() != null ? t.type().name() : null;
+        // Slice 10: SLA fields
+        dto.firstResponseAt = t.firstResponseAt();
+        dto.firstHumanResponseAt = t.firstHumanResponseAt();
+        dto.firstResponseDueAt = t.firstResponseDueAt();
+        dto.resolutionDueAt = t.resolutionDueAt();
+        dto.slaBreached = t.slaBreached();
+        if (t.firstResponseDueAt() != null || t.resolutionDueAt() != null) {
+            SlaState state = t.currentSlaState(java.time.Instant.now());
+            dto.firstResponseRemainingMs = t.firstResponseDueAt() != null
+                    ? state.firstResponseRemainingMs() : null;
+            dto.resolutionRemainingMs = t.resolutionDueAt() != null
+                    ? state.resolutionRemainingMs() : null;
+        }
         return dto;
     }
 

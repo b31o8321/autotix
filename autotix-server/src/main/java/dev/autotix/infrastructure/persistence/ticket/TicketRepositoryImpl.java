@@ -106,6 +106,27 @@ public class TicketRepositoryImpl implements TicketRepository {
     }
 
     @Override
+    public List<Ticket> findOverdue(java.time.Instant now) {
+        // Find tickets where sla_breached = false, status not in terminal set, AND
+        // (firstResponseDueAt < now AND firstResponseAt IS NULL)
+        // OR (resolutionDueAt < now AND solvedAt IS NULL)
+        QueryWrapper<TicketEntity> qw = new QueryWrapper<>();
+        qw.eq("sla_breached", false)
+          .notIn("status", TicketStatus.SOLVED.name(), TicketStatus.CLOSED.name(), TicketStatus.SPAM.name())
+          .and(w -> w
+                  .and(inner -> inner
+                          .lt("first_response_due_at", now)
+                          .isNull("first_response_at"))
+                  .or(inner -> inner
+                          .lt("resolution_due_at", now)
+                          .isNull("solved_at")));
+        List<TicketEntity> entities = ticketMapper.selectList(qw);
+        return entities.stream()
+                .map(e -> toDomain(e, Collections.emptyList()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Ticket> search(TicketSearchQuery query) {
         QueryWrapper<TicketEntity> qw = new QueryWrapper<>();
         if (query.status != null) {
@@ -191,6 +212,12 @@ public class TicketRepositoryImpl implements TicketRepository {
         e.setReopenCount(t.reopenCount());
         e.setPriority(t.priority() != null ? t.priority().name() : TicketPriority.NORMAL.name());
         e.setType(t.type() != null ? t.type().name() : TicketType.QUESTION.name());
+        // Slice 10: SLA fields
+        e.setFirstResponseAt(t.firstResponseAt());
+        e.setFirstHumanResponseAt(t.firstHumanResponseAt());
+        e.setFirstResponseDueAt(t.firstResponseDueAt());
+        e.setResolutionDueAt(t.resolutionDueAt());
+        e.setSlaBreached(t.slaBreached());
         return e;
     }
 
@@ -216,6 +243,7 @@ public class TicketRepositoryImpl implements TicketRepository {
                 ? TicketPriority.valueOf(e.getPriority()) : TicketPriority.NORMAL;
         TicketType type = e.getType() != null
                 ? TicketType.valueOf(e.getType()) : TicketType.QUESTION;
+        boolean slaBreached = e.getSlaBreached() != null && e.getSlaBreached();
         return Ticket.rehydrate(
                 new TicketId(String.valueOf(e.getId())),
                 new ChannelId(e.getChannelId()),
@@ -234,7 +262,12 @@ public class TicketRepositoryImpl implements TicketRepository {
                 parentId,
                 reopenCount,
                 priority,
-                type
+                type,
+                e.getFirstResponseAt(),
+                e.getFirstHumanResponseAt(),
+                e.getFirstResponseDueAt(),
+                e.getResolutionDueAt(),
+                slaBreached
         );
     }
 

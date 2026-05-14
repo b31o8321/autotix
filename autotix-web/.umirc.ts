@@ -20,6 +20,7 @@ export default defineConfig({
         { path: 'settings/ai', component: '@/pages/Settings/AIConfig' },
         { path: 'settings/users', component: '@/pages/Settings/Users' },
         { path: 'settings/automation', component: '@/pages/Settings/Automation' },
+        { path: 'settings/sla', component: '@/pages/Settings/SLA' },
       ],
     },
   ],

@@ -80,4 +80,20 @@ public class TicketEntity {
 
     /** Slice 9: ticket type — QUESTION / INCIDENT / PROBLEM / TASK */
     private String type;
+
+    // Slice 10: SLA fields
+    @TableField("first_response_at")
+    private Instant firstResponseAt;
+
+    @TableField("first_human_response_at")
+    private Instant firstHumanResponseAt;
+
+    @TableField("first_response_due_at")
+    private Instant firstResponseDueAt;
+
+    @TableField("resolution_due_at")
+    private Instant resolutionDueAt;
+
+    @TableField("sla_breached")
+    private Boolean slaBreached;
 }

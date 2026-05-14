@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Select, Input, Button, Tag, Space, Row, Col } from 'antd';
+import { Table, Select, Input, Button, Tag, Space, Row, Col, Badge } from 'antd';
 import { history } from 'umi';
 import type { ColumnsType } from 'antd/es/table';
 import { listTickets, type TicketDTO } from '@/services/ticket';
@@ -68,6 +68,14 @@ export default function DeskPage() {
       dataIndex: 'subject',
       key: 'subject',
       ellipsis: true,
+      render: (subject: string, record: TicketDTO) => (
+        <Space size="small">
+          {record.slaBreached && (
+            <Badge color="red" title="SLA Breached" />
+          )}
+          {subject}
+        </Space>
+      ),
     },
     {
       title: 'Customer',

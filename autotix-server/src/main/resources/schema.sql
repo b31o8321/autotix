@@ -19,7 +19,12 @@ CREATE TABLE IF NOT EXISTS ticket (
     parent_ticket_id BIGINT,
     reopen_count INT NOT NULL DEFAULT 0,
     priority VARCHAR(16) NOT NULL DEFAULT 'NORMAL',
-    type VARCHAR(16) NOT NULL DEFAULT 'QUESTION'
+    type VARCHAR(16) NOT NULL DEFAULT 'QUESTION',
+    first_response_at TIMESTAMP,
+    first_human_response_at TIMESTAMP,
+    first_response_due_at TIMESTAMP,
+    resolution_due_at TIMESTAMP,
+    sla_breached BOOLEAN NOT NULL DEFAULT FALSE
 );
 CREATE INDEX IF NOT EXISTS idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_ticket_status_updated ON ticket(status, updated_at);
@@ -82,6 +87,18 @@ CREATE TABLE IF NOT EXISTS automation_rule (
     enabled BOOLEAN NOT NULL DEFAULT TRUE,
     conditions_json CLOB,
     actions_json CLOB,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Slice 10: SLA policy table (one row per TicketPriority)
+CREATE TABLE IF NOT EXISTS sla_policy (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    priority VARCHAR(16) NOT NULL UNIQUE,
+    first_response_minutes INT NOT NULL,
+    resolution_minutes INT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );

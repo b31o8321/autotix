@@ -39,6 +39,13 @@ export default function SettingsIndex() {
                 </Card>
               </Link>
             </Col>
+            <Col span={8}>
+              <Link to="/settings/sla">
+                <Card title="SLA Policies" hoverable>
+                  Configure SLA targets per ticket priority
+                </Card>
+              </Link>
+            </Col>
           </>
         )}
       </Row>

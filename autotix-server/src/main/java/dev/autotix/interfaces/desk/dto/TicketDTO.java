@@ -32,4 +32,12 @@ public class TicketDTO {
     public String priority;
     /** Slice 9: QUESTION / INCIDENT / PROBLEM / TASK */
     public String type;
+    // Slice 10: SLA fields
+    public Instant firstResponseAt;
+    public Instant firstHumanResponseAt;
+    public Instant firstResponseDueAt;
+    public Instant resolutionDueAt;
+    public boolean slaBreached;
+    public Long firstResponseRemainingMs;   // ms to due; negative = overdue; null if no deadline
+    public Long resolutionRemainingMs;      // ms to due; negative = overdue; null if no deadline
 }

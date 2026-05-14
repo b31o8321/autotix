@@ -38,3 +38,7 @@ autotix:
     reopen-window-days: ${AUTOTIX_REOPEN_WINDOW_DAYS:7}
     # How often the auto-close scheduler checks for expired SOLVED tickets (ms).
     auto-close-check-interval-ms: ${AUTOTIX_AUTO_CLOSE_INTERVAL_MS:3600000}
+
+  sla:
+    # How often the SLA breach checker runs (ms). Default: 60 seconds.
+    check-interval-ms: ${AUTOTIX_SLA_CHECK_INTERVAL_MS:60000}

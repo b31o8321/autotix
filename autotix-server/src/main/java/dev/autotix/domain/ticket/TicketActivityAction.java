@@ -18,5 +18,6 @@ public enum TicketActivityAction {
     SOLVED,
     PERMANENTLY_CLOSED,
     MARKED_SPAM,
-    SPAWNED
+    SPAWNED,
+    SLA_BREACHED
 }

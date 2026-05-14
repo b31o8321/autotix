@@ -3,6 +3,7 @@ package dev.autotix.domain.ticket;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelId;
 import org.junit.jupiter.api.Test;
+// Note: SlaState is in the same package
 
 import java.time.Duration;
 import java.time.Instant;
@@ -453,6 +454,111 @@ class TicketTest {
                 "Note", Instant.now(), MessageVisibility.INTERNAL);
         assertThrows(AutotixException.ValidationException.class,
                 () -> ticket.appendInternalNote(internal));
+    }
+
+    // -----------------------------------------------------------------------
+    // SLA behaviors (Slice 10)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void firstOutbound_setsFirstResponseAt() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertNull(ticket.firstResponseAt());
+
+        Message reply = new Message(MessageDirection.OUTBOUND, "ai", "Hi", Instant.now());
+        ticket.appendOutbound(reply);
+
+        assertNotNull(ticket.firstResponseAt());
+    }
+
+    @Test
+    void secondOutbound_doesNotOverwriteFirstResponseAt() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Message first = new Message(MessageDirection.OUTBOUND, "ai", "First", Instant.now());
+        ticket.appendOutbound(first);
+        Instant firstResponseAt = ticket.firstResponseAt();
+
+        // Second outbound — should not change firstResponseAt
+        ticket.appendInbound(inboundMsg()); // reopen to OPEN
+        Message second = new Message(MessageDirection.OUTBOUND, "agent", "Second", Instant.now().plusSeconds(5));
+        ticket.appendOutbound(second);
+
+        assertEquals(firstResponseAt, ticket.firstResponseAt());
+    }
+
+    @Test
+    void firstNonAiOutbound_setsFirstHumanResponseAt() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        // AI reply first
+        ticket.appendOutbound(new Message(MessageDirection.OUTBOUND, "ai", "AI reply", Instant.now()));
+        assertNull(ticket.firstHumanResponseAt());
+
+        // Human reply next
+        ticket.appendInbound(inboundMsg());
+        ticket.appendOutbound(new Message(MessageDirection.OUTBOUND, "agent:1", "Human reply", Instant.now().plusSeconds(1)));
+
+        assertNotNull(ticket.firstHumanResponseAt());
+    }
+
+    @Test
+    void aiOnlyOutbound_doesNotSetFirstHumanResponseAt() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.appendOutbound(new Message(MessageDirection.OUTBOUND, "ai", "AI reply", Instant.now()));
+
+        assertNull(ticket.firstHumanResponseAt());
+    }
+
+    @Test
+    void applySlaDeadlines_setsDueFields() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Instant firstDue = Instant.now().plusSeconds(3600);
+        Instant resDue = Instant.now().plusSeconds(86400);
+
+        ticket.applySlaDeadlines(firstDue, resDue);
+
+        assertEquals(firstDue, ticket.firstResponseDueAt());
+        assertEquals(resDue, ticket.resolutionDueAt());
+    }
+
+    @Test
+    void markSlaBreached_isIdempotent() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertFalse(ticket.slaBreached());
+
+        ticket.markSlaBreached();
+        assertTrue(ticket.slaBreached());
+
+        // Calling again must not throw
+        ticket.markSlaBreached();
+        assertTrue(ticket.slaBreached());
+    }
+
+    @Test
+    void currentSlaState_beforeDue_returnsPositiveRemaining() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Instant now = Instant.now();
+        ticket.applySlaDeadlines(now.plusSeconds(3600), now.plusSeconds(86400));
+
+        SlaState state = ticket.currentSlaState(now);
+
+        assertTrue(state.firstResponseRemainingMs() > 0);
+        assertTrue(state.resolutionRemainingMs() > 0);
+        assertFalse(state.breached());
+    }
+
+    @Test
+    void currentSlaState_pastDue_returnsNegativeRemaining() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Instant now = Instant.now();
+        // Due 1 hour in the past
+        ticket.applySlaDeadlines(now.minusSeconds(3600), now.minusSeconds(1));
+        ticket.markSlaBreached();
+
+        SlaState state = ticket.currentSlaState(now);
+
+        assertTrue(state.firstResponseRemainingMs() < 0);
+        assertTrue(state.resolutionRemainingMs() < 0);
+        assertTrue(state.breached());
     }
 
     // -----------------------------------------------------------------------

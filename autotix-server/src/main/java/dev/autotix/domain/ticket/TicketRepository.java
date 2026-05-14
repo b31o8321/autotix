@@ -35,4 +35,14 @@ public interface TicketRepository {
 
     /** TODO: paginated list for desk UI; filter params TBD (status, channel, assignee, ...) */
     List<Ticket> search(TicketSearchQuery query);
+
+    /**
+     * Find active tickets (not SOLVED/CLOSED/SPAM) where sla_breached = false AND
+     * at least one SLA deadline has been missed:
+     *   (firstResponseDueAt < now AND firstResponseAt IS NULL)
+     *   OR
+     *   (resolutionDueAt < now AND solvedAt IS NULL)
+     * Used by SlaCheckerScheduler.
+     */
+    List<Ticket> findOverdue(java.time.Instant now);
 }

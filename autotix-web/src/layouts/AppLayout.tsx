@@ -11,6 +11,7 @@ import {
   ApiOutlined,
   TeamOutlined,
   ThunderboltOutlined,
+  ClockCircleOutlined,
 } from '@ant-design/icons';
 import { clearTokens, getAccessToken, getCurrentUser } from '@/utils/auth';
 
@@ -86,6 +87,12 @@ export default function AppLayout() {
                 icon: <TeamOutlined />,
                 label: 'Users',
                 onClick: () => history.push('/settings/users'),
+              },
+              {
+                key: '/settings/sla',
+                icon: <ClockCircleOutlined />,
+                label: 'SLA Policies',
+                onClick: () => history.push('/settings/sla'),
               },
             ]
           : []),
