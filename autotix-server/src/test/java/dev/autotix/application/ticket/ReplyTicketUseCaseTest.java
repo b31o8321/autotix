@@ -6,6 +6,7 @@ import dev.autotix.domain.channel.ChannelId;
 import dev.autotix.domain.channel.ChannelRepository;
 import dev.autotix.domain.channel.ChannelType;
 import dev.autotix.domain.channel.PlatformType;
+import dev.autotix.domain.ticket.AttachmentRepository;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.MessageVisibility;
@@ -27,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +45,7 @@ class ReplyTicketUseCaseTest {
     @Mock private TicketPlatformPlugin plugin;
     @Mock private InboxEventPublisher inboxPublisher;
     @Mock private TicketActivityRepository activityRepository;
+    @Mock private AttachmentRepository attachmentRepository;
 
     private ReplyTicketUseCase useCase;
 
@@ -53,7 +56,7 @@ class ReplyTicketUseCaseTest {
     @BeforeEach
     void setUp() {
         useCase = new ReplyTicketUseCase(ticketRepository, channelRepository, replyFormatter,
-                pluginRegistry, inboxPublisher, activityRepository);
+                pluginRegistry, inboxPublisher, activityRepository, attachmentRepository);
 
         ticketId = new TicketId("5");
         channel = Channel.rehydrate(
@@ -123,6 +126,36 @@ class ReplyTicketUseCaseTest {
                 () -> useCase.reply(ticketId, "reply", "ai"));
 
         verify(ticketRepository, never()).save(any());
+    }
+
+    @Test
+    void replyWithAttachmentIds_linksThemToMessage() {
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
+        when(replyFormatter.format(ChannelType.EMAIL, "Reply with attachment")).thenReturn("Reply with attachment");
+        when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(ticketRepository.save(any())).thenReturn(ticketId);
+        when(ticketRepository.findLastMessageId(ticketId)).thenReturn(99L);
+
+        useCase.reply(ticketId, "Reply with attachment", "agent", false, Arrays.asList(1L, 2L));
+
+        verify(ticketRepository).findLastMessageId(ticketId);
+        verify(attachmentRepository).linkToMessage(1L, 99L);
+        verify(attachmentRepository).linkToMessage(2L, 99L);
+    }
+
+    @Test
+    void replyWithNullAttachmentIds_doesNotCallLink() {
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+        when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
+        when(replyFormatter.format(any(), any())).thenReturn("reply");
+        when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(ticketRepository.save(any())).thenReturn(ticketId);
+
+        useCase.reply(ticketId, "reply", "agent", false, null);
+
+        verify(ticketRepository, never()).findLastMessageId(any());
+        verifyNoInteractions(attachmentRepository);
     }
 
     @Test

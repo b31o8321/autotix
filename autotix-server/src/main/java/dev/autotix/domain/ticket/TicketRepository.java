@@ -45,4 +45,17 @@ public interface TicketRepository {
      * Used by SlaCheckerScheduler.
      */
     List<Ticket> findOverdue(java.time.Instant now);
+
+    /**
+     * Return the id of the last (most recently inserted) message for a ticket.
+     * Used by Slice 11 to link uploaded attachments to the reply message.
+     * Returns null if the ticket has no messages.
+     */
+    Long findLastMessageId(TicketId ticketId);
+
+    /**
+     * Return the IDs of all messages for a ticket, ordered by occurred_at ASC.
+     * Used by DeskController to match attachments to message DTOs.
+     */
+    List<Long> findMessageIdsByTicketIdOrdered(TicketId ticketId);
 }

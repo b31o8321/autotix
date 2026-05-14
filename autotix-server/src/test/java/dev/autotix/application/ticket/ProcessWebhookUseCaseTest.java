@@ -7,6 +7,7 @@ import dev.autotix.domain.channel.ChannelType;
 import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.EventType;
 import dev.autotix.domain.event.TicketEvent;
+import dev.autotix.domain.ticket.AttachmentRepository;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
@@ -49,6 +50,7 @@ class ProcessWebhookUseCaseTest {
     @Mock private InboxEventPublisher inboxPublisher;
     @Mock private dev.autotix.domain.ticket.TicketActivityRepository activityRepository;
     @Mock private ApplySlaPolicyUseCase applySlaPolicyUseCase;
+    @Mock private AttachmentRepository attachmentRepository;
 
     private TicketDomainService ticketDomainService;
     private ProcessWebhookUseCase useCase;
@@ -61,7 +63,7 @@ class ProcessWebhookUseCaseTest {
         when(evaluateRules.evaluate(any(), any())).thenReturn(EvaluateRulesUseCase.RuleOutcome.noOp());
         useCase = new ProcessWebhookUseCase(ticketRepository, idempotencyStore,
                 queueProvider, ticketDomainService, evaluateRules, inboxPublisher, activityRepository,
-                applySlaPolicyUseCase);
+                applySlaPolicyUseCase, attachmentRepository);
         // @Value fields are not injected in plain Mockito tests — set the default explicitly
         ReflectionTestUtils.setField(useCase, "reopenWindowDays", 7);
 

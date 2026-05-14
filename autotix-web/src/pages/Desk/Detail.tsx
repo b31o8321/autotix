@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
   Card, Tag, Space, Descriptions, Button, Input, message as antMessage,
-  Spin, Divider, Typography, Dropdown, Menu, Switch, Select, Tabs, Timeline,
+  Spin, Divider, Typography, Dropdown, Menu, Switch, Select, Tabs, Timeline, Upload,
 } from 'antd';
-import { DownOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { DownOutlined, ClockCircleOutlined, UploadOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { useParams, history } from 'umi';
 import {
   getTicket, replyTicket, solveTicket, closeTicket, assignTicket,
-  changeTicketPriority, changeTicketType, listTicketActivity,
-  type TicketDTO, type MessageDTO, type TicketActivity,
+  changeTicketPriority, changeTicketType, listTicketActivity, uploadAttachment,
+  type TicketDTO, type MessageDTO, type TicketActivity, type AttachmentDTO,
   type TicketPriority, type TicketType,
 } from '@/services/ticket';
 import { getCurrentUser } from '@/utils/auth';
@@ -86,6 +86,7 @@ export default function TicketDetail() {
   const [replying, setReplying] = useState(false);
   const [isInternal, setIsInternal] = useState(false);
   const [activities, setActivities] = useState<TicketActivity[]>([]);
+  const [stagedAttachments, setStagedAttachments] = useState<AttachmentDTO[]>([]);
 
   const currentUser = getCurrentUser();
   const isAdmin = currentUser?.role === 'ADMIN';
@@ -121,9 +122,13 @@ export default function TicketDetail() {
     if (!ticketId || !replyContent.trim()) return;
     setReplying(true);
     try {
-      await replyTicket(ticketId, replyContent, solveAfter, isInternal);
+      const attachmentIds = stagedAttachments.length > 0
+        ? stagedAttachments.map(a => a.id)
+        : undefined;
+      await replyTicket(ticketId, replyContent, solveAfter, isInternal, attachmentIds);
       setReplyContent('');
       setIsInternal(false);
+      setStagedAttachments([]);
       antMessage.success(isInternal ? 'Internal note saved' : solveAfter ? 'Replied and solved' : 'Replied');
       await fetchTicket();
       await fetchActivity();
@@ -255,6 +260,17 @@ export default function TicketDetail() {
                 </Text>
               </Space>
               <div style={{ marginTop: 4, whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+              {msg.attachments && msg.attachments.length > 0 && (
+                <Space wrap style={{ marginTop: 6 }}>
+                  {msg.attachments.map((att, ai) => (
+                    <a key={ai} href={att.downloadUrl} target="_blank" rel="noopener noreferrer">
+                      <Tag icon={<PaperClipOutlined />} color="blue" style={{ cursor: 'pointer' }}>
+                        {att.fileName}
+                      </Tag>
+                    </a>
+                  ))}
+                </Space>
+              )}
             </Card>
           </div>
         );
@@ -419,6 +435,31 @@ export default function TicketDetail() {
                   onChange={(e) => setReplyContent(e.target.value)}
                   style={isInternal ? { background: '#fffbe6', borderColor: '#faad14' } : undefined}
                 />
+                <Space wrap>
+                  <Upload
+                    showUploadList={false}
+                    beforeUpload={(file) => {
+                      uploadAttachment(ticketId!, file).then(att => {
+                        setStagedAttachments(prev => [...prev, att]);
+                      }).catch(() => {
+                        antMessage.error('Upload failed');
+                      });
+                      return false;
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />} size="small">Attach File</Button>
+                  </Upload>
+                  {stagedAttachments.map(att => (
+                    <Tag
+                      key={att.id}
+                      closable
+                      onClose={() => setStagedAttachments(prev => prev.filter(a => a.id !== att.id))}
+                      icon={<PaperClipOutlined />}
+                    >
+                      {att.fileName}
+                    </Tag>
+                  ))}
+                </Space>
                 <Space wrap>
                   <Button
                     type="primary"

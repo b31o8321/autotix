@@ -32,3 +32,7 @@ autotix:
     api-key: test
     model: test-model
     system-prompt: test
+  storage:
+    driver: local
+    local:
+      root: /tmp/autotix-test-attachments

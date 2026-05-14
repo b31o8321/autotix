@@ -37,6 +37,18 @@ export interface TicketDTO {
   resolutionRemainingMs?: number;
 }
 
+/** Slice 11: file attachment metadata */
+export interface AttachmentDTO {
+  id: number;
+  key: string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  uploadedBy: string;
+  uploadedAt: string;
+  downloadUrl: string;
+}
+
 export interface MessageDTO {
   direction: 'INBOUND' | 'OUTBOUND';
   author: string;
@@ -44,6 +56,8 @@ export interface MessageDTO {
   occurredAt: string;
   /** Slice 9: PUBLIC (default) or INTERNAL */
   visibility?: 'PUBLIC' | 'INTERNAL';
+  /** Slice 11: file attachments linked to this message */
+  attachments?: AttachmentDTO[];
 }
 
 export interface TicketActivity {
@@ -78,10 +92,22 @@ export async function replyTicket(
   content: string,
   closeAfter = false,
   internal = false,
+  attachmentIds?: number[],
 ) {
   return request(`/api/desk/tickets/${ticketId}/reply`, {
     method: 'POST',
-    data: { content, closeAfter, internal },
+    data: { content, closeAfter, internal, attachmentIds },
+  });
+}
+
+/** Slice 11: upload a file attachment before sending reply */
+export async function uploadAttachment(ticketId: string, file: File): Promise<AttachmentDTO> {
+  const formData = new FormData();
+  formData.append('file', file);
+  return request(`/api/desk/tickets/${ticketId}/attachments`, {
+    method: 'POST',
+    data: formData,
+    requestType: 'form',
   });
 }
 

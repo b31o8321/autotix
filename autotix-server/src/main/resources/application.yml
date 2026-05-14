@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     active: ${AUTOTIX_PROFILE:h2}
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 55MB
 
 mybatis-plus:
   configuration:
@@ -42,3 +46,21 @@ autotix:
   sla:
     # How often the SLA breach checker runs (ms). Default: 60 seconds.
     check-interval-ms: ${AUTOTIX_SLA_CHECK_INTERVAL_MS:60000}
+
+  storage:
+    driver: local       # local | s3 | oss
+    max-upload-bytes: 10485760   # 10 MB
+    local:
+      root: /data/attachments
+    s3:
+      endpoint: ""
+      region: us-east-1
+      bucket: autotix
+      access-key: ""
+      secret-key: ""
+      path-style: false
+    oss:
+      endpoint: ""
+      bucket: autotix
+      access-key-id: ""
+      access-key-secret: ""

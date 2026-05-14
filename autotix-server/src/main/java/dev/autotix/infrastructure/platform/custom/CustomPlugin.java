@@ -1,6 +1,7 @@
 package dev.autotix.infrastructure.platform.custom;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.Channel;
@@ -10,14 +11,21 @@ import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.EventType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.infrastructure.infra.storage.StorageProvider;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Generic test/custom plugin for end-to-end verification without an external platform.
@@ -43,6 +51,12 @@ import java.util.Map;
 public class CustomPlugin implements TicketPlatformPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(CustomPlugin.class);
+
+    private final StorageProvider storageProvider;
+
+    public CustomPlugin(StorageProvider storageProvider) {
+        this.storageProvider = storageProvider;
+    }
 
     @Override
     public PlatformType platform() {
@@ -83,6 +97,40 @@ public class CustomPlugin implements TicketPlatformPlugin {
             }
         }
 
+        // Slice 11: process inbound attachments (base64-encoded)
+        List<TicketEvent.InboundAttachment> attachments = new ArrayList<>();
+        JSONArray attsArr = json.getJSONArray("attachments");
+        if (attsArr != null) {
+            for (int i = 0; i < attsArr.size(); i++) {
+                JSONObject att = attsArr.getJSONObject(i);
+                String attFileName = att.getString("fileName");
+                String attContentType = att.getString("contentType");
+                long attSizeBytes = att.getLongValue("sizeBytes");
+                String base64 = att.getString("contentBase64");
+                if (base64 != null && !base64.isEmpty()) {
+                    try {
+                        byte[] bytes = Base64.getDecoder().decode(base64);
+                        String safeFileName = (attFileName != null ? attFileName : "file")
+                                .replaceAll("[^a-zA-Z0-9._\\-]", "_");
+                        Date now = new Date();
+                        String year = String.format("%tY", now);
+                        String month = String.format("%tm", now);
+                        String key = "attachments/" + year + "/" + month + "/inbound/"
+                                + UUID.randomUUID().toString() + "-" + safeFileName;
+                        storageProvider.upload(key,
+                                new ByteArrayInputStream(bytes),
+                                bytes.length,
+                                attContentType != null ? attContentType : "application/octet-stream");
+                        attachments.add(new TicketEvent.InboundAttachment(
+                                attFileName, attContentType, attSizeBytes, key, "customer"));
+                        log.debug("[CUSTOM] stored inbound attachment {} -> {}", attFileName, key);
+                    } catch (Exception e) {
+                        log.warn("[CUSTOM] failed to store inbound attachment {}: {}", attFileName, e.getMessage());
+                    }
+                }
+            }
+        }
+
         Map<String, Object> raw = new HashMap<>(json);
         return new TicketEvent(
                 channel.id(),
@@ -93,7 +141,8 @@ public class CustomPlugin implements TicketPlatformPlugin {
                 json.getString("subject"),
                 json.getString("message"),
                 Instant.now(),
-                raw);
+                raw,
+                attachments);
     }
 
     @Override

@@ -6,6 +6,8 @@ import dev.autotix.domain.ai.AIAction;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.event.TicketEvent;
+import dev.autotix.domain.ticket.Attachment;
+import dev.autotix.domain.ticket.AttachmentRepository;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
@@ -61,6 +63,7 @@ public class ProcessWebhookUseCase {
     private final InboxEventPublisher inboxEventPublisher;
     private final TicketActivityRepository activityRepository;
     private final ApplySlaPolicyUseCase applySlaPolicyUseCase;
+    private final AttachmentRepository attachmentRepository;
 
     @Value("${autotix.ticket.reopen-window-days:7}")
     private int reopenWindowDays;
@@ -72,7 +75,8 @@ public class ProcessWebhookUseCase {
                                  EvaluateRulesUseCase evaluateRulesUseCase,
                                  InboxEventPublisher inboxEventPublisher,
                                  TicketActivityRepository activityRepository,
-                                 ApplySlaPolicyUseCase applySlaPolicyUseCase) {
+                                 ApplySlaPolicyUseCase applySlaPolicyUseCase,
+                                 AttachmentRepository attachmentRepository) {
         this.ticketRepository = ticketRepository;
         this.idempotencyStore = idempotencyStore;
         this.queueProvider = queueProvider;
@@ -81,6 +85,7 @@ public class ProcessWebhookUseCase {
         this.inboxEventPublisher = inboxEventPublisher;
         this.activityRepository = activityRepository;
         this.applySlaPolicyUseCase = applySlaPolicyUseCase;
+        this.attachmentRepository = attachmentRepository;
     }
 
     public void handle(Channel channel, TicketEvent event) {
@@ -196,9 +201,32 @@ public class ProcessWebhookUseCase {
 
         // 5. Persist
         ticketRepository.save(ticket);
+        TicketId savedId = ticket.id();
+
+        // 5a. Link inbound attachments (from CustomPlugin or other plugins that pre-upload)
+        if (!event.attachments().isEmpty()) {
+            Long lastMsgId = ticketRepository.findLastMessageId(savedId);
+            for (TicketEvent.InboundAttachment inboundAtt : event.attachments()) {
+                try {
+                    Attachment att = new Attachment(
+                            null, null, savedId,
+                            inboundAtt.storageKey(),
+                            inboundAtt.fileName(),
+                            inboundAtt.contentType(),
+                            inboundAtt.sizeBytes(),
+                            inboundAtt.uploadedBy(),
+                            now);
+                    Long attId = attachmentRepository.save(att);
+                    if (lastMsgId != null) {
+                        attachmentRepository.linkToMessage(attId, lastMsgId);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to persist inbound attachment {}: {}", inboundAtt.fileName(), e.getMessage());
+                }
+            }
+        }
 
         // 5b. Log activity (must happen after save so ticket.id() is set)
-        TicketId savedId = ticket.id();
         if (isNewTicket) {
             boolean isSpawned = ticket.parentTicketId() != null;
             if (isSpawned) {

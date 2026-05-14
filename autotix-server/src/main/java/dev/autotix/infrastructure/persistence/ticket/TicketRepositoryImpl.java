@@ -154,6 +154,27 @@ public class TicketRepositoryImpl implements TicketRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Long findLastMessageId(TicketId ticketId) {
+        QueryWrapper<MessageEntity> qw = new QueryWrapper<>();
+        qw.eq("ticket_id", Long.parseLong(ticketId.value()))
+          .orderByDesc("id")
+          .last("LIMIT 1");
+        MessageEntity me = messageMapper.selectOne(qw);
+        return me != null ? me.getId() : null;
+    }
+
+    @Override
+    public List<Long> findMessageIdsByTicketIdOrdered(TicketId ticketId) {
+        QueryWrapper<MessageEntity> qw = new QueryWrapper<>();
+        qw.eq("ticket_id", Long.parseLong(ticketId.value()))
+          .orderByAsc("occurred_at");
+        List<MessageEntity> entities = messageMapper.selectList(qw);
+        return entities.stream()
+                .map(MessageEntity::getId)
+                .collect(Collectors.toList());
+    }
+
     // -----------------------------------------------------------------------
     // Private helpers
     // -----------------------------------------------------------------------

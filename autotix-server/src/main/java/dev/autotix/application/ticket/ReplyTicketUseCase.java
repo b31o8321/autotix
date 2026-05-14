@@ -4,6 +4,7 @@ import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
 import dev.autotix.domain.event.InboxEvent;
+import dev.autotix.domain.ticket.AttachmentRepository;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.MessageVisibility;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 /**
  * Send a reply (from AI or human) back to the originating platform, or save an
@@ -52,34 +54,46 @@ public class ReplyTicketUseCase {
     private final PluginRegistry pluginRegistry;
     private final InboxEventPublisher inboxEventPublisher;
     private final TicketActivityRepository activityRepository;
+    private final AttachmentRepository attachmentRepository;
 
     public ReplyTicketUseCase(TicketRepository ticketRepository,
                               ChannelRepository channelRepository,
                               ReplyFormatter replyFormatter,
                               PluginRegistry pluginRegistry,
                               InboxEventPublisher inboxEventPublisher,
-                              TicketActivityRepository activityRepository) {
+                              TicketActivityRepository activityRepository,
+                              AttachmentRepository attachmentRepository) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.replyFormatter = replyFormatter;
         this.pluginRegistry = pluginRegistry;
         this.inboxEventPublisher = inboxEventPublisher;
         this.activityRepository = activityRepository;
+        this.attachmentRepository = attachmentRepository;
     }
 
     /**
-     * Backward-compatible overload — sends a PUBLIC reply.
+     * Backward-compatible overload — sends a PUBLIC reply (no attachments).
      */
     public void reply(TicketId ticketId, String markdownReply, String author) {
-        reply(ticketId, markdownReply, author, false);
+        reply(ticketId, markdownReply, author, false, null);
     }
 
     /**
-     * Send a reply or save an internal note.
-     *
-     * @param internal true → INTERNAL note (no external send, no status change)
+     * Send a reply or internal note without attachments.
      */
     public void reply(TicketId ticketId, String markdownReply, String author, boolean internal) {
+        reply(ticketId, markdownReply, author, internal, null);
+    }
+
+    /**
+     * Send a reply or save an internal note, optionally linking pre-uploaded attachments.
+     *
+     * @param internal      true → INTERNAL note (no external send, no status change)
+     * @param attachmentIds IDs of orphan attachments to link after the message is saved; may be null
+     */
+    public void reply(TicketId ticketId, String markdownReply, String author,
+                      boolean internal, List<Long> attachmentIds) {
         // 1. Load ticket
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new AutotixException.NotFoundException(
@@ -97,6 +111,7 @@ public class ReplyTicketUseCase {
                     MessageVisibility.INTERNAL));
 
             ticketRepository.save(ticket);
+            linkAttachments(ticketId, attachmentIds);
 
             // Still publish so inbox updates in real time
             if (!"ai".equals(author)) {
@@ -148,6 +163,7 @@ public class ReplyTicketUseCase {
 
         // 5. Persist
         ticketRepository.save(ticket);
+        linkAttachments(ticketId, attachmentIds);
 
         // 6. Publish AGENT_REPLIED only for human authors
         if (!"ai".equals(author)) {
@@ -166,5 +182,25 @@ public class ReplyTicketUseCase {
                 now));
 
         log.debug("Reply sent for ticket={} via platform={}", ticketId.value(), channel.platform());
+    }
+
+    // -----------------------------------------------------------------------
+
+    private void linkAttachments(TicketId ticketId, List<Long> attachmentIds) {
+        if (attachmentIds == null || attachmentIds.isEmpty()) {
+            return;
+        }
+        Long lastMsgId = ticketRepository.findLastMessageId(ticketId);
+        if (lastMsgId == null) {
+            log.warn("No message found to link attachments for ticket={}", ticketId.value());
+            return;
+        }
+        for (Long attId : attachmentIds) {
+            try {
+                attachmentRepository.linkToMessage(attId, lastMsgId);
+            } catch (Exception e) {
+                log.warn("Failed to link attachment {} to message {}: {}", attId, lastMsgId, e.getMessage());
+            }
+        }
     }
 }

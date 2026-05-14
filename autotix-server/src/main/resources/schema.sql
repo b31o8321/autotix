@@ -114,3 +114,17 @@ CREATE TABLE IF NOT EXISTS ai_config (
     max_retries INT,
     updated_at TIMESTAMP NOT NULL
 );
+
+-- Slice 11: file attachments
+CREATE TABLE IF NOT EXISTS attachment (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    message_id BIGINT,
+    ticket_id BIGINT NOT NULL,
+    storage_key VARCHAR(512) NOT NULL UNIQUE,
+    file_name VARCHAR(256) NOT NULL,
+    content_type VARCHAR(128) NOT NULL,
+    size_bytes BIGINT NOT NULL,
+    uploaded_by VARCHAR(128) NOT NULL,
+    uploaded_at TIMESTAMP NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_attachment_ticket ON attachment(ticket_id, uploaded_at);

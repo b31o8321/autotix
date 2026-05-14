@@ -1,8 +1,11 @@
 package dev.autotix.interfaces.desk;
 
+import dev.autotix.application.attachment.UploadAttachmentUseCase;
 import dev.autotix.application.ticket.*;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.ticket.Attachment;
+import dev.autotix.domain.ticket.AttachmentRepository;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketActivity;
 import dev.autotix.domain.ticket.TicketId;
@@ -12,12 +15,14 @@ import dev.autotix.domain.ticket.TicketSearchQuery;
 import dev.autotix.domain.ticket.SlaState;
 import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.domain.ticket.TicketType;
+import dev.autotix.interfaces.desk.dto.AttachmentDTO;
 import dev.autotix.interfaces.desk.dto.MessageDTO;
 import dev.autotix.interfaces.desk.dto.ReplyRequest;
 import dev.autotix.interfaces.desk.dto.TicketActivityDTO;
 import dev.autotix.interfaces.desk.dto.TicketDTO;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +55,8 @@ public class DeskController {
     private final ChangeTicketPriorityUseCase changePriority;
     private final ChangeTicketTypeUseCase changeType;
     private final ListTicketActivityUseCase listActivity;
+    private final AttachmentRepository attachmentRepository;
+    private final UploadAttachmentUseCase uploadAttachmentUseCase;
 
     public DeskController(ListTicketsUseCase listTickets,
                           ReplyTicketUseCase replyTicket,
@@ -59,7 +66,9 @@ public class DeskController {
                           TicketRepository ticketRepository,
                           ChangeTicketPriorityUseCase changePriority,
                           ChangeTicketTypeUseCase changeType,
-                          ListTicketActivityUseCase listActivity) {
+                          ListTicketActivityUseCase listActivity,
+                          AttachmentRepository attachmentRepository,
+                          UploadAttachmentUseCase uploadAttachmentUseCase) {
         this.listTickets = listTickets;
         this.replyTicket = replyTicket;
         this.assignTicket = assignTicket;
@@ -69,6 +78,8 @@ public class DeskController {
         this.changePriority = changePriority;
         this.changeType = changeType;
         this.listActivity = listActivity;
+        this.attachmentRepository = attachmentRepository;
+        this.uploadAttachmentUseCase = uploadAttachmentUseCase;
     }
 
     @GetMapping
@@ -113,29 +124,27 @@ public class DeskController {
 
     @GetMapping("/{ticketId}")
     public TicketDTO get(@PathVariable String ticketId) {
-        Ticket ticket = ticketRepository.findById(new TicketId(ticketId))
+        TicketId tid = new TicketId(ticketId);
+        Ticket ticket = ticketRepository.findById(tid)
                 .orElseThrow(() -> new AutotixException.NotFoundException(
                         "Ticket not found: " + ticketId));
         TicketDTO dto = toDTO(ticket);
-        dto.messages = ticket.messages().stream()
-                .map(this::toMessageDTO)
-                .collect(Collectors.toList());
+        dto.messages = buildMessageDTOs(tid, ticket);
         return dto;
     }
 
     @GetMapping("/{ticketId}/messages")
     public List<MessageDTO> messages(@PathVariable String ticketId) {
-        Ticket ticket = ticketRepository.findById(new TicketId(ticketId))
+        TicketId tid = new TicketId(ticketId);
+        Ticket ticket = ticketRepository.findById(tid)
                 .orElseThrow(() -> new AutotixException.NotFoundException(
                         "Ticket not found: " + ticketId));
-        return ticket.messages().stream()
-                .map(this::toMessageDTO)
-                .collect(Collectors.toList());
+        return buildMessageDTOs(tid, ticket);
     }
 
     @PostMapping("/{ticketId}/reply")
     public void reply(@PathVariable String ticketId, @RequestBody ReplyRequest req) {
-        replyTicket.reply(new TicketId(ticketId), req.content, "agent", req.internal);
+        replyTicket.reply(new TicketId(ticketId), req.content, "agent", req.internal, req.attachmentIds);
         if (!req.internal && req.closeAfter) {
             solveTicket.solve(new TicketId(ticketId));
         }
@@ -227,6 +236,31 @@ public class DeskController {
                     ? state.resolutionRemainingMs() : null;
         }
         return dto;
+    }
+
+    /**
+     * Build message DTOs with attachments enriched.
+     * Message IDs are fetched from DB in order; attachments matched by index.
+     */
+    private List<MessageDTO> buildMessageDTOs(TicketId ticketId, Ticket ticket) {
+        List<MessageDTO> dtos = ticket.messages().stream()
+                .map(this::toMessageDTO)
+                .collect(Collectors.toList());
+
+        try {
+            List<Long> msgIds = ticketRepository.findMessageIdsByTicketIdOrdered(ticketId);
+            for (int i = 0; i < Math.min(msgIds.size(), dtos.size()); i++) {
+                List<Attachment> atts = attachmentRepository.findByMessageId(msgIds.get(i));
+                if (!atts.isEmpty()) {
+                    dtos.get(i).attachments = atts.stream()
+                            .map(a -> uploadAttachmentUseCase.toDTO(a))
+                            .collect(Collectors.toList());
+                }
+            }
+        } catch (Exception e) {
+            // Non-fatal: return messages without attachment enrichment rather than failing
+        }
+        return dtos;
     }
 
     private MessageDTO toMessageDTO(dev.autotix.domain.ticket.Message m) {
