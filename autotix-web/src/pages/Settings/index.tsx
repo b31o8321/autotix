@@ -6,7 +6,7 @@ export default function SettingsIndex() {
   const isAdmin = hasRole('ADMIN');
 
   return (
-    <div>
+    <div style={{ padding: 24 }}>
       <Typography.Title level={4}>Settings</Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={8}>
@@ -18,7 +18,7 @@ export default function SettingsIndex() {
         </Col>
         <Col span={8}>
           <Link to="/settings/ai">
-            <Card title="AI Config" hoverable>
+            <Card title="AI Configuration" hoverable>
               Configure AI endpoint, model and prompt
             </Card>
           </Link>
@@ -43,6 +43,27 @@ export default function SettingsIndex() {
               <Link to="/settings/sla">
                 <Card title="SLA Policies" hoverable>
                   Configure SLA targets per ticket priority
+                </Card>
+              </Link>
+            </Col>
+            <Col span={8}>
+              <Link to="/settings/tags">
+                <Card title="Tags" hoverable>
+                  Manage tag definitions, colors and categories
+                </Card>
+              </Link>
+            </Col>
+            <Col span={8}>
+              <Link to="/settings/custom-fields">
+                <Card title="Custom Fields" hoverable>
+                  Manage custom field schema for tickets and customers
+                </Card>
+              </Link>
+            </Col>
+            <Col span={8}>
+              <Link to="/settings/general">
+                <Card title="General" hoverable>
+                  Global AI auto-reply toggle and system settings
                 </Card>
               </Link>
             </Col>

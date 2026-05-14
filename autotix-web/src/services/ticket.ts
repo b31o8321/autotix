@@ -35,6 +35,11 @@ export interface TicketDTO {
   slaBreached?: boolean;
   firstResponseRemainingMs?: number;
   resolutionRemainingMs?: number;
+  // Slice 13/14: AI suspension + escalation + customer link
+  aiSuspended?: boolean;
+  escalatedAt?: string;
+  customerId?: string;
+  customFields?: Record<string, string>;
 }
 
 /** Slice 11: file attachment metadata */
@@ -151,4 +156,17 @@ export async function listTicketActivity(
     method: 'GET',
     params: { offset, limit },
   });
+}
+
+/** Escalate ticket to human — sets aiSuspended=true */
+export async function escalateTicket(id: string, reason: string) {
+  return request(`/api/desk/tickets/${id}/escalate`, {
+    method: 'POST',
+    data: { reason },
+  });
+}
+
+/** Resume AI on a suspended ticket (admin only) */
+export async function resumeAi(id: string) {
+  return request(`/api/desk/tickets/${id}/resume-ai`, { method: 'POST' });
 }

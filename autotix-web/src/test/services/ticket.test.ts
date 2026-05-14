@@ -6,7 +6,7 @@ vi.mock('@/utils/request', () => ({
 }));
 
 import { request } from '@/utils/request';
-import { listTickets, getTicket, replyTicket, closeTicket } from '@/services/ticket';
+import { listTickets, getTicket, replyTicket, closeTicket, escalateTicket, resumeAi } from '@/services/ticket';
 
 const mockRequest = vi.mocked(request);
 
@@ -43,7 +43,7 @@ describe('ticket service', () => {
       '/api/desk/tickets/ticket-1/reply',
       expect.objectContaining({
         method: 'POST',
-        data: { content: 'Hello!', closeAfter: true },
+        data: expect.objectContaining({ content: 'Hello!', closeAfter: true }),
       }),
     );
   });
@@ -53,6 +53,27 @@ describe('ticket service', () => {
     await closeTicket('ticket-1');
     expect(mockRequest).toHaveBeenCalledWith(
       '/api/desk/tickets/ticket-1/close',
+      expect.objectContaining({ method: 'POST' }),
+    );
+  });
+
+  it('escalateTicket POSTs to escalate endpoint with reason', async () => {
+    mockRequest.mockResolvedValue({});
+    await escalateTicket('ticket-1', 'Customer upset');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/api/desk/tickets/ticket-1/escalate',
+      expect.objectContaining({
+        method: 'POST',
+        data: { reason: 'Customer upset' },
+      }),
+    );
+  });
+
+  it('resumeAi POSTs to resume-ai endpoint', async () => {
+    mockRequest.mockResolvedValue({});
+    await resumeAi('ticket-1');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/api/desk/tickets/ticket-1/resume-ai',
       expect.objectContaining({ method: 'POST' }),
     );
   });

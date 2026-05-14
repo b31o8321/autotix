@@ -1,9 +1,14 @@
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { ReactNode } from 'react';
+import { autotixTheme } from '@/styles/tokens';
 
 export function rootContainer(container: ReactNode) {
-  return <ConfigProvider locale={zhCN}>{container}</ConfigProvider>;
+  return (
+    <ConfigProvider locale={zhCN} theme={autotixTheme}>
+      {container}
+    </ConfigProvider>
+  );
 }
 
 // Request interceptor + auth/401 handling live in `src/utils/request.ts`.
