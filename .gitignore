@@ -18,6 +18,8 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+.superpowers/
+
 # Env / secrets
 .env
 .env.local
