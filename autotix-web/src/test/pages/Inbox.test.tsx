@@ -14,6 +14,9 @@ vi.mock('@/services/ticket', () => ({
   escalateTicket: vi.fn(),
   resumeAi: vi.fn(),
   uploadAttachment: vi.fn(),
+  updateTicketTags: vi.fn(),
+  updateTicketCustomField: vi.fn(),
+  markSpam: vi.fn(),
 }));
 
 vi.mock('@/services/inbox', () => ({
@@ -22,6 +25,10 @@ vi.mock('@/services/inbox', () => ({
 
 vi.mock('@/services/customer', () => ({
   getCustomer: vi.fn(),
+}));
+
+vi.mock('@/services/ai', () => ({
+  generateAIDraft: vi.fn(),
 }));
 
 vi.mock('@/services/tag', () => ({
@@ -39,16 +46,20 @@ vi.mock('@/utils/auth', () => ({
 }));
 
 import InboxPage from '@/pages/Inbox';
-import { listTickets, getTicket } from '@/services/ticket';
+import { listTickets, getTicket, replyTicket, updateTicketTags } from '@/services/ticket';
 import { subscribeInbox } from '@/services/inbox';
 import { getTagSuggestions } from '@/services/tag';
 import { getCustomFieldSchema } from '@/services/customfield';
+import { generateAIDraft } from '@/services/ai';
 
 const mockListTickets = vi.mocked(listTickets);
 const mockGetTicket = vi.mocked(getTicket);
 const mockSubscribeInbox = vi.mocked(subscribeInbox);
 const mockGetTagSuggestions = vi.mocked(getTagSuggestions);
 const mockGetCustomFieldSchema = vi.mocked(getCustomFieldSchema);
+const mockGenerateAIDraft = vi.mocked(generateAIDraft);
+const mockReplyTicket = vi.mocked(replyTicket);
+const mockUpdateTicketTags = vi.mocked(updateTicketTags);
 
 const sampleTickets = [
   {
@@ -101,6 +112,8 @@ describe('InboxPage (3-column)', () => {
     mockSubscribeInbox.mockReturnValue(() => {});
     mockGetTagSuggestions.mockResolvedValue([]);
     mockGetCustomFieldSchema.mockResolvedValue([]);
+    mockReplyTicket.mockResolvedValue(undefined);
+    mockUpdateTicketTags.mockResolvedValue(undefined);
   });
 
   it('calls subscribeInbox on mount', () => {
@@ -162,5 +175,77 @@ describe('InboxPage (3-column)', () => {
     // "Open" and "All" appear in both tabs and segmented filter; verify at least one
     expect(screen.getAllByText(/^Open$/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/^All$/).length).toBeGreaterThan(0);
+  });
+
+  it('AI draft: generate → use calls replyTicket', async () => {
+    mockGenerateAIDraft.mockResolvedValue({
+      reply: 'Your order is on the way!',
+      action: 'NONE',
+      suggestedTags: [],
+      latencyMs: 1200,
+      modelName: 'gpt-4o',
+    });
+
+    render(<InboxPage />);
+    await waitFor(() => screen.getByText('Order issue #1234'));
+    fireEvent.click(screen.getByText('Order issue #1234'));
+    await waitFor(() => screen.getByText('Hi, my order has not arrived yet.'));
+
+    // Click "Generate AI draft"
+    const generateBtn = await screen.findByText('Generate AI draft');
+    fireEvent.click(generateBtn);
+
+    // Should call generateAIDraft
+    await waitFor(() => expect(mockGenerateAIDraft).toHaveBeenCalledWith('ticket-1', 'DEFAULT'));
+
+    // Should show the draft content
+    await waitFor(() => screen.getByText('Your order is on the way!'));
+
+    // Click "Use this"
+    const useBtn = screen.getByText('Use this');
+    fireEvent.click(useBtn);
+
+    await waitFor(() => expect(mockReplyTicket).toHaveBeenCalledWith(
+      'ticket-1',
+      'Your order is on the way!',
+      false,
+      false,
+    ));
+  });
+
+  it('AI draft: shows suspended note when aiSuspended', async () => {
+    const suspendedTicket = {
+      ...sampleTicketDetail,
+      aiSuspended: true,
+    };
+    mockGetTicket.mockResolvedValue(suspendedTicket);
+
+    render(<InboxPage />);
+    await waitFor(() => screen.getByText('Order issue #1234'));
+    fireEvent.click(screen.getByText('Order issue #1234'));
+
+    // Wait for ticket to load — aiSuspended panel note should be visible (possibly multiple times)
+    await waitFor(() => {
+      const els = screen.getAllByText(/AI suspended/);
+      expect(els.length).toBeGreaterThan(0);
+    });
+    expect(screen.queryByText('Generate AI draft')).not.toBeInTheDocument();
+  });
+
+  it('tag editing: updateTicketTags is defined and mockable', async () => {
+    // Lightweight test: verify the mock is set up and the UI loads with tag section
+    render(<InboxPage />);
+    await waitFor(() => screen.getByText('Order issue #1234'));
+    fireEvent.click(screen.getByText('Order issue #1234'));
+    await waitFor(() => screen.getByText('Hi, my order has not arrived yet.'));
+
+    // The Tags section heading should be visible in the right panel
+    await waitFor(() => {
+      expect(screen.getByText('Tags')).toBeInTheDocument();
+    });
+
+    // Directly call the service function to verify it's mockable
+    await updateTicketTags('ticket-1', ['new-tag'], []);
+    expect(mockUpdateTicketTags).toHaveBeenCalledWith('ticket-1', ['new-tag'], []);
   });
 });

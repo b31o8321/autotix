@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   AutoComplete,
   Avatar,
   Badge,
   Button,
   Card,
+  DatePicker,
   Divider,
   Dropdown,
   Input,
+  InputNumber,
   message,
   Modal,
+  Select,
   Segmented,
+  Spin,
   Tabs,
   Tag,
   Tooltip,
@@ -21,6 +26,7 @@ import {
   CloseOutlined,
   EllipsisOutlined,
   LeftOutlined,
+  LoadingOutlined,
   MailOutlined,
   MessageOutlined,
   PaperClipOutlined,
@@ -30,19 +36,24 @@ import {
 import { history } from 'umi';
 import type { TicketDTO, AttachmentDTO } from '@/services/ticket';
 import {
+  closeTicket,
   escalateTicket,
   getTicket,
   listTickets,
+  markSpam,
   replyTicket,
   resumeAi,
   solveTicket,
+  updateTicketTags,
+  updateTicketCustomField,
   uploadAttachment,
 } from '@/services/ticket';
+import type { DraftDTO, StyleHint } from '@/services/ai';
+import { generateAIDraft } from '@/services/ai';
 import { subscribeInbox } from '@/services/inbox';
-import { getCustomer } from '@/services/customer';
+import type { CustomerDetailDTO } from '@/services/customer';
 import { getTagSuggestions } from '@/services/tag';
 import { getCustomFieldSchema } from '@/services/customfield';
-import type { CustomerDetailDTO } from '@/services/customer';
 import type { TagDTO } from '@/services/tag';
 import type { CustomFieldDTO } from '@/services/customfield';
 import { getAccessToken, getCurrentUser, hasRole } from '@/utils/auth';
@@ -256,7 +267,6 @@ export default function InboxPage() {
 
   // ── Right panel state ─────────────────────────
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
-  const [customer, setCustomer] = useState<CustomerDetailDTO | null>(null);
   const [tagDefs, setTagDefs] = useState<TagDTO[]>([]);
   const [customFieldSchema, setCustomFieldSchema] = useState<CustomFieldDTO[]>([]);
 
@@ -269,6 +279,19 @@ export default function InboxPage() {
   // ── Escalate modal state ──────────────────────
   const [escalateVisible, setEscalateVisible] = useState(false);
   const [escalateReason, setEscalateReason] = useState('');
+
+  // ── AI Draft state ────────────────────────────
+  type DraftState = 'idle' | 'loading' | 'ready' | 'error';
+  const [draftState, setDraftState] = useState<DraftState>('idle');
+  const [draft, setDraft] = useState<DraftDTO | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+  const [draftStyleHint, setDraftStyleHint] = useState<StyleHint>('DEFAULT');
+
+  // ── Tag input state ───────────────────────────
+  const [tagInputValue, setTagInputValue] = useState('');
+
+  // ── Custom field save pending ─────────────────
+  const [savingField, setSavingField] = useState<Record<string, boolean>>({});
 
   // ── Refresh debounce ref ──────────────────────
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -298,18 +321,10 @@ export default function InboxPage() {
     try {
       const t = await getTicket(ticketId);
       setCurrentTicket(t);
-
-      // Load customer if available
-      if (t.customerId) {
-        try {
-          const c = await getCustomer(t.customerId);
-          setCustomer(c);
-        } catch {
-          setCustomer(null);
-        }
-      } else {
-        setCustomer(null);
-      }
+      // Auto-clear draft when ticket changes
+      setDraftState('idle');
+      setDraft(null);
+      setDraftError(null);
     } catch {
       // ignore
     } finally {
@@ -474,6 +489,91 @@ export default function InboxPage() {
   }
 
   // ──────────────────────────────────────────────
+  // AI Draft
+  // ──────────────────────────────────────────────
+  async function handleGenerateDraft() {
+    if (!currentTicket) return;
+    setDraftState('loading');
+    setDraftError(null);
+    try {
+      const d = await generateAIDraft(currentTicket.id, draftStyleHint);
+      setDraft(d);
+      setDraftState('ready');
+    } catch (e: any) {
+      setDraftError(e?.message || 'AI generation failed');
+      setDraftState('error');
+    }
+  }
+
+  async function handleUseDraft() {
+    if (!currentTicket || !draft) return;
+    setSendingReply(true);
+    try {
+      await replyTicket(currentTicket.id, draft.reply, false, false);
+      message.success('Reply sent');
+      setDraftState('idle');
+      setDraft(null);
+      await fetchTicketDetail(currentTicket.id);
+      await fetchTickets();
+    } catch {
+      message.error('Failed to send reply');
+    } finally {
+      setSendingReply(false);
+    }
+  }
+
+  function handleEditAndUseDraft() {
+    if (!draft) return;
+    setReplyContent(draft.reply);
+    setDraftState('idle');
+    setDraft(null);
+    // Focus reply textarea (best-effort)
+  }
+
+  // ──────────────────────────────────────────────
+  // Tag editing
+  // ──────────────────────────────────────────────
+  async function handleAddTag(tagName: string) {
+    if (!currentTicket || !tagName.trim()) return;
+    const name = tagName.trim();
+    try {
+      await updateTicketTags(currentTicket.id, [name], []);
+      setTagInputValue('');
+      await fetchTicketDetail(currentTicket.id);
+      // Also refresh tag definitions
+      getTagSuggestions().then(setTagDefs).catch(() => {});
+    } catch {
+      message.error('Failed to add tag');
+    }
+  }
+
+  async function handleRemoveTag(tagName: string) {
+    if (!currentTicket) return;
+    try {
+      await updateTicketTags(currentTicket.id, [], [tagName]);
+      await fetchTicketDetail(currentTicket.id);
+    } catch {
+      message.error('Failed to remove tag');
+    }
+  }
+
+  // ──────────────────────────────────────────────
+  // Custom field editing
+  // ──────────────────────────────────────────────
+  async function handleSaveCustomField(key: string, value: string | null) {
+    if (!currentTicket) return;
+    setSavingField((prev) => ({ ...prev, [key]: true }));
+    try {
+      await updateTicketCustomField(currentTicket.id, key, value);
+      await fetchTicketDetail(currentTicket.id);
+    } catch {
+      message.error('Failed to save custom field');
+    } finally {
+      setSavingField((prev) => ({ ...prev, [key]: false }));
+    }
+  }
+
+  // ──────────────────────────────────────────────
   // Middle column "More" dropdown
   // ──────────────────────────────────────────────
   const moreMenuItems = [
@@ -486,29 +586,58 @@ export default function InboxPage() {
     {
       key: 'close',
       label: 'Permanently Close',
-      onClick: async () => {
+      onClick: () => {
         if (!currentTicket) return;
-        try {
-          const { closeTicket } = await import('@/services/ticket');
-          await closeTicket(currentTicket.id);
-          await fetchTicketDetail(currentTicket.id);
-          await fetchTickets();
-        } catch {
-          message.error('Failed to close ticket');
-        }
+        Modal.confirm({
+          title: 'Permanently close this ticket?',
+          content: 'This action cannot be undone.',
+          okText: 'Close',
+          okButtonProps: { danger: true },
+          onOk: async () => {
+            try {
+              await closeTicket(currentTicket.id);
+              await fetchTicketDetail(currentTicket.id);
+              await fetchTickets();
+            } catch {
+              message.error('Failed to close ticket');
+            }
+          },
+        });
       },
     },
     {
       key: 'spam',
       label: 'Mark spam',
-      disabled: true, // TODO: add spam endpoint
+      onClick: () => {
+        if (!currentTicket) return;
+        Modal.confirm({
+          title: 'Mark this ticket as spam?',
+          okText: 'Mark spam',
+          okButtonProps: { danger: true },
+          onOk: async () => {
+            try {
+              await markSpam(currentTicket.id);
+              await fetchTicketDetail(currentTicket.id);
+              await fetchTickets();
+              message.success('Ticket marked as spam');
+            } catch {
+              message.error('Failed to mark ticket as spam');
+            }
+          },
+        });
+      },
     },
     ...(isAdmin && currentTicket?.aiSuspended
       ? [
           {
             key: 'resume-ai',
             label: 'Resume AI',
-            onClick: handleResumeAi,
+            onClick: () => {
+              Modal.confirm({
+                title: 'Resume AI for this ticket?',
+                onOk: handleResumeAi,
+              });
+            },
           },
         ]
       : []),
@@ -1095,56 +1224,59 @@ export default function InboxPage() {
                     />
                     <div style={{ minWidth: 0 }}>
                       <Text style={{ fontSize: 13, fontWeight: 600, color: '#0B1426', display: 'block' }}>
-                        {customer?.displayName ||
+                        {currentTicket.customer?.displayName ||
                           currentTicket.customerName ||
                           currentTicket.customerIdentifier ||
                           'Unknown'}
                       </Text>
-                      {(customer?.primaryEmail || currentTicket.customerIdentifier) && (
+                      {(currentTicket.customer?.primaryEmail || currentTicket.customerIdentifier) && (
                         <Link
-                          href={`mailto:${customer?.primaryEmail || currentTicket.customerIdentifier}`}
+                          href={`mailto:${currentTicket.customer?.primaryEmail || currentTicket.customerIdentifier}`}
                           style={{ fontSize: 12 }}
                         >
-                          {customer?.primaryEmail || currentTicket.customerIdentifier}
+                          {currentTicket.customer?.primaryEmail || currentTicket.customerIdentifier}
                         </Link>
                       )}
                     </div>
                   </div>
-                  {customer && (
+                  {currentTicket.customer && (
                     <Text style={{ fontSize: 12, color: '#5A6B7D' }}>
-                      {customer.identifierCount} channel{customer.identifierCount !== 1 ? 's' : ''}
+                      {currentTicket.customer.identifierCount} channel{currentTicket.customer.identifierCount !== 1 ? 's' : ''}
                     </Text>
                   )}
                 </div>
 
                 {/* Customer ticket history */}
-                {customer && customer.recentTicketIds && customer.recentTicketIds.length > 0 && (
+                {currentTicket.recentTicketSummary && currentTicket.recentTicketSummary.length > 0 && (
                   <div style={{ marginTop: 10 }}>
                     <Text style={{ fontSize: 12, color: '#5A6B7D' }}>
-                      History · {customer.recentTicketIds.length} tickets
+                      History · {currentTicket.recentTicketSummary.length} ticket{currentTicket.recentTicketSummary.length !== 1 ? 's' : ''}
                     </Text>
                     <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      {customer.recentTicketIds.slice(0, 5).map((tid) => (
+                      {currentTicket.recentTicketSummary.map((ts) => (
                         <div
-                          key={tid}
+                          key={ts.id}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
                             gap: 4,
                             cursor: 'pointer',
+                            padding: '2px 0',
                           }}
-                          onClick={() => handleSelectTicket(tid)}
+                          onClick={() => handleSelectTicket(ts.id)}
                         >
                           <span
                             style={{
                               width: 8,
                               height: 8,
                               borderRadius: '50%',
-                              background: tid === currentTicket.id ? '#2962FF' : '#9BAAB8',
+                              background: ts.status === 'SOLVED' || ts.status === 'CLOSED' ? '#16A34A' : '#9BAAB8',
                               flexShrink: 0,
                             }}
                           />
-                          <Text style={{ fontSize: 12, color: '#2962FF' }}>{tid}</Text>
+                          <Text style={{ fontSize: 12, color: '#2962FF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {ts.subject}
+                          </Text>
                         </div>
                       ))}
                     </div>
@@ -1162,13 +1294,18 @@ export default function InboxPage() {
                   Tags
                 </Text>
                 <Divider style={{ margin: '6px 0' }} />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 6 }}>
                   {currentTicket.tags.length === 0 && (
                     <Text style={{ fontSize: 12, color: '#9BAAB8' }}>No tags</Text>
                   )}
                   {currentTicket.tags.map((tag) => (
                     <Tag
                       key={tag}
+                      closable
+                      onClose={(e) => {
+                        e.preventDefault();
+                        handleRemoveTag(tag);
+                      }}
                       style={{
                         fontSize: 12,
                         background: tagColorMap[tag] ? `${tagColorMap[tag]}22` : '#EEF2F6',
@@ -1180,17 +1317,22 @@ export default function InboxPage() {
                     </Tag>
                   ))}
                 </div>
-                {/* TODO (slice 16): add tag editing — requires POST /api/desk/tickets/{id}/tags endpoint */}
                 <AutoComplete
-                  style={{ width: '100%', marginTop: 8 }}
+                  style={{ width: '100%' }}
                   placeholder="Add tag…"
-                  options={tagDefs.map((t) => ({ value: t.name, label: t.name }))}
+                  options={tagDefs
+                    .filter((t) => !currentTicket.tags.includes(t.name))
+                    .map((t) => ({ value: t.name, label: t.name }))}
                   size="small"
-                  disabled
+                  value={tagInputValue}
+                  onChange={(v) => setTagInputValue(v)}
+                  onSelect={(v) => handleAddTag(v)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && tagInputValue.trim()) {
+                      handleAddTag(tagInputValue);
+                    }
+                  }}
                 />
-                <Text style={{ fontSize: 11, color: '#9BAAB8' }}>
-                  Tag editing coming in slice 16
-                </Text>
               </div>
 
               <div style={{ height: 16 }} />
@@ -1207,19 +1349,50 @@ export default function InboxPage() {
                   <Text style={{ fontSize: 12, color: '#9BAAB8' }}>No custom fields defined</Text>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {customFieldSchema.map((field) => (
-                      <div key={field.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 12, color: '#5A6B7D' }}>{field.name}</Text>
-                        <Text style={{ fontSize: 12, color: '#0B1426' }}>
-                          {currentTicket.customFields?.[field.key] || (
-                            <span style={{ color: '#9BAAB8' }}>—</span>
-                          )}
-                        </Text>
-                      </div>
-                    ))}
+                    {customFieldSchema.map((field) => {
+                      const currentVal = currentTicket.customFields?.[field.key] ?? '';
+                      const isSaving = savingField[field.key];
+                      return (
+                        <div key={field.id} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <Text style={{ fontSize: 11, color: '#5A6B7D' }}>{field.name}</Text>
+                          <div style={{ position: 'relative' }}>
+                            {field.type === 'NUMBER' ? (
+                              <InputNumber
+                                size="small"
+                                style={{ width: '100%', fontSize: 12 }}
+                                value={currentVal ? Number(currentVal) : undefined}
+                                onBlur={(e) => handleSaveCustomField(field.key, e.target.value || null)}
+                                placeholder="—"
+                              />
+                            ) : field.type === 'DATE' ? (
+                              <Input
+                                size="small"
+                                style={{ fontSize: 12 }}
+                                value={currentVal}
+                                placeholder="YYYY-MM-DD"
+                                onBlur={(e) => handleSaveCustomField(field.key, e.target.value || null)}
+                              />
+                            ) : (
+                              <Input
+                                size="small"
+                                style={{ fontSize: 12 }}
+                                defaultValue={currentVal}
+                                key={`${field.key}-${currentVal}`}
+                                placeholder="—"
+                                onBlur={(e) => handleSaveCustomField(field.key, e.target.value || null)}
+                              />
+                            )}
+                            {isSaving && (
+                              <span style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)' }}>
+                                <LoadingOutlined style={{ fontSize: 11, color: '#9BAAB8' }} />
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
-                {/* TODO (slice 16): inline editing requires PUT /api/desk/tickets/{id}/custom-fields endpoint */}
               </div>
 
               <div style={{ height: 16 }} />
@@ -1229,43 +1402,103 @@ export default function InboxPage() {
               {/* AI Draft section */}
               <Card
                 size="small"
-                title={
-                  <span style={{ fontSize: 12, fontWeight: 600 }}>
-                    AI Draft
-                    <Button
-                      type="text"
-                      size="small"
-                      style={{ marginLeft: 4, fontSize: 11 }}
-                      title="Coming in slice 15"
-                      disabled
-                    >
-                      ↻
-                    </Button>
-                  </span>
-                }
+                title={<span style={{ fontSize: 12, fontWeight: 600 }}>AI Draft</span>}
                 style={{ border: '1px solid #EEF2F6' }}
                 styles={{ header: { minHeight: 36, padding: '0 12px' }, body: { padding: '8px 12px' } }}
               >
                 {currentTicket.aiSuspended ? (
                   <Text style={{ fontSize: 12, color: '#9BAAB8' }}>
-                    AI suspended for this ticket. Use ⋯ More → Resume AI (admin) to re-enable.
+                    AI suspended. Resume from ⋯ More menu (admin only).
                   </Text>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <Text style={{ fontSize: 12, color: '#9BAAB8' }}>
-                      AI draft would appear here in slice 15.
-                    </Text>
-                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                      <Button size="small" disabled title="Coming in slice 15">
-                        Use this
-                      </Button>
-                      <Button size="small" disabled title="Coming in slice 15">
-                        Edit &amp; use
-                      </Button>
-                      <Button size="small" disabled title="Coming in slice 15">
-                        Regenerate
-                      </Button>
-                    </div>
+                    {draftState === 'idle' && (
+                      <>
+                        <Select
+                          size="small"
+                          value={draftStyleHint}
+                          onChange={(v) => setDraftStyleHint(v as StyleHint)}
+                          options={[
+                            { value: 'DEFAULT', label: 'Default style' },
+                            { value: 'FRIENDLIER', label: 'Friendlier' },
+                            { value: 'FORMAL', label: 'Formal' },
+                            { value: 'SHORTER', label: 'Shorter' },
+                          ]}
+                          style={{ width: '100%' }}
+                        />
+                        <Button
+                          size="small"
+                          type="primary"
+                          onClick={handleGenerateDraft}
+                          block
+                        >
+                          Generate AI draft
+                        </Button>
+                      </>
+                    )}
+                    {draftState === 'loading' && (
+                      <div style={{ textAlign: 'center', padding: '8px 0' }}>
+                        <Spin indicator={<LoadingOutlined />} />
+                        <div style={{ marginTop: 4 }}>
+                          <Button
+                            size="small"
+                            onClick={() => setDraftState('idle')}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    {draftState === 'ready' && draft && (
+                      <>
+                        <div style={{ fontSize: 11, color: '#9BAAB8' }}>
+                          {draft.latencyMs < 2000 ? '⚡ fast' : '⏱'} · {draft.modelName}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: '#0B1426',
+                            background: '#F7F9FB',
+                            borderRadius: 6,
+                            padding: '8px 10px',
+                            whiteSpace: 'pre-wrap',
+                            lineHeight: 1.5,
+                            maxHeight: 160,
+                            overflowY: 'auto',
+                          }}
+                        >
+                          {draft.reply}
+                        </div>
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                          <Button
+                            size="small"
+                            type="primary"
+                            onClick={handleUseDraft}
+                            loading={sendingReply}
+                          >
+                            Use this
+                          </Button>
+                          <Button size="small" onClick={handleEditAndUseDraft}>
+                            Edit &amp; use
+                          </Button>
+                          <Button size="small" onClick={handleGenerateDraft}>
+                            Regenerate
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                    {draftState === 'error' && (
+                      <>
+                        <Alert
+                          type="error"
+                          message={draftError || 'AI generation failed'}
+                          style={{ fontSize: 11 }}
+                        />
+                        <Button size="small" onClick={handleGenerateDraft} block>
+                          Retry
+                        </Button>
+                      </>
+                    )}
                   </div>
                 )}
               </Card>

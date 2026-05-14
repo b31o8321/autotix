@@ -662,4 +662,37 @@ class TicketTest {
         assertNull(ticket.customFields().get("region"));
         assertEquals(1, ticket.customFields().size());
     }
+
+    @Test
+    void removeTags_idempotent_doesNotThrow() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Set<String> initialTags = new HashSet<>();
+        initialTags.add("billing");
+        initialTags.add("refund");
+        ticket.addTags(new HashSet<>(initialTags));
+
+        // Remove an existing tag — should succeed
+        Set<String> billing = new HashSet<>();
+        billing.add("billing");
+        ticket.removeTags(billing);
+        assertFalse(ticket.tags().contains("billing"));
+        assertTrue(ticket.tags().contains("refund"));
+
+        // Remove a tag that doesn't exist — should not throw
+        Set<String> nonExistent = new HashSet<>();
+        nonExistent.add("non-existent-tag");
+        assertDoesNotThrow(() -> ticket.removeTags(nonExistent));
+        assertTrue(ticket.tags().contains("refund"));
+    }
+
+    @Test
+    void removeTags_null_noOp() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Set<String> tagA = new HashSet<>();
+        tagA.add("tag-a");
+        ticket.addTags(tagA);
+
+        assertDoesNotThrow(() -> ticket.removeTags(null));
+        assertTrue(ticket.tags().contains("tag-a"));
+    }
 }

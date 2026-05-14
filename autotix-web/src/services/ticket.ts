@@ -1,5 +1,6 @@
 // ticket REST client - matches DeskController
 import { request } from '@/utils/request';
+import type { CustomerDetailDTO } from '@/services/customer';
 
 export type TicketPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
 export type TicketType = 'QUESTION' | 'INCIDENT' | 'PROBLEM' | 'TASK';
@@ -40,6 +41,16 @@ export interface TicketDTO {
   escalatedAt?: string;
   customerId?: string;
   customFields?: Record<string, string>;
+  // Slice 15: enriched customer detail + recent ticket summary
+  customer?: CustomerDetailDTO;
+  recentTicketSummary?: TicketSummary[];
+}
+
+export interface TicketSummary {
+  id: string;
+  subject: string;
+  status: string;
+  updatedAt: string;
 }
 
 /** Slice 11: file attachment metadata */
@@ -169,4 +180,25 @@ export async function escalateTicket(id: string, reason: string) {
 /** Resume AI on a suspended ticket (admin only) */
 export async function resumeAi(id: string) {
   return request(`/api/desk/tickets/${id}/resume-ai`, { method: 'POST' });
+}
+
+/** Slice 15: add/remove tags on a ticket */
+export async function updateTicketTags(ticketId: string, add: string[], remove: string[]) {
+  return request(`/api/desk/tickets/${ticketId}/tags`, {
+    method: 'POST',
+    data: { add, remove },
+  });
+}
+
+/** Slice 15: set or clear a custom field value */
+export async function updateTicketCustomField(ticketId: string, key: string, value: string | null) {
+  return request(`/api/desk/tickets/${ticketId}/custom-fields/${key}`, {
+    method: 'PUT',
+    data: { value },
+  });
+}
+
+/** Slice 15: mark ticket as spam */
+export async function markSpam(ticketId: string) {
+  return request(`/api/desk/tickets/${ticketId}/mark-spam`, { method: 'POST' });
 }

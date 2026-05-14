@@ -1,12 +1,16 @@
 package dev.autotix.interfaces.desk.dto;
 
+import dev.autotix.interfaces.admin.dto.CustomerDetailDTO;
+
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * REST DTO for ticket (decoupled from domain).
  * Slice 8: added solvedAt, closedAt, parentTicketId, reopenCount.
+ * Slice 15: added customerId, customer detail, recentTicketSummary, customFields.
  */
 public class TicketDTO {
     public String id;
@@ -43,4 +47,17 @@ public class TicketDTO {
     // Slice 12/13: AI suspension fields
     public boolean aiSuspended;
     public Instant escalatedAt;
+    // Slice 15: customer detail + custom fields
+    public String customerId;
+    public Map<String, String> customFields;
+    public CustomerDetailDTO customer;
+    public List<TicketSummary> recentTicketSummary;
+
+    /** Lightweight ticket reference for customer history. */
+    public static class TicketSummary {
+        public String id;
+        public String subject;
+        public String status;
+        public Instant updatedAt;
+    }
 }

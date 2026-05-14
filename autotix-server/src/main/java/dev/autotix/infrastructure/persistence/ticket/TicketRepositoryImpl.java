@@ -261,7 +261,8 @@ public class TicketRepositoryImpl implements TicketRepository {
         e.setAiSuspended(t.aiSuspended());
         e.setEscalatedAt(t.escalatedAt());
         Map<String, String> cf = t.customFields();
-        e.setCustomFieldsJson((cf != null && !cf.isEmpty()) ? JSON.toJSONString(cf) : null);
+        // Store "{}" for empty map so MyBatis Plus updateById can clear a previously non-null column
+        e.setCustomFieldsJson((cf != null && !cf.isEmpty()) ? JSON.toJSONString(cf) : "{}");
         return e;
     }
 

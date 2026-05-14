@@ -1,10 +1,15 @@
 package dev.autotix.interfaces.desk;
 
+import dev.autotix.application.ai.GenerateAIDraftUseCase;
 import dev.autotix.application.attachment.UploadAttachmentUseCase;
 import dev.autotix.application.ticket.*;
+import dev.autotix.application.ticket.UpdateTicketCustomFieldUseCase;
 import dev.autotix.infrastructure.auth.CurrentUser;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.customer.Customer;
+import dev.autotix.domain.customer.CustomerId;
+import dev.autotix.domain.customer.CustomerRepository;
 import dev.autotix.domain.ticket.Attachment;
 import dev.autotix.domain.ticket.AttachmentRepository;
 import dev.autotix.domain.ticket.Ticket;
@@ -16,6 +21,8 @@ import dev.autotix.domain.ticket.TicketSearchQuery;
 import dev.autotix.domain.ticket.SlaState;
 import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.domain.ticket.TicketType;
+import dev.autotix.interfaces.admin.dto.CustomerDetailDTO;
+import dev.autotix.interfaces.admin.dto.CustomerIdentifierDTO;
 import dev.autotix.interfaces.desk.dto.AttachmentDTO;
 import dev.autotix.interfaces.desk.dto.MessageDTO;
 import dev.autotix.interfaces.desk.dto.ReplyRequest;
@@ -26,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +70,12 @@ public class DeskController {
     private final EscalateToHumanUseCase escalateToHuman;
     private final ResumeAiUseCase resumeAi;
     private final CurrentUser currentUser;
+    // Slice 15 additions
+    private final GenerateAIDraftUseCase generateAIDraft;
+    private final UpdateTagsUseCase updateTagsUseCase;
+    private final UpdateTicketCustomFieldUseCase updateCustomFieldUseCase;
+    private final MarkSpamUseCase markSpamUseCase;
+    private final CustomerRepository customerRepository;
 
     public DeskController(ListTicketsUseCase listTickets,
                           ReplyTicketUseCase replyTicket,
@@ -76,7 +90,12 @@ public class DeskController {
                           UploadAttachmentUseCase uploadAttachmentUseCase,
                           EscalateToHumanUseCase escalateToHuman,
                           ResumeAiUseCase resumeAi,
-                          CurrentUser currentUser) {
+                          CurrentUser currentUser,
+                          GenerateAIDraftUseCase generateAIDraft,
+                          UpdateTagsUseCase updateTags,
+                          UpdateTicketCustomFieldUseCase updateCustomField,
+                          MarkSpamUseCase markSpam,
+                          CustomerRepository customerRepository) {
         this.listTickets = listTickets;
         this.replyTicket = replyTicket;
         this.assignTicket = assignTicket;
@@ -91,6 +110,11 @@ public class DeskController {
         this.escalateToHuman = escalateToHuman;
         this.resumeAi = resumeAi;
         this.currentUser = currentUser;
+        this.generateAIDraft = generateAIDraft;
+        this.updateTagsUseCase = updateTags;
+        this.updateCustomFieldUseCase = updateCustomField;
+        this.markSpamUseCase = markSpam;
+        this.customerRepository = customerRepository;
     }
 
     @GetMapping
@@ -141,6 +165,27 @@ public class DeskController {
                         "Ticket not found: " + ticketId));
         TicketDTO dto = toDTO(ticket);
         dto.messages = buildMessageDTOs(tid, ticket);
+
+        // Slice 15: enrich with customer detail + recent ticket summary
+        if (ticket.customerId() != null) {
+            customerRepository.findById(ticket.customerId()).ifPresent(customer -> {
+                dto.customer = toCustomerDetailDTO(customer);
+                // Recent tickets (up to 10) excluding current
+                List<Ticket> recent = ticketRepository.findByCustomerId(customer.id(), 11);
+                dto.recentTicketSummary = recent.stream()
+                        .filter(t -> !t.id().value().equals(ticketId))
+                        .limit(10)
+                        .map(t -> {
+                            TicketDTO.TicketSummary s = new TicketDTO.TicketSummary();
+                            s.id = t.id().value();
+                            s.subject = t.subject();
+                            s.status = t.status() != null ? t.status().name() : null;
+                            s.updatedAt = t.updatedAt();
+                            return s;
+                        })
+                        .collect(Collectors.toList());
+            });
+        }
         return dto;
     }
 
@@ -223,6 +268,53 @@ public class DeskController {
         resumeAi.resume(new TicketId(ticketId), actorId);
     }
 
+    /**
+     * POST /api/desk/tickets/{id}/ai-draft — generate an AI draft reply.
+     */
+    @PostMapping("/{ticketId}/ai-draft")
+    public GenerateAIDraftUseCase.Draft aiDraft(@PathVariable String ticketId,
+                                                 @RequestBody(required = false) AIDraftRequest req) {
+        GenerateAIDraftUseCase.GenerationOptions options = new GenerateAIDraftUseCase.GenerationOptions();
+        if (req != null && req.styleHint != null) {
+            try {
+                options.styleHint = GenerateAIDraftUseCase.StyleHint.valueOf(req.styleHint.toUpperCase());
+            } catch (IllegalArgumentException ignored) {
+                options.styleHint = GenerateAIDraftUseCase.StyleHint.DEFAULT;
+            }
+        }
+        return generateAIDraft.generate(new TicketId(ticketId), options);
+    }
+
+    /**
+     * POST /api/desk/tickets/{id}/tags — add/remove tags on a ticket.
+     */
+    @PostMapping("/{ticketId}/tags")
+    public void updateTags(@PathVariable String ticketId,
+                            @RequestBody TagsRequest req) {
+        updateTagsUseCase.update(new TicketId(ticketId),
+                req.add != null ? req.add : Collections.emptySet(),
+                req.remove != null ? req.remove : Collections.emptySet());
+    }
+
+    /**
+     * PUT /api/desk/tickets/{id}/custom-fields/{key} — set/clear a custom field.
+     */
+    @PutMapping("/{ticketId}/custom-fields/{key}")
+    public void updateCustomField(@PathVariable String ticketId,
+                                   @PathVariable String key,
+                                   @RequestBody CustomFieldValueRequest req) {
+        updateCustomFieldUseCase.update(new TicketId(ticketId), key, req.value);
+    }
+
+    /**
+     * POST /api/desk/tickets/{id}/mark-spam — mark ticket as spam.
+     */
+    @PostMapping("/{ticketId}/mark-spam")
+    public void markSpam(@PathVariable String ticketId) {
+        String actorId = "agent:" + currentUser.id().value();
+        markSpamUseCase.mark(new TicketId(ticketId), actorId);
+    }
+
     @GetMapping("/{ticketId}/activity")
     public List<TicketActivityDTO> activity(@PathVariable String ticketId,
                                             @RequestParam(defaultValue = "0") int offset,
@@ -239,6 +331,19 @@ public class DeskController {
 
     public static class EscalateRequest {
         public String reason;
+    }
+
+    public static class AIDraftRequest {
+        public String styleHint;
+    }
+
+    public static class TagsRequest {
+        public Set<String> add;
+        public Set<String> remove;
+    }
+
+    public static class CustomFieldValueRequest {
+        public String value;
     }
 
     // -----------------------------------------------------------------------
@@ -280,6 +385,9 @@ public class DeskController {
         // Slice 13
         dto.aiSuspended = t.aiSuspended();
         dto.escalatedAt = t.escalatedAt();
+        // Slice 15
+        dto.customerId = t.customerId() != null ? t.customerId().value().toString() : null;
+        dto.customFields = t.customFields().isEmpty() ? null : t.customFields();
         return dto;
     }
 
@@ -326,6 +434,26 @@ public class DeskController {
         dto.action = a.action().name();
         dto.details = a.details();
         dto.occurredAt = a.occurredAt();
+        return dto;
+    }
+
+    private CustomerDetailDTO toCustomerDetailDTO(dev.autotix.domain.customer.Customer c) {
+        CustomerDetailDTO dto = new CustomerDetailDTO();
+        dto.id = c.id().longValue();
+        dto.displayName = c.displayName();
+        dto.primaryEmail = c.primaryEmail();
+        dto.identifierCount = c.identifiers().size();
+        dto.createdAt = c.createdAt();
+        dto.identifiers = c.identifiers().stream()
+                .map(ci -> {
+                    CustomerIdentifierDTO idDto = new CustomerIdentifierDTO();
+                    idDto.type = ci.type().name();
+                    idDto.value = ci.value();
+                    idDto.channelId = ci.channelId() != null ? ci.channelId().value() : null;
+                    return idDto;
+                })
+                .collect(Collectors.toList());
+        dto.attributes = c.attributes();
         return dto;
     }
 }

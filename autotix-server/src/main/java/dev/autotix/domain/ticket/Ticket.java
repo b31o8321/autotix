@@ -567,6 +567,17 @@ public class Ticket {
         updatedAt = Instant.now();
     }
 
+    /** Remove tags (idempotent — silently ignores tags not present). */
+    public void removeTags(Set<String> tagsToRemove) {
+        if (tagsToRemove == null || tagsToRemove.isEmpty()) {
+            return;
+        }
+        if (tags != null) {
+            tags.removeAll(tagsToRemove);
+        }
+        updatedAt = Instant.now();
+    }
+
     // -----------------------------------------------------------------------
     // Internal guards
     // -----------------------------------------------------------------------

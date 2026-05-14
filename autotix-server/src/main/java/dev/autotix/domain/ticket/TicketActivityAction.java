@@ -21,5 +21,6 @@ public enum TicketActivityAction {
     SPAWNED,
     SLA_BREACHED,
     ESCALATED,
-    AI_RESUMED
+    AI_RESUMED,
+    CUSTOM_FIELD_CHANGED
 }
