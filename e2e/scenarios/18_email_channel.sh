@@ -25,11 +25,13 @@ _check() {
 }
 
 # ── Pre-req: mail service running ─────────────────────────────────────────────
-if ! curl -s --connect-timeout 3 http://localhost:8088/ >/dev/null 2>&1; then
-  note "${SCENARIO}: GreenMail not reachable at localhost:8088 — skipping"
+# GreenMail standalone 2.0.0 doesn't serve HTTP — check SMTP TCP port directly.
+if ! (exec 3<>/dev/tcp/localhost/3025) 2>/dev/null; then
+  note "${SCENARIO}: GreenMail SMTP not reachable at localhost:3025 — skipping"
   note "${SCENARIO}: Start it with: docker compose --profile mail up -d mail"
   exit 77
 fi
+exec 3<&- 3>&- 2>/dev/null || true
 
 # ── Pre-req: python3 available ────────────────────────────────────────────────
 if ! command -v python3 >/dev/null 2>&1; then
@@ -44,7 +46,7 @@ SUBJECT="E2E Email Test $(random_token)"
 
 info "${SCENARIO}: Creating EMAIL channel"
 http POST /api/admin/channels/connect-api-key \
-  "{\"platform\":\"EMAIL\",\"channelType\":\"EMAIL\",\"displayName\":\"${CHANNEL_DISPLAY}\",\"credentials\":{\"imap_host\":\"localhost\",\"imap_port\":\"3143\",\"imap_user\":\"agent@autotix.local\",\"imap_password\":\"secret\",\"imap_use_ssl\":\"false\",\"smtp_host\":\"localhost\",\"smtp_port\":\"3025\",\"smtp_user\":\"agent@autotix.local\",\"smtp_password\":\"secret\",\"smtp_use_tls\":\"false\",\"from_address\":\"agent@autotix.local\"}}"
+  "{\"platform\":\"EMAIL\",\"channelType\":\"EMAIL\",\"displayName\":\"${CHANNEL_DISPLAY}\",\"credentials\":{\"imap_host\":\"mail\",\"imap_port\":\"3143\",\"imap_user\":\"agent\",\"imap_password\":\"secret\",\"imap_use_ssl\":\"false\",\"smtp_host\":\"mail\",\"smtp_port\":\"3025\",\"smtp_user\":\"agent\",\"smtp_password\":\"secret\",\"smtp_use_tls\":\"false\",\"from_address\":\"agent@autotix.local\"}}"
 _check "create EMAIL channel → 200" expect_2xx
 
 EMAIL_CHANNEL_ID=$(jq_extract '.channelId // .id // .channel.id')
@@ -122,7 +124,7 @@ IMAP_MSG_COUNT=$(python3 - <<'PY' 2>/dev/null || echo "0"
 import imaplib
 try:
     imap = imaplib.IMAP4('localhost', 3143)
-    imap.login('customer@example.com', 'secret')
+    imap.login('customer', 'secret')
     imap.select('INBOX')
     _, data = imap.search(None, 'ALL')
     count = len(data[0].split()) if data[0] else 0
@@ -142,12 +144,13 @@ fi
 
 # ── 7. Verify reply body via IMAP ─────────────────────────────────────────────
 info "${SCENARIO}: Verifying reply body in customer mailbox"
-REPLY_BODY=$(python3 - <<'PY' 2>/dev/null || echo "")
+set +e
+REPLY_BODY=$(python3 - 2>/dev/null <<'PY'
 import imaplib
 import email
 try:
     imap = imaplib.IMAP4('localhost', 3143)
-    imap.login('customer@example.com', 'secret')
+    imap.login('customer', 'secret')
     imap.select('INBOX')
     _, data = imap.search(None, 'ALL')
     ids = data[0].split()
@@ -165,10 +168,11 @@ try:
         else:
             print(msg.get_payload(decode=True).decode('utf-8', errors='replace'))
     imap.logout()
-except Exception as e:
+except Exception:
     print('')
 PY
 )
+set -e
 
 if printf '%s' "${REPLY_BODY}" | grep -qi "auto reply"; then
   pass "${SCENARIO}: Reply body contains 'auto reply'"

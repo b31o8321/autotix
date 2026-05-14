@@ -59,7 +59,7 @@ services:
       - "3143:3143"   # IMAP
       - "8088:8080"   # GreenMail API/Web UI
     environment:
-      GREENMAIL_OPTS: "-Dgreenmail.setup.test.all -Dgreenmail.users=agent:secret:autotix.local,customer:secret:example.com -Dgreenmail.auth.disabled"
+      GREENMAIL_OPTS: "-Dgreenmail.setup.test.all -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.users=agent:secret:autotix.local,customer:secret:example.com -Dgreenmail.auth.disabled"
 
 volumes:
   autotix-data:
