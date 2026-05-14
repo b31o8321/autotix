@@ -578,4 +578,88 @@ class TicketTest {
         assertNotNull(child.parentTicketId());
         assertEquals("99", child.parentTicketId().value());
     }
+
+    // -----------------------------------------------------------------------
+    // Slice 12: escalation + custom fields
+    // -----------------------------------------------------------------------
+
+    @Test
+    void escalateToHuman_fromOpen_setsAiSuspendedAndEscalatedAt() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.changeStatus(TicketStatus.OPEN);
+
+        assertFalse(ticket.aiSuspended());
+        assertNull(ticket.escalatedAt());
+
+        ticket.escalateToHuman("agent:1", "Customer wants human");
+
+        assertTrue(ticket.aiSuspended());
+        assertNotNull(ticket.escalatedAt());
+        assertEquals(TicketStatus.OPEN, ticket.status()); // was already OPEN
+    }
+
+    @Test
+    void escalateToHuman_fromNew_transitionsToOpen() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertEquals(TicketStatus.NEW, ticket.status());
+
+        ticket.escalateToHuman("agent:1", "reason");
+
+        assertEquals(TicketStatus.OPEN, ticket.status());
+        assertTrue(ticket.aiSuspended());
+    }
+
+    @Test
+    void escalateToHuman_fromClosed_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.permanentClose(Instant.now());
+
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.escalateToHuman("agent:1", "reason"));
+    }
+
+    @Test
+    void escalateToHuman_alreadyEscalated_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.escalateToHuman("agent:1", "first");
+
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.escalateToHuman("agent:2", "second"));
+    }
+
+    @Test
+    void resumeAi_whenSuspended_clearsFlag() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.escalateToHuman("agent:1", "reason");
+        assertTrue(ticket.aiSuspended());
+
+        ticket.resumeAi("agent:admin");
+
+        assertFalse(ticket.aiSuspended());
+    }
+
+    @Test
+    void resumeAi_whenNotSuspended_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertFalse(ticket.aiSuspended());
+
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.resumeAi("agent:admin"));
+    }
+
+    @Test
+    void setCustomField_and_clearCustomField_roundTrip() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+
+        ticket.setCustomField("order_id", "ORD-12345");
+        ticket.setCustomField("region", "APAC");
+
+        assertEquals("ORD-12345", ticket.customFields().get("order_id"));
+        assertEquals("APAC", ticket.customFields().get("region"));
+        assertEquals(2, ticket.customFields().size());
+
+        ticket.clearCustomField("region");
+        assertNull(ticket.customFields().get("region"));
+        assertEquals(1, ticket.customFields().size());
+    }
 }

@@ -1,8 +1,11 @@
 package dev.autotix.infrastructure.persistence.ticket;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.customer.CustomerId;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.MessageVisibility;
@@ -21,8 +24,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -239,6 +244,12 @@ public class TicketRepositoryImpl implements TicketRepository {
         e.setFirstResponseDueAt(t.firstResponseDueAt());
         e.setResolutionDueAt(t.resolutionDueAt());
         e.setSlaBreached(t.slaBreached());
+        // Slice 12: customer + AI suspension + custom fields
+        e.setCustomerId(t.customerId() != null ? t.customerId().longValue() : null);
+        e.setAiSuspended(t.aiSuspended());
+        e.setEscalatedAt(t.escalatedAt());
+        Map<String, String> cf = t.customFields();
+        e.setCustomFieldsJson((cf != null && !cf.isEmpty()) ? JSON.toJSONString(cf) : null);
         return e;
     }
 
@@ -265,6 +276,14 @@ public class TicketRepositoryImpl implements TicketRepository {
         TicketType type = e.getType() != null
                 ? TicketType.valueOf(e.getType()) : TicketType.QUESTION;
         boolean slaBreached = e.getSlaBreached() != null && e.getSlaBreached();
+        // Slice 12
+        CustomerId customerId = e.getCustomerId() != null ? new CustomerId(e.getCustomerId()) : null;
+        boolean aiSuspended = e.getAiSuspended() != null && e.getAiSuspended();
+        Map<String, String> customFields = new HashMap<>();
+        if (e.getCustomFieldsJson() != null && !e.getCustomFieldsJson().isEmpty()) {
+            customFields = JSON.parseObject(e.getCustomFieldsJson(),
+                    new TypeReference<Map<String, String>>() {});
+        }
         return Ticket.rehydrate(
                 new TicketId(String.valueOf(e.getId())),
                 new ChannelId(e.getChannelId()),
@@ -288,7 +307,11 @@ public class TicketRepositoryImpl implements TicketRepository {
                 e.getFirstHumanResponseAt(),
                 e.getFirstResponseDueAt(),
                 e.getResolutionDueAt(),
-                slaBreached
+                slaBreached,
+                customerId,
+                aiSuspended,
+                e.getEscalatedAt(),
+                customFields
         );
     }
 

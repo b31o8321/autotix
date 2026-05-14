@@ -1,9 +1,12 @@
 package dev.autotix.application.ticket;
 
 import dev.autotix.application.automation.EvaluateRulesUseCase;
+import dev.autotix.application.customer.CustomerLookupService;
 import dev.autotix.application.sla.ApplySlaPolicyUseCase;
 import dev.autotix.domain.ai.AIAction;
 import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.customer.CustomerId;
+import dev.autotix.domain.customer.CustomerIdentifierType;
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Attachment;
@@ -30,6 +33,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Entry point invoked by webhook controller after the platform plugin parses the
@@ -64,6 +68,7 @@ public class ProcessWebhookUseCase {
     private final TicketActivityRepository activityRepository;
     private final ApplySlaPolicyUseCase applySlaPolicyUseCase;
     private final AttachmentRepository attachmentRepository;
+    private final CustomerLookupService customerLookupService;
 
     @Value("${autotix.ticket.reopen-window-days:7}")
     private int reopenWindowDays;
@@ -76,7 +81,8 @@ public class ProcessWebhookUseCase {
                                  InboxEventPublisher inboxEventPublisher,
                                  TicketActivityRepository activityRepository,
                                  ApplySlaPolicyUseCase applySlaPolicyUseCase,
-                                 AttachmentRepository attachmentRepository) {
+                                 AttachmentRepository attachmentRepository,
+                                 CustomerLookupService customerLookupService) {
         this.ticketRepository = ticketRepository;
         this.idempotencyStore = idempotencyStore;
         this.queueProvider = queueProvider;
@@ -86,6 +92,7 @@ public class ProcessWebhookUseCase {
         this.activityRepository = activityRepository;
         this.applySlaPolicyUseCase = applySlaPolicyUseCase;
         this.attachmentRepository = attachmentRepository;
+        this.customerLookupService = customerLookupService;
     }
 
     public void handle(Channel channel, TicketEvent event) {
@@ -115,6 +122,19 @@ public class ProcessWebhookUseCase {
         Instant now = Instant.now();
         Duration reopenWindow = Duration.ofDays(reopenWindowDays);
 
+        // Look up or create customer
+        CustomerId customerId = null;
+        if (event.customerIdentifier() != null && !event.customerIdentifier().isEmpty()) {
+            CustomerIdentifierType identType = inferIdentifierType(event.customerIdentifier());
+            try {
+                customerId = customerLookupService.findOrCreate(
+                        channel.id(), identType, event.customerIdentifier());
+            } catch (Exception ex) {
+                log.warn("CustomerLookupService failed for identifier '{}': {}",
+                        event.customerIdentifier(), ex.getMessage());
+            }
+        }
+
         boolean isNewTicket;
         Ticket ticket;
 
@@ -125,7 +145,8 @@ public class ProcessWebhookUseCase {
                     event.externalTicketId(),
                     event.subject(),
                     event.customerIdentifier(),
-                    inbound);
+                    inbound,
+                    customerId);
             isNewTicket = true;
 
         } else {
@@ -269,5 +290,19 @@ public class ProcessWebhookUseCase {
                     "new inbound on #" + event.externalTicketId(),
                     now));
         }
+    }
+
+    // -----------------------------------------------------------------------
+    // Private helpers
+    // -----------------------------------------------------------------------
+
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[^@]+@[^@]+\\.[^@]+$");
+
+    private CustomerIdentifierType inferIdentifierType(String identifier) {
+        if (identifier != null && EMAIL_PATTERN.matcher(identifier.trim()).matches()) {
+            return CustomerIdentifierType.EMAIL;
+        }
+        return CustomerIdentifierType.CUSTOM_EXTERNAL;
     }
 }

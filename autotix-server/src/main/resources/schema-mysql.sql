@@ -25,9 +25,14 @@ CREATE TABLE IF NOT EXISTS ticket (
     first_human_response_at TIMESTAMP NULL,
     first_response_due_at TIMESTAMP NULL,
     resolution_due_at TIMESTAMP NULL,
-    sla_breached TINYINT(1) NOT NULL DEFAULT 0
+    sla_breached TINYINT(1) NOT NULL DEFAULT 0,
+    customer_id BIGINT,
+    ai_suspended TINYINT(1) NOT NULL DEFAULT 0,
+    escalated_at TIMESTAMP NULL,
+    custom_fields_json LONGTEXT
 );
 CREATE INDEX idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
+CREATE INDEX idx_ticket_customer ON ticket(customer_id);
 CREATE INDEX idx_ticket_status_updated ON ticket(status, updated_at);
 CREATE INDEX idx_ticket_status_solved ON ticket(status, solved_at);
 
@@ -114,6 +119,49 @@ CREATE TABLE IF NOT EXISTS ai_config (
     timeout_seconds INT,
     max_retries INT,
     updated_at TIMESTAMP NOT NULL
+);
+
+-- Slice 12: customer aggregate
+CREATE TABLE IF NOT EXISTS customer (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    display_name VARCHAR(256),
+    primary_email VARCHAR(256),
+    attributes_json LONGTEXT,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+CREATE INDEX idx_customer_email ON customer(primary_email);
+
+CREATE TABLE IF NOT EXISTS customer_identifier (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    identifier_type VARCHAR(32) NOT NULL,
+    identifier_value VARCHAR(512) NOT NULL,
+    channel_id VARCHAR(64),
+    first_seen_at TIMESTAMP NOT NULL,
+    UNIQUE KEY uq_customer_identifier_type_value (identifier_type, identifier_value)
+);
+CREATE INDEX idx_customer_identifier_customer ON customer_identifier(customer_id);
+
+-- Slice 12: tag definition
+CREATE TABLE IF NOT EXISTS tag_definition (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL UNIQUE,
+    color VARCHAR(16) NOT NULL DEFAULT '#9BAAB8',
+    category VARCHAR(64),
+    created_at TIMESTAMP NOT NULL
+);
+
+-- Slice 12: custom field definition
+CREATE TABLE IF NOT EXISTS custom_field_definition (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    field_key VARCHAR(64) NOT NULL UNIQUE,
+    field_type VARCHAR(16) NOT NULL,
+    applies_to VARCHAR(16) NOT NULL,
+    required TINYINT(1) NOT NULL DEFAULT 0,
+    display_order INT NOT NULL DEFAULT 100,
+    created_at TIMESTAMP NOT NULL
 );
 
 -- Slice 11: file attachments

@@ -148,4 +148,17 @@ class DispatchAIReplyUseCaseTest {
         // AI CLOSE now calls SolveTicketUseCase, NOT CloseTicketUseCase
         verify(solveTicketUseCase).solve(eq(ticketId));
     }
+
+    @Test
+    void aiSuspended_ticket_returnsEarlyWithoutCallingAi() {
+        // Escalate the ticket so aiSuspended = true
+        ticket.escalateToHuman("agent:1", "wants human");
+
+        when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
+
+        useCase.dispatch(ticketId);
+
+        // No AI call, no reply, no inbox event
+        verifyNoInteractions(aiReplyPort, replyTicketUseCase, solveTicketUseCase, inboxPublisher);
+    }
 }

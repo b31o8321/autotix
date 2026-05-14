@@ -96,4 +96,29 @@ public class TicketEntity {
 
     @TableField("sla_breached")
     private Boolean slaBreached;
+
+    // Slice 12: customer link + AI suspension + custom fields
+    @TableField("customer_id")
+    private Long customerId;
+
+    @TableField("ai_suspended")
+    private Boolean aiSuspended;
+
+    @TableField("escalated_at")
+    private Instant escalatedAt;
+
+    @TableField("custom_fields_json")
+    private String customFieldsJson;
+
+    public Long getCustomerId() { return customerId; }
+    public void setCustomerId(Long customerId) { this.customerId = customerId; }
+
+    public Boolean getAiSuspended() { return aiSuspended; }
+    public void setAiSuspended(Boolean aiSuspended) { this.aiSuspended = aiSuspended; }
+
+    public Instant getEscalatedAt() { return escalatedAt; }
+    public void setEscalatedAt(Instant escalatedAt) { this.escalatedAt = escalatedAt; }
+
+    public String getCustomFieldsJson() { return customFieldsJson; }
+    public void setCustomFieldsJson(String customFieldsJson) { this.customFieldsJson = customFieldsJson; }
 }

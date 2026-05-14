@@ -89,6 +89,12 @@ public class DispatchAIReplyUseCase {
                     .orElseThrow(() -> new AutotixException.NotFoundException(
                             "Ticket not found: " + ticketId.value()));
 
+            // Slice 12: skip AI if ticket was escalated to human
+            if (ticket.aiSuspended()) {
+                log.info("Skipping AI dispatch for ticket={} — aiSuspended=true", ticketId.value());
+                return;
+            }
+
             Channel channel = channelRepository.findById(ticket.channelId())
                     .orElseThrow(() -> new AutotixException.NotFoundException(
                             "Channel not found: " + ticket.channelId().value()));

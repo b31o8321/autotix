@@ -1,5 +1,6 @@
 package dev.autotix.application.ticket;
 
+import dev.autotix.application.customer.CustomerLookupService;
 import dev.autotix.application.sla.ApplySlaPolicyUseCase;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelId;
@@ -17,6 +18,7 @@ import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.application.automation.EvaluateRulesUseCase;
 import dev.autotix.domain.ai.AIAction;
+import dev.autotix.domain.customer.CustomerId;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.idempotency.IdempotencyStore;
 import dev.autotix.infrastructure.infra.queue.QueueProvider;
@@ -51,6 +53,7 @@ class ProcessWebhookUseCaseTest {
     @Mock private dev.autotix.domain.ticket.TicketActivityRepository activityRepository;
     @Mock private ApplySlaPolicyUseCase applySlaPolicyUseCase;
     @Mock private AttachmentRepository attachmentRepository;
+    @Mock private CustomerLookupService customerLookupService;
 
     private TicketDomainService ticketDomainService;
     private ProcessWebhookUseCase useCase;
@@ -61,9 +64,10 @@ class ProcessWebhookUseCaseTest {
     void setUp() {
         ticketDomainService = new TicketDomainService();
         when(evaluateRules.evaluate(any(), any())).thenReturn(EvaluateRulesUseCase.RuleOutcome.noOp());
+        when(customerLookupService.findOrCreate(any(), any(), any())).thenReturn(new CustomerId("100"));
         useCase = new ProcessWebhookUseCase(ticketRepository, idempotencyStore,
                 queueProvider, ticketDomainService, evaluateRules, inboxPublisher, activityRepository,
-                applySlaPolicyUseCase, attachmentRepository);
+                applySlaPolicyUseCase, attachmentRepository, customerLookupService);
         // @Value fields are not injected in plain Mockito tests — set the default explicitly
         ReflectionTestUtils.setField(useCase, "reopenWindowDays", 7);
 
@@ -315,5 +319,34 @@ class ProcessWebhookUseCaseTest {
         assertNotNull(spawned.parentTicketId());
         assertEquals("99", spawned.parentTicketId().value());
         assertEquals(TicketStatus.NEW, spawned.status());
+    }
+
+    // -----------------------------------------------------------------------
+    // Slice 12: CustomerLookupService integration
+    // -----------------------------------------------------------------------
+
+    @Test
+    void newTicket_callsCustomerLookupService_andThreadsCustomerIdIntoTicket() {
+        CustomerId expectedCustomerId = new CustomerId("777");
+        when(customerLookupService.findOrCreate(any(), any(), any())).thenReturn(expectedCustomerId);
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), any())).thenReturn(Optional.empty());
+        doAnswer(invocation -> {
+            Ticket t = invocation.getArgument(0);
+            t.assignPersistedId(new TicketId("10"));
+            return new TicketId("10");
+        }).when(ticketRepository).save(any(Ticket.class));
+
+        useCase.handle(channel, makeEvent("ext-customer-test"));
+
+        // Verify CustomerLookupService was called
+        verify(customerLookupService).findOrCreate(any(), any(), eq("customer@example.com"));
+
+        // Verify the created ticket has the customerId set
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket saved = captor.getValue();
+        assertNotNull(saved.customerId());
+        assertEquals("777", saved.customerId().value());
     }
 }

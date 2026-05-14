@@ -1,6 +1,7 @@
 package dev.autotix.infrastructure.persistence.ticket;
 
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.customer.CustomerId;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
@@ -178,5 +179,38 @@ class TicketRepositoryImplTest {
         assertEquals(TicketStatus.SOLVED, afterSolve.get().status());
         assertNotNull(afterSolve.get().solvedAt());
         assertEquals(0, afterSolve.get().reopenCount());
+    }
+
+    @Test
+    void saveAndFindById_preservesSlice12Fields() {
+        String extId = uniqueExtId();
+        // Create ticket with customerId
+        CustomerId customerId = new CustomerId("42");
+        Ticket ticket = Ticket.openFromInbound(TEST_CHANNEL, extId, "Slice12 Test",
+                "slice12@example.com", inboundMsg("slice 12 test"), customerId);
+
+        TicketId savedId = ticketRepository.save(ticket);
+        assertNotNull(savedId);
+
+        Optional<Ticket> loaded = ticketRepository.findById(savedId);
+        assertTrue(loaded.isPresent());
+        Ticket t = loaded.get();
+
+        // customerId should be persisted
+        assertNotNull(t.customerId());
+        assertEquals("42", t.customerId().value());
+
+        // Escalate and set custom fields
+        t.escalateToHuman("agent:1", "reason");
+        t.setCustomField("order_id", "ORD-999");
+        ticketRepository.save(t);
+
+        Optional<Ticket> afterEscalate = ticketRepository.findById(savedId);
+        assertTrue(afterEscalate.isPresent());
+        Ticket te = afterEscalate.get();
+
+        assertTrue(te.aiSuspended());
+        assertNotNull(te.escalatedAt());
+        assertEquals("ORD-999", te.customFields().get("order_id"));
     }
 }

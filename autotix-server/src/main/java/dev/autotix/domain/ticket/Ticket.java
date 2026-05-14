@@ -2,13 +2,16 @@ package dev.autotix.domain.ticket;
 
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelId;
+import dev.autotix.domain.customer.CustomerId;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,6 +56,12 @@ public class Ticket {
     private Instant resolutionDueAt;        // SLA target for resolution
     private boolean slaBreached;            // sticky once true
 
+    // Slice 12: customer link + AI suspension + custom fields
+    private CustomerId customerId;          // nullable — links to Customer aggregate
+    private boolean aiSuspended;            // true once escalateToHuman() called
+    private Instant escalatedAt;            // when aiSuspended was set to true
+    private Map<String, String> customFields = new HashMap<>();  // key→value per CustomFieldDefinition.key
+
     /** Private constructor — use factory methods or rehydration. */
     private Ticket() {}
 
@@ -68,6 +77,16 @@ public class Ticket {
     public static Ticket openFromInbound(ChannelId channelId, String externalNativeId,
                                          String subject, String customerIdentifier,
                                          Message firstMessage) {
+        return openFromInbound(channelId, externalNativeId, subject, customerIdentifier,
+                firstMessage, null);
+    }
+
+    /**
+     * Overload that also links the ticket to an existing Customer aggregate.
+     */
+    public static Ticket openFromInbound(ChannelId channelId, String externalNativeId,
+                                         String subject, String customerIdentifier,
+                                         Message firstMessage, CustomerId customerId) {
         if (channelId == null) {
             throw new AutotixException.ValidationException("channelId must not be null");
         }
@@ -93,6 +112,9 @@ public class Ticket {
         t.priority = TicketPriority.NORMAL;
         t.type = TicketType.QUESTION;
         t.slaBreached = false;
+        t.customerId = customerId;
+        t.aiSuspended = false;
+        t.customFields = new HashMap<>();
         return t;
     }
 
@@ -147,6 +169,28 @@ public class Ticket {
                                    Instant firstResponseAt, Instant firstHumanResponseAt,
                                    Instant firstResponseDueAt, Instant resolutionDueAt,
                                    boolean slaBreached) {
+        return rehydrate(id, channelId, externalNativeId, subject, customerIdentifier, customerName,
+                assigneeId, status, messages, tags, createdAt, updatedAt,
+                solvedAt, closedAt, parentTicketId, reopenCount, priority, type,
+                firstResponseAt, firstHumanResponseAt, firstResponseDueAt, resolutionDueAt,
+                slaBreached, null, false, null, null);
+    }
+
+    /**
+     * Full rehydrate overload including Slice 12 fields.
+     */
+    public static Ticket rehydrate(TicketId id, ChannelId channelId, String externalNativeId,
+                                   String subject, String customerIdentifier, String customerName,
+                                   String assigneeId, TicketStatus status, List<Message> messages,
+                                   Set<String> tags, Instant createdAt, Instant updatedAt,
+                                   Instant solvedAt, Instant closedAt,
+                                   TicketId parentTicketId, int reopenCount,
+                                   TicketPriority priority, TicketType type,
+                                   Instant firstResponseAt, Instant firstHumanResponseAt,
+                                   Instant firstResponseDueAt, Instant resolutionDueAt,
+                                   boolean slaBreached,
+                                   CustomerId customerId, boolean aiSuspended,
+                                   Instant escalatedAt, Map<String, String> customFields) {
         Ticket t = new Ticket();
         t.id = id;
         t.channelId = channelId;
@@ -171,6 +215,10 @@ public class Ticket {
         t.firstResponseDueAt = firstResponseDueAt;
         t.resolutionDueAt = resolutionDueAt;
         t.slaBreached = slaBreached;
+        t.customerId = customerId;
+        t.aiSuspended = aiSuspended;
+        t.escalatedAt = escalatedAt;
+        t.customFields = customFields != null ? new HashMap<>(customFields) : new HashMap<>();
         return t;
     }
 
@@ -435,6 +483,78 @@ public class Ticket {
         return new SlaState(firstResponseRemainingMs, resolutionRemainingMs, slaBreached);
     }
 
+    // -----------------------------------------------------------------------
+    // Slice 12: escalation + custom field behaviors
+    // -----------------------------------------------------------------------
+
+    /**
+     * Suspend AI for this ticket (escalate to human).
+     * Sets aiSuspended=true, escalatedAt=now.
+     * If status is NEW or WAITING_ON_CUSTOMER, transitions to OPEN.
+     * Throws if already escalated.
+     */
+    public void escalateToHuman(String actorId, String reason) {
+        if (aiSuspended) {
+            throw new AutotixException.ValidationException("Ticket is already escalated to human");
+        }
+        requireNotTerminal();
+        aiSuspended = true;
+        escalatedAt = Instant.now();
+        if (status == TicketStatus.NEW || status == TicketStatus.WAITING_ON_CUSTOMER) {
+            status = TicketStatus.OPEN;
+        }
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Re-enable AI for this ticket.
+     * Only valid when aiSuspended == true.
+     * Throws if not currently suspended.
+     */
+    public void resumeAi(String actorId) {
+        if (!aiSuspended) {
+            throw new AutotixException.ValidationException(
+                    "Ticket AI is not currently suspended; cannot resume");
+        }
+        aiSuspended = false;
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Set a custom field value.
+     */
+    public void setCustomField(String key, String value) {
+        if (key == null || key.trim().isEmpty()) {
+            throw new AutotixException.ValidationException("custom field key must not be blank");
+        }
+        if (customFields == null) {
+            customFields = new HashMap<>();
+        }
+        customFields.put(key, value);
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Remove a custom field entry.
+     */
+    public void clearCustomField(String key) {
+        if (key == null || key.trim().isEmpty()) {
+            throw new AutotixException.ValidationException("custom field key must not be blank");
+        }
+        if (customFields != null) {
+            customFields.remove(key);
+        }
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Package-private: link to a Customer aggregate.
+     * Called by repository after loading and by ProcessWebhookUseCase after CustomerLookupService.
+     */
+    void setCustomerId(CustomerId customerId) {
+        this.customerId = customerId;
+    }
+
     /** Add tags (idempotent). */
     public void addTags(Set<String> newTags) {
         if (newTags == null) {
@@ -490,4 +610,12 @@ public class Ticket {
     public Instant firstResponseDueAt() { return firstResponseDueAt; }
     public Instant resolutionDueAt() { return resolutionDueAt; }
     public boolean slaBreached() { return slaBreached; }
+
+    // Slice 12: accessors
+    public CustomerId customerId() { return customerId; }
+    public boolean aiSuspended() { return aiSuspended; }
+    public Instant escalatedAt() { return escalatedAt; }
+    public Map<String, String> customFields() {
+        return customFields == null ? Collections.emptyMap() : Collections.unmodifiableMap(customFields);
+    }
 }
