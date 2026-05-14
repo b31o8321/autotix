@@ -9,12 +9,12 @@ import lombok.Data;
 import java.time.Instant;
 
 /**
- * TODO: MyBatis Plus entity for one ticket message.
- *  Index: (ticket_id, occurred_at).
+ * MyBatis Plus entity for ticket_activity.
+ * Ordered by (ticket_id, occurred_at DESC).
  */
 @Data
-@TableName("ticket_message")
-public class MessageEntity {
+@TableName("ticket_activity")
+public class TicketActivityEntity {
 
     @TableId(type = IdType.AUTO)
     private Long id;
@@ -22,16 +22,15 @@ public class MessageEntity {
     @TableField("ticket_id")
     private Long ticketId;
 
-    /** INBOUND / OUTBOUND */
-    private String direction;
+    /** "customer" / "ai" / "agent:{userId}" / "system" */
+    private String actor;
 
-    private String author;
+    /** TicketActivityAction name */
+    private String action;
 
-    private String content;
+    /** Free-form JSON string, may be null */
+    private String details;
 
     @TableField("occurred_at")
     private Instant occurredAt;
-
-    /** Slice 9: PUBLIC (default) or INTERNAL */
-    private String visibility;
 }

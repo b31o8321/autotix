@@ -8,4 +8,6 @@ package dev.autotix.interfaces.desk.dto;
 public class ReplyRequest {
     public String content;
     public boolean closeAfter;
+    /** Slice 9: if true, this is an internal note (not sent externally, no status change) */
+    public boolean internal;
 }

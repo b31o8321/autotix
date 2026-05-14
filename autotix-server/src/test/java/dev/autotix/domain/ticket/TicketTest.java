@@ -375,6 +375,87 @@ class TicketTest {
     }
 
     // -----------------------------------------------------------------------
+    // Priority and Type
+    // -----------------------------------------------------------------------
+
+    @Test
+    void defaultPriorityIsNormal() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertEquals(TicketPriority.NORMAL, ticket.priority());
+    }
+
+    @Test
+    void defaultTypeIsQuestion() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertEquals(TicketType.QUESTION, ticket.type());
+    }
+
+    @Test
+    void changePriority_updatesField() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.changePriority(TicketPriority.HIGH);
+        assertEquals(TicketPriority.HIGH, ticket.priority());
+    }
+
+    @Test
+    void changeType_updatesField() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.changeType(TicketType.INCIDENT);
+        assertEquals(TicketType.INCIDENT, ticket.type());
+    }
+
+    @Test
+    void changePriority_null_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.changePriority(null));
+    }
+
+    @Test
+    void changeType_null_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.changeType(null));
+    }
+
+    // -----------------------------------------------------------------------
+    // Internal notes
+    // -----------------------------------------------------------------------
+
+    @Test
+    void appendInternalNote_doesNotChangeStatus() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        TicketStatus before = ticket.status();
+        Message internal = new Message(MessageDirection.OUTBOUND, "agent:1",
+                "Note for team", Instant.now(), MessageVisibility.INTERNAL);
+
+        ticket.appendInternalNote(internal);
+
+        assertEquals(before, ticket.status(), "Internal note must not change status");
+        assertEquals(2, ticket.messages().size());
+        assertEquals(MessageVisibility.INTERNAL, ticket.messages().get(1).visibility());
+    }
+
+    @Test
+    void appendInternalNote_withPublicVisibility_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        Message publicMsg = new Message(MessageDirection.OUTBOUND, "agent:1",
+                "Public", Instant.now(), MessageVisibility.PUBLIC);
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.appendInternalNote(publicMsg));
+    }
+
+    @Test
+    void appendInternalNote_onClosedTicket_throws() {
+        Ticket ticket = Ticket.openFromInbound(CHANNEL, EXT_ID, "Sub", "cust", inboundMsg());
+        ticket.permanentClose(Instant.now());
+        Message internal = new Message(MessageDirection.OUTBOUND, "agent:1",
+                "Note", Instant.now(), MessageVisibility.INTERNAL);
+        assertThrows(AutotixException.ValidationException.class,
+                () -> ticket.appendInternalNote(internal));
+    }
+
+    // -----------------------------------------------------------------------
     // spawnFromClosed
     // -----------------------------------------------------------------------
 

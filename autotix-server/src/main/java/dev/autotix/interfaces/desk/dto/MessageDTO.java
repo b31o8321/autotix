@@ -10,4 +10,6 @@ public class MessageDTO {
     public String author;
     public String content;
     public Instant occurredAt;
+    /** Slice 9: PUBLIC (default) or INTERNAL */
+    public String visibility;
 }

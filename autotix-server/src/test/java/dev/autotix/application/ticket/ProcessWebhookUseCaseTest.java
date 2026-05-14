@@ -46,6 +46,7 @@ class ProcessWebhookUseCaseTest {
     @Mock private QueueProvider queueProvider;
     @Mock private EvaluateRulesUseCase evaluateRules;
     @Mock private InboxEventPublisher inboxPublisher;
+    @Mock private dev.autotix.domain.ticket.TicketActivityRepository activityRepository;
 
     private TicketDomainService ticketDomainService;
     private ProcessWebhookUseCase useCase;
@@ -57,7 +58,7 @@ class ProcessWebhookUseCaseTest {
         ticketDomainService = new TicketDomainService();
         when(evaluateRules.evaluate(any(), any())).thenReturn(EvaluateRulesUseCase.RuleOutcome.noOp());
         useCase = new ProcessWebhookUseCase(ticketRepository, idempotencyStore,
-                queueProvider, ticketDomainService, evaluateRules, inboxPublisher);
+                queueProvider, ticketDomainService, evaluateRules, inboxPublisher, activityRepository);
         // @Value fields are not injected in plain Mockito tests — set the default explicitly
         ReflectionTestUtils.setField(useCase, "reopenWindowDays", 7);
 

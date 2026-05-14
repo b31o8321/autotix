@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS ticket (
     solved_at TIMESTAMP,
     closed_at TIMESTAMP,
     parent_ticket_id BIGINT,
-    reopen_count INT NOT NULL DEFAULT 0
+    reopen_count INT NOT NULL DEFAULT 0,
+    priority VARCHAR(16) NOT NULL DEFAULT 'NORMAL',
+    type VARCHAR(16) NOT NULL DEFAULT 'QUESTION'
 );
 CREATE INDEX IF NOT EXISTS idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_ticket_status_updated ON ticket(status, updated_at);
@@ -29,9 +31,20 @@ CREATE TABLE IF NOT EXISTS ticket_message (
     direction VARCHAR(16) NOT NULL,
     author VARCHAR(128) NOT NULL,
     content CLOB NOT NULL,
-    occurred_at TIMESTAMP NOT NULL
+    occurred_at TIMESTAMP NOT NULL,
+    visibility VARCHAR(16) NOT NULL DEFAULT 'PUBLIC'
 );
 CREATE INDEX IF NOT EXISTS idx_msg_ticket ON ticket_message(ticket_id, occurred_at);
+
+CREATE TABLE IF NOT EXISTS ticket_activity (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id BIGINT NOT NULL,
+    actor VARCHAR(128) NOT NULL,
+    action VARCHAR(32) NOT NULL,
+    details CLOB,
+    occurred_at TIMESTAMP NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_activity_ticket_occurred ON ticket_activity(ticket_id, occurred_at);
 
 CREATE TABLE IF NOT EXISTS channel (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

@@ -32,12 +32,13 @@ class AutoCloseSolvedTicketsSchedulerTest {
 
     @Mock private TicketRepository ticketRepository;
     @Mock private InboxEventPublisher inboxPublisher;
+    @Mock private dev.autotix.domain.ticket.TicketActivityRepository activityRepository;
 
     private AutoCloseSolvedTicketsScheduler scheduler;
 
     @BeforeEach
     void setUp() {
-        scheduler = new AutoCloseSolvedTicketsScheduler(ticketRepository, inboxPublisher);
+        scheduler = new AutoCloseSolvedTicketsScheduler(ticketRepository, inboxPublisher, activityRepository);
         // Set reopen window to 7 days (default)
         ReflectionTestUtils.setField(scheduler, "reopenWindowDays", 7);
     }

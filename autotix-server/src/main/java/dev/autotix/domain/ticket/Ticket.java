@@ -42,6 +42,10 @@ public class Ticket {
     private TicketId parentTicketId;      // set when this ticket spawned from a prior one
     private int reopenCount;              // increments on each reopen()
 
+    // Slice 9: priority + type
+    private TicketPriority priority = TicketPriority.NORMAL;
+    private TicketType type = TicketType.QUESTION;
+
     /** Private constructor — use factory methods or rehydration. */
     private Ticket() {}
 
@@ -79,6 +83,8 @@ public class Ticket {
         t.createdAt = now;
         t.updatedAt = now;
         t.reopenCount = 0;
+        t.priority = TicketPriority.NORMAL;
+        t.type = TicketType.QUESTION;
         return t;
     }
 
@@ -104,6 +110,19 @@ public class Ticket {
                                    Set<String> tags, Instant createdAt, Instant updatedAt,
                                    Instant solvedAt, Instant closedAt,
                                    TicketId parentTicketId, int reopenCount) {
+        return rehydrate(id, channelId, externalNativeId, subject, customerIdentifier, customerName,
+                assigneeId, status, messages, tags, createdAt, updatedAt,
+                solvedAt, closedAt, parentTicketId, reopenCount,
+                TicketPriority.NORMAL, TicketType.QUESTION);
+    }
+
+    public static Ticket rehydrate(TicketId id, ChannelId channelId, String externalNativeId,
+                                   String subject, String customerIdentifier, String customerName,
+                                   String assigneeId, TicketStatus status, List<Message> messages,
+                                   Set<String> tags, Instant createdAt, Instant updatedAt,
+                                   Instant solvedAt, Instant closedAt,
+                                   TicketId parentTicketId, int reopenCount,
+                                   TicketPriority priority, TicketType type) {
         Ticket t = new Ticket();
         t.id = id;
         t.channelId = channelId;
@@ -121,6 +140,8 @@ public class Ticket {
         t.closedAt = closedAt;
         t.parentTicketId = parentTicketId;
         t.reopenCount = reopenCount;
+        t.priority = priority != null ? priority : TicketPriority.NORMAL;
+        t.type = type != null ? type : TicketType.QUESTION;
         return t;
     }
 
@@ -301,6 +322,46 @@ public class Ticket {
         updatedAt = Instant.now();
     }
 
+    /**
+     * Append an internal note (OUTBOUND, INTERNAL visibility).
+     * Does NOT change ticket status (internal notes don't move the conversation).
+     * Throws ValidationException if ticket is CLOSED or SPAM.
+     */
+    public void appendInternalNote(Message message) {
+        if (message == null) {
+            throw new AutotixException.ValidationException("message must not be null");
+        }
+        if (message.visibility() != MessageVisibility.INTERNAL) {
+            throw new AutotixException.ValidationException(
+                    "appendInternalNote requires INTERNAL visibility");
+        }
+        requireNotTerminal();
+        messages.add(message);
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Change ticket priority. Stamps updatedAt.
+     */
+    public void changePriority(TicketPriority newPriority) {
+        if (newPriority == null) {
+            throw new AutotixException.ValidationException("priority must not be null");
+        }
+        this.priority = newPriority;
+        updatedAt = Instant.now();
+    }
+
+    /**
+     * Change ticket type. Stamps updatedAt.
+     */
+    public void changeType(TicketType newType) {
+        if (newType == null) {
+            throw new AutotixException.ValidationException("type must not be null");
+        }
+        this.type = newType;
+        updatedAt = Instant.now();
+    }
+
     /** Add tags (idempotent). */
     public void addTags(Set<String> newTags) {
         if (newTags == null) {
@@ -348,4 +409,6 @@ public class Ticket {
     public Instant closedAt() { return closedAt; }
     public TicketId parentTicketId() { return parentTicketId; }
     public int reopenCount() { return reopenCount; }
+    public TicketPriority priority() { return priority; }
+    public TicketType type() { return type; }
 }

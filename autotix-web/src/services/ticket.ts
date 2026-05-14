@@ -1,6 +1,9 @@
 // ticket REST client - matches DeskController
 import { request } from '@/utils/request';
 
+export type TicketPriority = 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT';
+export type TicketType = 'QUESTION' | 'INCIDENT' | 'PROBLEM' | 'TASK';
+
 export interface TicketDTO {
   id: string;
   channelId: string;
@@ -21,12 +24,26 @@ export interface TicketDTO {
   closedAt?: string;
   parentTicketId?: string;
   reopenCount?: number;
+  // Slice 9: priority + type
+  priority?: TicketPriority;
+  type?: TicketType;
 }
 
 export interface MessageDTO {
   direction: 'INBOUND' | 'OUTBOUND';
   author: string;
   content: string;
+  occurredAt: string;
+  /** Slice 9: PUBLIC (default) or INTERNAL */
+  visibility?: 'PUBLIC' | 'INTERNAL';
+}
+
+export interface TicketActivity {
+  id: number;
+  ticketId: string;
+  actor: string;
+  action: string;
+  details?: string;
   occurredAt: string;
 }
 
@@ -35,6 +52,7 @@ export interface ListParams {
   channelId?: string;
   assignee?: string;
   q?: string;
+  priority?: string;
   offset?: number;
   limit?: number;
 }
@@ -47,10 +65,15 @@ export async function getTicket(ticketId: string): Promise<TicketDTO> {
   return request(`/api/desk/tickets/${ticketId}`, { method: 'GET' });
 }
 
-export async function replyTicket(ticketId: string, content: string, closeAfter = false) {
+export async function replyTicket(
+  ticketId: string,
+  content: string,
+  closeAfter = false,
+  internal = false,
+) {
   return request(`/api/desk/tickets/${ticketId}/reply`, {
     method: 'POST',
-    data: { content, closeAfter },
+    data: { content, closeAfter, internal },
   });
 }
 
@@ -69,4 +92,29 @@ export async function solveTicket(ticketId: string) {
 /** Permanent close (admin) — transitions to CLOSED (terminal). */
 export async function closeTicket(ticketId: string) {
   return request(`/api/desk/tickets/${ticketId}/close`, { method: 'POST' });
+}
+
+export async function changeTicketPriority(ticketId: string, value: TicketPriority) {
+  return request(`/api/desk/tickets/${ticketId}/priority`, {
+    method: 'PUT',
+    params: { value },
+  });
+}
+
+export async function changeTicketType(ticketId: string, value: TicketType) {
+  return request(`/api/desk/tickets/${ticketId}/type`, {
+    method: 'PUT',
+    params: { value },
+  });
+}
+
+export async function listTicketActivity(
+  ticketId: string,
+  offset = 0,
+  limit = 100,
+): Promise<TicketActivity[]> {
+  return request(`/api/desk/tickets/${ticketId}/activity`, {
+    method: 'GET',
+    params: { offset, limit },
+  });
 }

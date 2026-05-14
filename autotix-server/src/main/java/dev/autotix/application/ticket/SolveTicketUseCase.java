@@ -5,6 +5,9 @@ import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivity;
+import dev.autotix.domain.ticket.TicketActivityAction;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
@@ -35,16 +38,23 @@ public class SolveTicketUseCase {
     private final TicketRepository ticketRepository;
     private final ChannelRepository channelRepository;
     private final InboxEventPublisher inboxEventPublisher;
+    private final TicketActivityRepository activityRepository;
 
     public SolveTicketUseCase(TicketRepository ticketRepository,
                               ChannelRepository channelRepository,
-                              InboxEventPublisher inboxEventPublisher) {
+                              InboxEventPublisher inboxEventPublisher,
+                              TicketActivityRepository activityRepository) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.inboxEventPublisher = inboxEventPublisher;
+        this.activityRepository = activityRepository;
     }
 
     public void solve(TicketId ticketId) {
+        solve(ticketId, "system");
+    }
+
+    public void solve(TicketId ticketId, String actor) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new AutotixException.NotFoundException(
                         "Ticket not found: " + ticketId.value()));
@@ -67,6 +77,11 @@ public class SolveTicketUseCase {
                 ticketId.value(),
                 channel.id().value(),
                 "ticket solved",
+                now));
+
+        activityRepository.save(new TicketActivity(
+                ticketId, actor,
+                TicketActivityAction.SOLVED,
                 now));
 
         log.debug("Ticket solved: {}", ticketId.value());

@@ -74,4 +74,10 @@ public class TicketEntity {
     /** Number of times this ticket has been reopened from SOLVED. */
     @TableField("reopen_count")
     private Integer reopenCount;
+
+    /** Slice 9: ticket priority — LOW / NORMAL / HIGH / URGENT */
+    private String priority;
+
+    /** Slice 9: ticket type — QUESTION / INCIDENT / PROBLEM / TASK */
+    private String type;
 }

@@ -34,6 +34,7 @@ class SolveTicketUseCaseTest {
     @Mock private TicketRepository ticketRepository;
     @Mock private ChannelRepository channelRepository;
     @Mock private InboxEventPublisher inboxPublisher;
+    @Mock private dev.autotix.domain.ticket.TicketActivityRepository activityRepository;
 
     private SolveTicketUseCase useCase;
 
@@ -43,7 +44,7 @@ class SolveTicketUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        useCase = new SolveTicketUseCase(ticketRepository, channelRepository, inboxPublisher);
+        useCase = new SolveTicketUseCase(ticketRepository, channelRepository, inboxPublisher, activityRepository);
 
         ticketId = new TicketId("42");
         channel = Channel.rehydrate(

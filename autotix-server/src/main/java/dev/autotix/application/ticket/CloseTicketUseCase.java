@@ -5,6 +5,9 @@ import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivity;
+import dev.autotix.domain.ticket.TicketActivityAction;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
@@ -38,15 +41,18 @@ public class CloseTicketUseCase {
     private final ChannelRepository channelRepository;
     private final PluginRegistry pluginRegistry;
     private final InboxEventPublisher inboxEventPublisher;
+    private final TicketActivityRepository activityRepository;
 
     public CloseTicketUseCase(TicketRepository ticketRepository,
                               ChannelRepository channelRepository,
                               PluginRegistry pluginRegistry,
-                              InboxEventPublisher inboxEventPublisher) {
+                              InboxEventPublisher inboxEventPublisher,
+                              TicketActivityRepository activityRepository) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.pluginRegistry = pluginRegistry;
         this.inboxEventPublisher = inboxEventPublisher;
+        this.activityRepository = activityRepository;
     }
 
     /**
@@ -87,6 +93,11 @@ public class CloseTicketUseCase {
                 ticketId.value(),
                 channel.id().value(),
                 "ticket permanently closed",
+                now));
+
+        activityRepository.save(new TicketActivity(
+                ticketId, "system",
+                TicketActivityAction.PERMANENTLY_CLOSED,
                 now));
 
         log.debug("Ticket permanently closed: {}", ticketId.value());

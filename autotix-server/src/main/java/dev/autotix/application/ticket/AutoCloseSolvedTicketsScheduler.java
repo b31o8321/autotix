@@ -2,6 +2,9 @@ package dev.autotix.application.ticket;
 
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivity;
+import dev.autotix.domain.ticket.TicketActivityAction;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import org.slf4j.Logger;
@@ -30,14 +33,17 @@ public class AutoCloseSolvedTicketsScheduler {
 
     private final TicketRepository ticketRepository;
     private final InboxEventPublisher inboxEventPublisher;
+    private final TicketActivityRepository activityRepository;
 
     @Value("${autotix.ticket.reopen-window-days:7}")
     private int reopenWindowDays;
 
     public AutoCloseSolvedTicketsScheduler(TicketRepository ticketRepository,
-                                           InboxEventPublisher inboxEventPublisher) {
+                                           InboxEventPublisher inboxEventPublisher,
+                                           TicketActivityRepository activityRepository) {
         this.ticketRepository = ticketRepository;
         this.inboxEventPublisher = inboxEventPublisher;
+        this.activityRepository = activityRepository;
     }
 
     @Scheduled(fixedDelayString = "${autotix.ticket.auto-close-check-interval-ms:3600000}")
@@ -63,6 +69,12 @@ public class AutoCloseSolvedTicketsScheduler {
                         ticket.id().value(),
                         ticket.channelId().value(),
                         "auto-closed after reopen window expired",
+                        now));
+
+                activityRepository.save(new TicketActivity(
+                        ticket.id(), "system",
+                        TicketActivityAction.PERMANENTLY_CLOSED,
+                        "{\"reason\":\"auto-close-after-window\"}",
                         now));
 
                 log.debug("AutoClose: ticket {} permanently closed", ticket.id().value());

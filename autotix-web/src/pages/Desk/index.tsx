@@ -15,6 +15,13 @@ const STATUS_COLORS: Record<string, string> = {
   SPAM: 'red',
 };
 
+const PRIORITY_COLORS: Record<string, string> = {
+  LOW: 'default',
+  NORMAL: 'blue',
+  HIGH: 'orange',
+  URGENT: 'red',
+};
+
 const PAGE_SIZE = 20;
 
 export default function DeskPage() {
@@ -23,6 +30,7 @@ export default function DeskPage() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [channelId, setChannelId] = useState<string | undefined>(undefined);
+  const [priority, setPriority] = useState<string | undefined>(undefined);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
 
@@ -32,6 +40,7 @@ export default function DeskPage() {
       const data = await listTickets({
         status,
         channelId,
+        priority,
         q: search || undefined,
         offset,
         limit: PAGE_SIZE,
@@ -51,7 +60,7 @@ export default function DeskPage() {
   useEffect(() => {
     fetchTickets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, channelId, offset]);
+  }, [status, channelId, priority, offset]);
 
   const columns: ColumnsType<TicketDTO> = [
     {
@@ -78,6 +87,15 @@ export default function DeskPage() {
       dataIndex: 'status',
       key: 'status',
       render: (s: string) => <Tag color={STATUS_COLORS[s] || 'default'}>{s}</Tag>,
+    },
+    {
+      title: 'Priority',
+      dataIndex: 'priority',
+      key: 'priority',
+      render: (p: string) => {
+        const val = p || 'NORMAL';
+        return <Tag color={PRIORITY_COLORS[val] || 'default'}>{val}</Tag>;
+      },
     },
     {
       title: 'Assignee',
@@ -112,6 +130,21 @@ export default function DeskPage() {
               { label: 'Solved', value: 'SOLVED' },
               { label: 'Closed', value: 'CLOSED' },
               { label: 'Spam', value: 'SPAM' },
+            ]}
+          />
+        </Col>
+        <Col>
+          <Select
+            placeholder="Priority"
+            allowClear
+            style={{ width: 110 }}
+            value={priority}
+            onChange={(v) => { setPriority(v); setOffset(0); }}
+            options={[
+              { label: 'Low', value: 'LOW' },
+              { label: 'Normal', value: 'NORMAL' },
+              { label: 'High', value: 'HIGH' },
+              { label: 'Urgent', value: 'URGENT' },
             ]}
           />
         </Col>

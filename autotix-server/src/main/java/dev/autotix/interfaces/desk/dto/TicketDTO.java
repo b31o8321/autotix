@@ -28,4 +28,8 @@ public class TicketDTO {
     public Instant closedAt;             // non-null when status == CLOSED
     public String parentTicketId;         // non-null when spawned from a prior ticket
     public int reopenCount;              // number of times reopened from SOLVED
+    /** Slice 9: LOW / NORMAL / HIGH / URGENT */
+    public String priority;
+    /** Slice 9: QUESTION / INCIDENT / PROBLEM / TASK */
+    public String type;
 }

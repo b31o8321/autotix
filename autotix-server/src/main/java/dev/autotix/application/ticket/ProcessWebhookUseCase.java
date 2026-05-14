@@ -8,7 +8,11 @@ import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivity;
+import dev.autotix.domain.ticket.TicketActivityAction;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketDomainService;
+import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
@@ -54,6 +58,7 @@ public class ProcessWebhookUseCase {
     private final TicketDomainService ticketDomainService;
     private final EvaluateRulesUseCase evaluateRulesUseCase;
     private final InboxEventPublisher inboxEventPublisher;
+    private final TicketActivityRepository activityRepository;
 
     @Value("${autotix.ticket.reopen-window-days:7}")
     private int reopenWindowDays;
@@ -63,13 +68,15 @@ public class ProcessWebhookUseCase {
                                  QueueProvider queueProvider,
                                  TicketDomainService ticketDomainService,
                                  EvaluateRulesUseCase evaluateRulesUseCase,
-                                 InboxEventPublisher inboxEventPublisher) {
+                                 InboxEventPublisher inboxEventPublisher,
+                                 TicketActivityRepository activityRepository) {
         this.ticketRepository = ticketRepository;
         this.idempotencyStore = idempotencyStore;
         this.queueProvider = queueProvider;
         this.ticketDomainService = ticketDomainService;
         this.evaluateRulesUseCase = evaluateRulesUseCase;
         this.inboxEventPublisher = inboxEventPublisher;
+        this.activityRepository = activityRepository;
     }
 
     public void handle(Channel channel, TicketEvent event) {
@@ -178,6 +185,26 @@ public class ProcessWebhookUseCase {
 
         // 5. Persist
         ticketRepository.save(ticket);
+
+        // 5b. Log activity (must happen after save so ticket.id() is set)
+        TicketId savedId = ticket.id();
+        if (isNewTicket) {
+            boolean isSpawned = ticket.parentTicketId() != null;
+            if (isSpawned) {
+                String details = "{\"parentTicketId\":\"" + ticket.parentTicketId().value() + "\"}";
+                activityRepository.save(new TicketActivity(
+                        savedId, "system", TicketActivityAction.SPAWNED, details, now));
+            } else {
+                activityRepository.save(new TicketActivity(
+                        savedId, "customer", TicketActivityAction.CREATED, now));
+            }
+        } else if (!existing.isPresent() || existing.get().status() != ticket.status()) {
+            // Detect reopen (status went from SOLVED to OPEN)
+            if (existing.isPresent() && existing.get().status() == TicketStatus.SOLVED) {
+                activityRepository.save(new TicketActivity(
+                        savedId, "customer", TicketActivityAction.REOPENED, now));
+            }
+        }
 
         // 6. Enqueue AI dispatch if conditions met
         if (!immediatelySolved && !outcome.skipAi

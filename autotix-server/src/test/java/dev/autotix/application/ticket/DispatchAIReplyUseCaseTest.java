@@ -12,6 +12,7 @@ import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.event.InboxEvent;
@@ -46,6 +47,7 @@ class DispatchAIReplyUseCaseTest {
     @Mock private ReplyTicketUseCase replyTicketUseCase;
     @Mock private SolveTicketUseCase solveTicketUseCase;
     @Mock private InboxEventPublisher inboxPublisher;
+    @Mock private TicketActivityRepository activityRepository;
 
     private LockProvider lockProvider;
     private DispatchAIReplyUseCase useCase;
@@ -59,7 +61,8 @@ class DispatchAIReplyUseCaseTest {
         lockProvider = new InMemoryLockProvider();
         useCase = new DispatchAIReplyUseCase(
                 ticketRepository, channelRepository, aiReplyPort,
-                replyTicketUseCase, solveTicketUseCase, lockProvider, inboxPublisher);
+                replyTicketUseCase, solveTicketUseCase, lockProvider, inboxPublisher,
+                activityRepository);
 
         ticketId = new TicketId("10");
         channel = Channel.rehydrate(

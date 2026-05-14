@@ -11,6 +11,9 @@ import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivity;
+import dev.autotix.domain.ticket.TicketActivityAction;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
@@ -32,13 +35,14 @@ import java.util.List;
  *   1. Acquire distributed lock on ticketId
  *   2. Load Ticket
  *   3. Build AIRequest from conversation history
+ *      - INTERNAL notes → role="system", content="[Internal note from {author}]: {content}"
+ *      - PUBLIC outbound → role="assistant"
+ *      - INBOUND → role="user"
  *   4. Call AIReplyPort.generate
- *   5. Pass result to ReplyTicketUseCase
- *   6. Apply optional AI action (solve, tag) — AI CLOSE → solve (not permanent close)
- *   7. Release lock (try-with-resources)
- *   8. Publish InboxEvent (AI_REPLIED on success, ASSIGNED on fallback)
- *
- * Failure handling: on AI error, assign ticket to "ai-fallback-queue" for human review.
+ *   5. Pass result to ReplyTicketUseCase (PUBLIC reply)
+ *   6. Apply optional AI action (solve, tag)
+ *   7. Release lock
+ *   8. Publish InboxEvent; log activity
  */
 @Service
 public class DispatchAIReplyUseCase {
@@ -52,6 +56,7 @@ public class DispatchAIReplyUseCase {
     private final SolveTicketUseCase solveTicketUseCase;
     private final LockProvider lockProvider;
     private final InboxEventPublisher inboxEventPublisher;
+    private final TicketActivityRepository activityRepository;
 
     public DispatchAIReplyUseCase(TicketRepository ticketRepository,
                                   ChannelRepository channelRepository,
@@ -59,7 +64,8 @@ public class DispatchAIReplyUseCase {
                                   ReplyTicketUseCase replyTicketUseCase,
                                   SolveTicketUseCase solveTicketUseCase,
                                   LockProvider lockProvider,
-                                  InboxEventPublisher inboxEventPublisher) {
+                                  InboxEventPublisher inboxEventPublisher,
+                                  TicketActivityRepository activityRepository) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.aiReplyPort = aiReplyPort;
@@ -67,6 +73,7 @@ public class DispatchAIReplyUseCase {
         this.solveTicketUseCase = solveTicketUseCase;
         this.lockProvider = lockProvider;
         this.inboxEventPublisher = inboxEventPublisher;
+        this.activityRepository = activityRepository;
     }
 
     public void dispatch(TicketId ticketId) {
@@ -78,17 +85,15 @@ public class DispatchAIReplyUseCase {
         }
 
         try (LockProvider.LockHandle lockHandle = lock) {
-            // Load ticket
             Ticket ticket = ticketRepository.findById(ticketId)
                     .orElseThrow(() -> new AutotixException.NotFoundException(
                             "Ticket not found: " + ticketId.value()));
 
-            // Load channel
             Channel channel = channelRepository.findById(ticket.channelId())
                     .orElseThrow(() -> new AutotixException.NotFoundException(
                             "Channel not found: " + ticket.channelId().value()));
 
-            // Build history (all messages except the last inbound)
+            // Build history — INTERNAL notes as role=system, PUBLIC outbound as assistant
             List<Message> messages = ticket.messages();
             List<AIRequest.HistoryTurn> history = new ArrayList<>();
             String latestMessage = "";
@@ -97,6 +102,10 @@ public class DispatchAIReplyUseCase {
                 Message msg = messages.get(i);
                 if (i == messages.size() - 1 && msg.direction() == MessageDirection.INBOUND) {
                     latestMessage = msg.content();
+                } else if (msg.isInternal()) {
+                    // Internal notes give AI context without being customer/agent turns
+                    String content = "[Internal note from " + msg.author() + "]: " + msg.content();
+                    history.add(new AIRequest.HistoryTurn("system", content));
                 } else {
                     String role = msg.direction() == MessageDirection.INBOUND ? "user" : "assistant";
                     history.add(new AIRequest.HistoryTurn(role, msg.content()));
@@ -128,10 +137,15 @@ public class DispatchAIReplyUseCase {
                         channel.id().value(),
                         "AI failed — assigned to fallback queue",
                         Instant.now()));
+                activityRepository.save(new TicketActivity(
+                        ticketId, "system",
+                        TicketActivityAction.ASSIGNED,
+                        "{\"assignee\":\"ai-fallback-queue\",\"reason\":\"ai-error\"}",
+                        Instant.now()));
                 return;
             }
 
-            // Send reply via platform
+            // Send reply via platform (PUBLIC)
             replyTicketUseCase.reply(ticketId, response.reply(), "ai");
 
             // Publish AI_REPLIED event
@@ -141,6 +155,8 @@ public class DispatchAIReplyUseCase {
                     channel.id().value(),
                     "AI replied",
                     Instant.now()));
+
+            // Activity for AI reply is already logged inside ReplyTicketUseCase.reply()
 
             // Apply optional action: CLOSE → solve (AI should not permanently close)
             if (response.action() == AIAction.CLOSE) {

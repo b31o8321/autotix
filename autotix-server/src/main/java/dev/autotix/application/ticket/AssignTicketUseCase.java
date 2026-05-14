@@ -3,6 +3,9 @@ package dev.autotix.application.ticket;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.domain.ticket.Ticket;
+import dev.autotix.domain.ticket.TicketActivity;
+import dev.autotix.domain.ticket.TicketActivityAction;
+import dev.autotix.domain.ticket.TicketActivityRepository;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
@@ -18,11 +21,14 @@ public class AssignTicketUseCase {
 
     private final TicketRepository ticketRepository;
     private final InboxEventPublisher inboxEventPublisher;
+    private final TicketActivityRepository activityRepository;
 
     public AssignTicketUseCase(TicketRepository ticketRepository,
-                               InboxEventPublisher inboxEventPublisher) {
+                               InboxEventPublisher inboxEventPublisher,
+                               TicketActivityRepository activityRepository) {
         this.ticketRepository = ticketRepository;
         this.inboxEventPublisher = inboxEventPublisher;
+        this.activityRepository = activityRepository;
     }
 
     public void assign(TicketId ticketId, String agentId) {
@@ -32,12 +38,19 @@ public class AssignTicketUseCase {
         ticket.assignTo(agentId);
         ticketRepository.save(ticket);
 
+        Instant now = Instant.now();
         // Publish ASSIGNED event
         inboxEventPublisher.publish(new InboxEvent(
                 InboxEvent.Kind.ASSIGNED,
                 ticketId.value(),
                 ticket.channelId().value(),
                 "assigned to " + agentId,
-                Instant.now()));
+                now));
+
+        activityRepository.save(new TicketActivity(
+                ticketId, "system",
+                TicketActivityAction.ASSIGNED,
+                "{\"assignee\":\"" + agentId + "\"}",
+                now));
     }
 }

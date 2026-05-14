@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import dev.autotix.domain.channel.ChannelId;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
+import dev.autotix.domain.ticket.MessageVisibility;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
+import dev.autotix.domain.ticket.TicketPriority;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketSearchQuery;
 import dev.autotix.domain.ticket.TicketStatus;
+import dev.autotix.domain.ticket.TicketType;
 import dev.autotix.infrastructure.persistence.ticket.mapper.MessageMapper;
 import dev.autotix.infrastructure.persistence.ticket.mapper.TicketMapper;
 import org.springframework.stereotype.Repository;
@@ -150,6 +153,7 @@ public class TicketRepositoryImpl implements TicketRepository {
                 me.setAuthor(m.author());
                 me.setContent(m.content());
                 me.setOccurredAt(m.occurredAt());
+                me.setVisibility(m.visibility() != null ? m.visibility().name() : MessageVisibility.PUBLIC.name());
                 messageMapper.insert(me);
             }
         }
@@ -185,23 +189,33 @@ public class TicketRepositoryImpl implements TicketRepository {
         e.setParentTicketId(t.parentTicketId() != null
                 ? Long.parseLong(t.parentTicketId().value()) : null);
         e.setReopenCount(t.reopenCount());
+        e.setPriority(t.priority() != null ? t.priority().name() : TicketPriority.NORMAL.name());
+        e.setType(t.type() != null ? t.type().name() : TicketType.QUESTION.name());
         return e;
     }
 
     private Ticket toDomain(TicketEntity e, List<MessageEntity> messageEntities) {
         List<Message> messages = new ArrayList<>();
         for (MessageEntity me : messageEntities) {
+            MessageVisibility vis = me.getVisibility() != null
+                    ? MessageVisibility.valueOf(me.getVisibility())
+                    : MessageVisibility.PUBLIC;
             messages.add(new Message(
                     MessageDirection.valueOf(me.getDirection()),
                     me.getAuthor(),
                     me.getContent(),
-                    me.getOccurredAt()
+                    me.getOccurredAt(),
+                    vis
             ));
         }
         Set<String> tags = stringToTags(e.getTagsCsv());
         TicketId parentId = e.getParentTicketId() != null
                 ? new TicketId(String.valueOf(e.getParentTicketId())) : null;
         int reopenCount = e.getReopenCount() != null ? e.getReopenCount() : 0;
+        TicketPriority priority = e.getPriority() != null
+                ? TicketPriority.valueOf(e.getPriority()) : TicketPriority.NORMAL;
+        TicketType type = e.getType() != null
+                ? TicketType.valueOf(e.getType()) : TicketType.QUESTION;
         return Ticket.rehydrate(
                 new TicketId(String.valueOf(e.getId())),
                 new ChannelId(e.getChannelId()),
@@ -218,7 +232,9 @@ public class TicketRepositoryImpl implements TicketRepository {
                 e.getSolvedAt(),
                 e.getClosedAt(),
                 parentId,
-                reopenCount
+                reopenCount,
+                priority,
+                type
         );
     }
 
