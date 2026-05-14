@@ -59,6 +59,15 @@ public class CustomFieldDefinition {
         this.id = id;
     }
 
+    /** Update mutable fields. Type and key are immutable after creation. */
+    public void updateMutableFields(String name, boolean required, int displayOrder) {
+        if (name != null && !name.trim().isEmpty()) {
+            this.name = name;
+        }
+        this.required = required;
+        this.displayOrder = displayOrder;
+    }
+
     public Long id() { return id; }
     public String name() { return name; }
     public String key() { return key; }

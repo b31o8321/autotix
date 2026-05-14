@@ -64,6 +64,62 @@ class AIConfigControllerTest {
     }
 
     @Test
+    void get_responseIncludesGlobalAutoReplyEnabled() {
+        String adminToken = getAdminToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+
+        ResponseEntity<AIConfigDTO> resp = rest.exchange(
+                base() + "/api/admin/ai",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                AIConfigDTO.class);
+
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+        AIConfigDTO dto = resp.getBody();
+        assertNotNull(dto);
+        // Default should be true
+        assertTrue(dto.globalAutoReplyEnabled, "globalAutoReplyEnabled should default to true");
+    }
+
+    @Test
+    void put_withGlobalAutoReplyDisabled_persistsAndGetReflectsChange() {
+        String adminToken = getAdminToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        AIConfigDTO update = new AIConfigDTO();
+        update.globalAutoReplyEnabled = false;
+        update.maxRetries = -1; // sentinel: negative means "don't change" in controller logic
+
+        ResponseEntity<AIConfigDTO> putResp = rest.exchange(
+                base() + "/api/admin/ai",
+                HttpMethod.PUT,
+                new HttpEntity<>(update, headers),
+                AIConfigDTO.class);
+
+        assertEquals(HttpStatus.OK, putResp.getStatusCode());
+        AIConfigDTO saved = putResp.getBody();
+        assertNotNull(saved);
+        assertFalse(saved.globalAutoReplyEnabled, "globalAutoReplyEnabled should now be false");
+
+        // Verify GET reflects it
+        ResponseEntity<AIConfigDTO> getResp = rest.exchange(
+                base() + "/api/admin/ai",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                AIConfigDTO.class);
+        assertEquals(HttpStatus.OK, getResp.getStatusCode());
+        assertFalse(getResp.getBody().globalAutoReplyEnabled);
+
+        // Restore to true for other tests
+        update.globalAutoReplyEnabled = true;
+        rest.exchange(base() + "/api/admin/ai", HttpMethod.PUT,
+                new HttpEntity<>(update, headers), AIConfigDTO.class);
+    }
+
+    @Test
     void put_withAdminToken_updatesConfigAndGetReflectsChange() {
         String adminToken = getAdminToken();
         HttpHeaders headers = new HttpHeaders();

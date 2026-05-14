@@ -21,6 +21,7 @@ import dev.autotix.domain.ticket.TicketDomainService;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
+import dev.autotix.infrastructure.ai.AIConfig;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.idempotency.IdempotencyStore;
 import dev.autotix.infrastructure.infra.queue.QueueProvider;
@@ -69,6 +70,7 @@ public class ProcessWebhookUseCase {
     private final ApplySlaPolicyUseCase applySlaPolicyUseCase;
     private final AttachmentRepository attachmentRepository;
     private final CustomerLookupService customerLookupService;
+    private final AIConfig aiConfig;
 
     @Value("${autotix.ticket.reopen-window-days:7}")
     private int reopenWindowDays;
@@ -82,7 +84,8 @@ public class ProcessWebhookUseCase {
                                  TicketActivityRepository activityRepository,
                                  ApplySlaPolicyUseCase applySlaPolicyUseCase,
                                  AttachmentRepository attachmentRepository,
-                                 CustomerLookupService customerLookupService) {
+                                 CustomerLookupService customerLookupService,
+                                 AIConfig aiConfig) {
         this.ticketRepository = ticketRepository;
         this.idempotencyStore = idempotencyStore;
         this.queueProvider = queueProvider;
@@ -93,6 +96,7 @@ public class ProcessWebhookUseCase {
         this.applySlaPolicyUseCase = applySlaPolicyUseCase;
         this.attachmentRepository = attachmentRepository;
         this.customerLookupService = customerLookupService;
+        this.aiConfig = aiConfig;
     }
 
     public void handle(Channel channel, TicketEvent event) {
@@ -267,7 +271,9 @@ public class ProcessWebhookUseCase {
         }
 
         // 6. Enqueue AI dispatch if conditions met
+        // Slice 13: also check global autoReply kill-switch
         if (!immediatelySolved && !outcome.skipAi
+                && aiConfig.isGlobalAutoReplyEnabled()
                 && channel.isAutoReplyEnabled()
                 && ticketDomainService.shouldAutoReply(ticket)) {
             queueProvider.publish("ai.dispatch", ticket.id().value());

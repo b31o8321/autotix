@@ -2,6 +2,7 @@ package dev.autotix.interfaces.desk;
 
 import dev.autotix.application.attachment.UploadAttachmentUseCase;
 import dev.autotix.application.ticket.*;
+import dev.autotix.infrastructure.auth.CurrentUser;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelId;
 import dev.autotix.domain.ticket.Attachment;
@@ -20,6 +21,7 @@ import dev.autotix.interfaces.desk.dto.MessageDTO;
 import dev.autotix.interfaces.desk.dto.ReplyRequest;
 import dev.autotix.interfaces.desk.dto.TicketActivityDTO;
 import dev.autotix.interfaces.desk.dto.TicketDTO;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -57,6 +59,9 @@ public class DeskController {
     private final ListTicketActivityUseCase listActivity;
     private final AttachmentRepository attachmentRepository;
     private final UploadAttachmentUseCase uploadAttachmentUseCase;
+    private final EscalateToHumanUseCase escalateToHuman;
+    private final ResumeAiUseCase resumeAi;
+    private final CurrentUser currentUser;
 
     public DeskController(ListTicketsUseCase listTickets,
                           ReplyTicketUseCase replyTicket,
@@ -68,7 +73,10 @@ public class DeskController {
                           ChangeTicketTypeUseCase changeType,
                           ListTicketActivityUseCase listActivity,
                           AttachmentRepository attachmentRepository,
-                          UploadAttachmentUseCase uploadAttachmentUseCase) {
+                          UploadAttachmentUseCase uploadAttachmentUseCase,
+                          EscalateToHumanUseCase escalateToHuman,
+                          ResumeAiUseCase resumeAi,
+                          CurrentUser currentUser) {
         this.listTickets = listTickets;
         this.replyTicket = replyTicket;
         this.assignTicket = assignTicket;
@@ -80,6 +88,9 @@ public class DeskController {
         this.listActivity = listActivity;
         this.attachmentRepository = attachmentRepository;
         this.uploadAttachmentUseCase = uploadAttachmentUseCase;
+        this.escalateToHuman = escalateToHuman;
+        this.resumeAi = resumeAi;
+        this.currentUser = currentUser;
     }
 
     @GetMapping
@@ -189,6 +200,29 @@ public class DeskController {
         changeType.change(new TicketId(ticketId), t, "agent");
     }
 
+    /**
+     * POST /api/desk/tickets/{id}/escalate — suspend AI and escalate to human.
+     * Any AGENT or ADMIN can call this.
+     */
+    @PostMapping("/{ticketId}/escalate")
+    public void escalate(@PathVariable String ticketId,
+                         @RequestBody(required = false) EscalateRequest req) {
+        String actorId = "agent:" + currentUser.id().value();
+        String reason = req != null ? req.reason : null;
+        escalateToHuman.escalate(new TicketId(ticketId), actorId, reason);
+    }
+
+    /**
+     * POST /api/desk/tickets/{id}/resume-ai — re-enable AI for a previously escalated ticket.
+     * Admin-only.
+     */
+    @PostMapping("/{ticketId}/resume-ai")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void resumeAi(@PathVariable String ticketId) {
+        String actorId = "agent:" + currentUser.id().value();
+        resumeAi.resume(new TicketId(ticketId), actorId);
+    }
+
     @GetMapping("/{ticketId}/activity")
     public List<TicketActivityDTO> activity(@PathVariable String ticketId,
                                             @RequestParam(defaultValue = "0") int offset,
@@ -197,6 +231,14 @@ public class DeskController {
         return entries.stream()
                 .map(this::toActivityDTO)
                 .collect(Collectors.toList());
+    }
+
+    // -----------------------------------------------------------------------
+    // Inner DTOs
+    // -----------------------------------------------------------------------
+
+    public static class EscalateRequest {
+        public String reason;
     }
 
     // -----------------------------------------------------------------------
@@ -235,6 +277,9 @@ public class DeskController {
             dto.resolutionRemainingMs = t.resolutionDueAt() != null
                     ? state.resolutionRemainingMs() : null;
         }
+        // Slice 13
+        dto.aiSuspended = t.aiSuspended();
+        dto.escalatedAt = t.escalatedAt();
         return dto;
     }
 

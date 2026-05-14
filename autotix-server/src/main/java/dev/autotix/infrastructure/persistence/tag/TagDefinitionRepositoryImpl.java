@@ -38,6 +38,12 @@ public class TagDefinitionRepositoryImpl implements TagDefinitionRepository {
     }
 
     @Override
+    public Optional<TagDefinition> findById(Long id) {
+        TagDefinitionEntity entity = mapper.selectById(id);
+        return Optional.ofNullable(entity).map(this::toDomain);
+    }
+
+    @Override
     public Optional<TagDefinition> findByName(String name) {
         QueryWrapper<TagDefinitionEntity> qw = new QueryWrapper<>();
         qw.eq("name", name).last("LIMIT 1");

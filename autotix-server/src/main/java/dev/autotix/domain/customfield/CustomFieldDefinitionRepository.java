@@ -10,6 +10,8 @@ public interface CustomFieldDefinitionRepository {
 
     Long save(CustomFieldDefinition field);
 
+    Optional<CustomFieldDefinition> findById(Long id);
+
     Optional<CustomFieldDefinition> findByKey(String key);
 
     /**

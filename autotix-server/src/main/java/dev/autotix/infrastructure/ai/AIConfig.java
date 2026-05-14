@@ -17,6 +17,7 @@ public class AIConfig {
     private String systemPrompt;
     private int timeoutSeconds = 30;
     private int maxRetries = 2;
+    private boolean globalAutoReplyEnabled = true;
 
     // getters & setters
     public String getEndpoint() { return endpoint; }
@@ -31,4 +32,8 @@ public class AIConfig {
     public void setTimeoutSeconds(int t) { this.timeoutSeconds = t; }
     public int getMaxRetries() { return maxRetries; }
     public void setMaxRetries(int r) { this.maxRetries = r; }
+    public boolean isGlobalAutoReplyEnabled() { return globalAutoReplyEnabled; }
+    public void setGlobalAutoReplyEnabled(boolean globalAutoReplyEnabled) {
+        this.globalAutoReplyEnabled = globalAutoReplyEnabled;
+    }
 }

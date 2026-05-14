@@ -29,6 +29,11 @@ public class ErrorHandler {
         return error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler(AutotixException.ConflictException.class)
+    public ResponseEntity<Map<String, String>> handleConflict(AutotixException.ConflictException e) {
+        return error(HttpStatus.CONFLICT, e.getMessage());
+    }
+
     @ExceptionHandler(AutotixException.AuthException.class)
     public ResponseEntity<Map<String, String>> handleAuth(AutotixException.AuthException e) {
         return error(HttpStatus.UNAUTHORIZED, e.getMessage());

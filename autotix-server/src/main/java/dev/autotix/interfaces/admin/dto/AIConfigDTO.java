@@ -11,6 +11,7 @@ public class AIConfigDTO {
     public String systemPrompt;
     public int timeoutSeconds;
     public int maxRetries;
+    public boolean globalAutoReplyEnabled = true;
 
     /** TODO: response of /test — used by UI to validate config before saving. */
     public static class TestResult {

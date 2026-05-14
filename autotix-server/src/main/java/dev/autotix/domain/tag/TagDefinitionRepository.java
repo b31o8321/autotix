@@ -10,6 +10,8 @@ public interface TagDefinitionRepository {
 
     Long save(TagDefinition tag);
 
+    Optional<TagDefinition> findById(Long id);
+
     Optional<TagDefinition> findByName(String name);
 
     List<TagDefinition> findAll();

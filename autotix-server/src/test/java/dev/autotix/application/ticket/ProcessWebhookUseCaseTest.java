@@ -2,6 +2,7 @@ package dev.autotix.application.ticket;
 
 import dev.autotix.application.customer.CustomerLookupService;
 import dev.autotix.application.sla.ApplySlaPolicyUseCase;
+import dev.autotix.infrastructure.ai.AIConfig;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelId;
 import dev.autotix.domain.channel.ChannelType;
@@ -56,6 +57,7 @@ class ProcessWebhookUseCaseTest {
     @Mock private CustomerLookupService customerLookupService;
 
     private TicketDomainService ticketDomainService;
+    private AIConfig aiConfig;
     private ProcessWebhookUseCase useCase;
 
     private Channel channel;
@@ -63,11 +65,13 @@ class ProcessWebhookUseCaseTest {
     @BeforeEach
     void setUp() {
         ticketDomainService = new TicketDomainService();
+        aiConfig = new AIConfig();
+        aiConfig.setGlobalAutoReplyEnabled(true); // default: global auto-reply ON
         when(evaluateRules.evaluate(any(), any())).thenReturn(EvaluateRulesUseCase.RuleOutcome.noOp());
         when(customerLookupService.findOrCreate(any(), any(), any())).thenReturn(new CustomerId("100"));
         useCase = new ProcessWebhookUseCase(ticketRepository, idempotencyStore,
                 queueProvider, ticketDomainService, evaluateRules, inboxPublisher, activityRepository,
-                applySlaPolicyUseCase, attachmentRepository, customerLookupService);
+                applySlaPolicyUseCase, attachmentRepository, customerLookupService, aiConfig);
         // @Value fields are not injected in plain Mockito tests — set the default explicitly
         ReflectionTestUtils.setField(useCase, "reopenWindowDays", 7);
 
@@ -324,6 +328,29 @@ class ProcessWebhookUseCaseTest {
     // -----------------------------------------------------------------------
     // Slice 12: CustomerLookupService integration
     // -----------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------
+    // Slice 13: global autoReply kill-switch
+    // -----------------------------------------------------------------------
+
+    @Test
+    void globalAutoReplyDisabled_doesNotEnqueueEvenWhenChannelAutoReplyEnabled() {
+        aiConfig.setGlobalAutoReplyEnabled(false); // kill-switch OFF
+
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), any())).thenReturn(Optional.empty());
+        doAnswer(invocation -> {
+            Ticket t = invocation.getArgument(0);
+            t.assignPersistedId(new TicketId("42"));
+            return new TicketId("42");
+        }).when(ticketRepository).save(any(Ticket.class));
+
+        // channel has autoReplyEnabled = true, but global flag is false
+        useCase.handle(channel, makeEvent("ext-global-off"));
+
+        verify(ticketRepository).save(any(Ticket.class));
+        verifyNoInteractions(queueProvider);
+    }
 
     @Test
     void newTicket_callsCustomerLookupService_andThreadsCustomerIdIntoTicket() {

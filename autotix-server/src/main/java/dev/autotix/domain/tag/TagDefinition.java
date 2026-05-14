@@ -40,6 +40,16 @@ public class TagDefinition {
         this.id = id;
     }
 
+    /** Update mutable fields (color and category). Name is immutable after creation. */
+    public void updateColorAndCategory(String color, String category) {
+        if (color != null) {
+            this.color = color;
+        }
+        if (category != null) {
+            this.category = category;
+        }
+    }
+
     public Long id() { return id; }
     public String name() { return name; }
     public String color() { return color; }

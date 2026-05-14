@@ -160,6 +160,18 @@ public class TicketRepositoryImpl implements TicketRepository {
     }
 
     @Override
+    public List<Ticket> findByCustomerId(dev.autotix.domain.customer.CustomerId customerId, int limit) {
+        QueryWrapper<TicketEntity> qw = new QueryWrapper<>();
+        qw.eq("customer_id", customerId.longValue())
+          .orderByDesc("updated_at")
+          .last("LIMIT " + limit);
+        List<TicketEntity> entities = ticketMapper.selectList(qw);
+        return entities.stream()
+                .map(e -> toDomain(e, Collections.emptyList()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Long findLastMessageId(TicketId ticketId) {
         QueryWrapper<MessageEntity> qw = new QueryWrapper<>();
         qw.eq("ticket_id", Long.parseLong(ticketId.value()))

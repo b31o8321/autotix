@@ -44,6 +44,9 @@ public class AIConfigBootstrap implements ApplicationRunner {
             if (e.getMaxRetries() != null && e.getMaxRetries() >= 0) {
                 aiConfig.setMaxRetries(e.getMaxRetries());
             }
+            if (e.getGlobalAutoReplyEnabled() != null) {
+                aiConfig.setGlobalAutoReplyEnabled(e.getGlobalAutoReplyEnabled());
+            }
         } else {
             log.info("No AI config in DB — seeding from yml values (endpoint={}, model={})",
                     aiConfig.getEndpoint(), aiConfig.getModel());

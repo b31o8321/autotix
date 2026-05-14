@@ -38,6 +38,13 @@ public class AutotixException extends RuntimeException {
         }
     }
 
+    /** Conflict with existing resource — renders as 409. */
+    public static class ConflictException extends AutotixException {
+        public ConflictException(String message) {
+            super(message);
+        }
+    }
+
     /** Failure calling an external system (AI, platform API, etc.). Renders as 502. */
     public static class IntegrationException extends AutotixException {
         private final String platform;

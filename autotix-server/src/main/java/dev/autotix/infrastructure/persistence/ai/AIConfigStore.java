@@ -43,6 +43,7 @@ public class AIConfigStore {
         entity.setSystemPrompt(snapshot.getSystemPrompt());
         entity.setTimeoutSeconds(snapshot.getTimeoutSeconds());
         entity.setMaxRetries(snapshot.getMaxRetries());
+        entity.setGlobalAutoReplyEnabled(snapshot.isGlobalAutoReplyEnabled());
         entity.setUpdatedAt(Instant.now());
 
         if (mapper.selectById(SINGLETON_ID) == null) {

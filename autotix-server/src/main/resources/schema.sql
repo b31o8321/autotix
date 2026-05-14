@@ -109,6 +109,7 @@ CREATE TABLE IF NOT EXISTS sla_policy (
 );
 
 -- Singleton AI config row (id always = 1)
+-- Slice 13: added global_auto_reply_enabled (default TRUE)
 CREATE TABLE IF NOT EXISTS ai_config (
     id BIGINT PRIMARY KEY,
     endpoint VARCHAR(512) NOT NULL,
@@ -117,6 +118,7 @@ CREATE TABLE IF NOT EXISTS ai_config (
     system_prompt CLOB,
     timeout_seconds INT,
     max_retries INT,
+    global_auto_reply_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     updated_at TIMESTAMP NOT NULL
 );
 

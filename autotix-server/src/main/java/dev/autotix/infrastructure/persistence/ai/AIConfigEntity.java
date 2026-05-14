@@ -34,6 +34,9 @@ public class AIConfigEntity {
     @TableField("max_retries")
     private Integer maxRetries;
 
+    @TableField("global_auto_reply_enabled")
+    private Boolean globalAutoReplyEnabled;
+
     @TableField("updated_at")
     private Instant updatedAt;
 }

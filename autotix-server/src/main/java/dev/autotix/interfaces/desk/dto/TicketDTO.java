@@ -40,4 +40,7 @@ public class TicketDTO {
     public boolean slaBreached;
     public Long firstResponseRemainingMs;   // ms to due; negative = overdue; null if no deadline
     public Long resolutionRemainingMs;      // ms to due; negative = overdue; null if no deadline
+    // Slice 12/13: AI suspension fields
+    public boolean aiSuspended;
+    public Instant escalatedAt;
 }

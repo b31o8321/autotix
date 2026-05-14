@@ -112,6 +112,22 @@ public class Customer {
     }
 
     /**
+     * Update the customer's display name.
+     */
+    public void updateDisplayName(String displayName) {
+        this.displayName = displayName;
+        this.updatedAt = Instant.now();
+    }
+
+    /**
+     * Update the customer's primary email.
+     */
+    public void updatePrimaryEmail(String primaryEmail) {
+        this.primaryEmail = primaryEmail;
+        this.updatedAt = Instant.now();
+    }
+
+    /**
      * Set a custom attribute value.
      */
     public void setAttribute(String key, String value) {

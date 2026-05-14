@@ -69,6 +69,8 @@ public class AIConfigController {
         if (dto.maxRetries >= 0) {
             aiConfig.setMaxRetries(dto.maxRetries);
         }
+        // globalAutoReplyEnabled is a boolean; always apply it on PUT
+        aiConfig.setGlobalAutoReplyEnabled(dto.globalAutoReplyEnabled);
         aiConfigStore.save(aiConfig);
         return toDTO(aiConfig);
     }
@@ -109,6 +111,7 @@ public class AIConfigController {
         dto.systemPrompt = config.getSystemPrompt();
         dto.timeoutSeconds = config.getTimeoutSeconds();
         dto.maxRetries = config.getMaxRetries();
+        dto.globalAutoReplyEnabled = config.isGlobalAutoReplyEnabled();
         return dto;
     }
 

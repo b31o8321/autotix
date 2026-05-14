@@ -47,6 +47,12 @@ public interface TicketRepository {
     List<Ticket> findOverdue(java.time.Instant now);
 
     /**
+     * Return the most recent tickets for a given customer, ordered by updated_at DESC, limited to `limit`.
+     * Used by GetCustomerUseCase to populate recentTicketIds on the customer detail view.
+     */
+    List<Ticket> findByCustomerId(dev.autotix.domain.customer.CustomerId customerId, int limit);
+
+    /**
      * Return the id of the last (most recently inserted) message for a ticket.
      * Used by Slice 11 to link uploaded attachments to the reply message.
      * Returns null if the ticket has no messages.

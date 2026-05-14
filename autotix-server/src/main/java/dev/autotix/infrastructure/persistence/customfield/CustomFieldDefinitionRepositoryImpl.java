@@ -40,6 +40,12 @@ public class CustomFieldDefinitionRepositoryImpl implements CustomFieldDefinitio
     }
 
     @Override
+    public Optional<CustomFieldDefinition> findById(Long id) {
+        CustomFieldDefinitionEntity entity = mapper.selectById(id);
+        return Optional.ofNullable(entity).map(this::toDomain);
+    }
+
+    @Override
     public Optional<CustomFieldDefinition> findByKey(String key) {
         QueryWrapper<CustomFieldDefinitionEntity> qw = new QueryWrapper<>();
         qw.eq("field_key", key).last("LIMIT 1");
