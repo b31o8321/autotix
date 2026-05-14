@@ -156,6 +156,13 @@
             <version>3.17.4</version>
         </dependency>
 
+        <!-- E2E-B: Jakarta Mail for IMAP/SMTP — Java 8 + 1.6.7 line -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>1.6.7</version>
+        </dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -177,6 +184,20 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>mockwebserver</artifactId>
             <version>4.9.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- E2E-B: GreenMail for in-memory SMTP+IMAP in tests -->
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail</artifactId>
+            <version>1.6.15</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.icegreen</groupId>
+            <artifactId>greenmail-junit5</artifactId>
+            <version>1.6.15</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

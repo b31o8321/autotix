@@ -34,4 +34,8 @@ public class MessageEntity {
 
     /** Slice 9: PUBLIC (default) or INTERNAL */
     private String visibility;
+
+    /** E2E-B: RFC 2822 Message-ID header for email threading (null for non-email channels). */
+    @TableField("email_message_id")
+    private String emailMessageId;
 }

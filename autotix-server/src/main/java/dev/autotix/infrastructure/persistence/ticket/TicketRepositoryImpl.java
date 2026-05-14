@@ -192,6 +192,25 @@ public class TicketRepositoryImpl implements TicketRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public TicketId findTicketIdByEmailMessageId(String emailMessageId) {
+        if (emailMessageId == null || emailMessageId.trim().isEmpty()) {
+            return null;
+        }
+        QueryWrapper<MessageEntity> qw = new QueryWrapper<>();
+        qw.eq("email_message_id", emailMessageId)
+          .orderByDesc("id")
+          .last("LIMIT 1");
+        MessageEntity me = messageMapper.selectOne(qw);
+        if (me == null) {
+            return null;
+        }
+        // Look up ticket entity to get ticket id
+        QueryWrapper<MessageEntity> tqw = new QueryWrapper<>();
+        tqw.eq("id", me.getId());
+        return new TicketId(String.valueOf(me.getTicketId()));
+    }
+
     // -----------------------------------------------------------------------
     // Private helpers
     // -----------------------------------------------------------------------
@@ -213,6 +232,7 @@ public class TicketRepositoryImpl implements TicketRepository {
                 me.setContent(m.content());
                 me.setOccurredAt(m.occurredAt());
                 me.setVisibility(m.visibility() != null ? m.visibility().name() : MessageVisibility.PUBLIC.name());
+                me.setEmailMessageId(m.externalMessageId());
                 messageMapper.insert(me);
             }
         }
@@ -277,7 +297,8 @@ public class TicketRepositoryImpl implements TicketRepository {
                     me.getAuthor(),
                     me.getContent(),
                     me.getOccurredAt(),
-                    vis
+                    vis,
+                    me.getEmailMessageId()
             ));
         }
         Set<String> tags = stringToTags(e.getTagsCsv());

@@ -56,6 +56,44 @@ SKIP_AI=1 bash e2e/run.sh
 | 15 | `15_customer_aggregation.sh`   | Same email on 2 channels → 1 Customer, ≥2 identifiers                |
 | 16 | `16_attachments_local.sh`      | Inbound with base64 attachment; download and MD5 verify               |
 | 17 | `17_activity_history.sh`       | Aggregate activity across tickets; assert ≥5 distinct action types    |
+| 18 | `18_email_channel.sh`          | EMAIL channel: inbound SMTP→IMAP→poller→ticket + reply→customer IMAP  |
+
+## Email Channel Scenario (18)
+
+Scenario 18 tests the end-to-end EMAIL channel flow: an inbound email is sent over SMTP to
+GreenMail, the IMAP poller picks it up and creates a ticket, and then a reply is sent back
+to the customer's mailbox via SMTP.
+
+### Setup
+
+```bash
+# Start GreenMail (SMTP on 3025, IMAP on 3143, API on 8088)
+docker compose --profile mail up -d mail
+
+# Run scenario (or full suite)
+bash e2e/run.sh 18
+```
+
+### Requirements
+
+- GreenMail must be running (`docker compose --profile mail up -d mail`)
+- `python3` must be in PATH (used to send test email and verify customer mailbox via IMAP)
+
+### What it tests
+
+1. **Inbound flow**: customer sends email → SMTP (GreenMail) → autotix IMAP poller → ticket created
+2. **Ticket content**: customerIdentifier, subject mapped correctly
+3. **Outbound flow**: agent posts reply → autotix SMTP → customer's GreenMail mailbox
+4. **Delivery verification**: customer mailbox checked via IMAP with Python imaplib
+
+### Limitations
+
+- **Threading**: GreenMail does not preserve Message-ID headers across SMTP relay in all versions.
+  The In-Reply-To threading test is covered in unit tests (EmailInboxPollerTest) rather than E2E.
+- **Gmail/OAuth**: scenario uses plain-auth GreenMail only; no OAuth2 flows tested
+- **DKIM / bounce / spam**: not covered
+- **Poll interval**: the IMAP poller runs every 60s by default (`autotix.email.poll-interval-ms`).
+  Scenario 18 polls for up to 90s; if your poller is set to a longer interval the test will fail.
 
 ## Known Limitations
 

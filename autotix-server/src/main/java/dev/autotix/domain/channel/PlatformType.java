@@ -27,5 +27,7 @@ public enum PlatformType {
     TIKTOK,
     /** Generic test/custom platform — no external API; healthCheck always passes; sendReply logs only. */
     CUSTOM,
+    /** Native IMAP/SMTP email channel — polls via IMAP, sends via SMTP. */
+    EMAIL,
     // TODO: add others as migrated from shulex-intelli
 }

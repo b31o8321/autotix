@@ -84,11 +84,12 @@ class ReplyTicketUseCaseTest {
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(replyFormatter.format(ChannelType.EMAIL, "**Hello**")).thenReturn("<b>Hello</b>");
         when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(plugin.sendReplyDetailed(any(), any(), any())).thenReturn(new TicketPlatformPlugin.SendResult(null));
         when(ticketRepository.save(any())).thenReturn(ticketId);
 
         useCase.reply(ticketId, "**Hello**", "agent-user");
 
-        verify(plugin).sendReply(eq(channel), eq(ticket), eq("<b>Hello</b>"));
+        verify(plugin).sendReplyDetailed(eq(channel), eq(ticket), eq("<b>Hello</b>"));
 
         ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
         verify(ticketRepository).save(captor.capture());
@@ -106,11 +107,12 @@ class ReplyTicketUseCaseTest {
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(replyFormatter.format(ChannelType.EMAIL, "AI answer")).thenReturn("AI answer");
         when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(plugin.sendReplyDetailed(any(), any(), any())).thenReturn(new TicketPlatformPlugin.SendResult(null));
         when(ticketRepository.save(any())).thenReturn(ticketId);
 
         useCase.reply(ticketId, "AI answer", "ai");
 
-        verify(plugin).sendReply(eq(channel), eq(ticket), eq("AI answer"));
+        verify(plugin).sendReplyDetailed(eq(channel), eq(ticket), eq("AI answer"));
         verifyNoInteractions(inboxPublisher);
     }
 
@@ -120,7 +122,7 @@ class ReplyTicketUseCaseTest {
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(replyFormatter.format(any(), any())).thenReturn("formatted");
         when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
-        doThrow(new RuntimeException("network error")).when(plugin).sendReply(any(), any(), any());
+        doThrow(new RuntimeException("network error")).when(plugin).sendReplyDetailed(any(), any(), any());
 
         assertThrows(AutotixException.IntegrationException.class,
                 () -> useCase.reply(ticketId, "reply", "ai"));
@@ -134,6 +136,7 @@ class ReplyTicketUseCaseTest {
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(replyFormatter.format(ChannelType.EMAIL, "Reply with attachment")).thenReturn("Reply with attachment");
         when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(plugin.sendReplyDetailed(any(), any(), any())).thenReturn(new TicketPlatformPlugin.SendResult(null));
         when(ticketRepository.save(any())).thenReturn(ticketId);
         when(ticketRepository.findLastMessageId(ticketId)).thenReturn(99L);
 
@@ -150,6 +153,7 @@ class ReplyTicketUseCaseTest {
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(replyFormatter.format(any(), any())).thenReturn("reply");
         when(pluginRegistry.get(PlatformType.ZENDESK)).thenReturn(plugin);
+        when(plugin.sendReplyDetailed(any(), any(), any())).thenReturn(new TicketPlatformPlugin.SendResult(null));
         when(ticketRepository.save(any())).thenReturn(ticketId);
 
         useCase.reply(ticketId, "reply", "agent", false, null);

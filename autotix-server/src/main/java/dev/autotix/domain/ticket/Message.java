@@ -18,10 +18,18 @@ public final class Message {
     private final String content;
     private final Instant occurredAt;
     private final MessageVisibility visibility;
+    /** E2E-B: RFC 2822 Message-ID for email channel threading; null for all other channels. */
+    private final String externalMessageId;
 
     /** Full constructor with explicit visibility. */
     public Message(MessageDirection direction, String author, String content,
                    Instant occurredAt, MessageVisibility visibility) {
+        this(direction, author, content, occurredAt, visibility, null);
+    }
+
+    /** E2E-B: Full constructor including optional externalMessageId. */
+    public Message(MessageDirection direction, String author, String content,
+                   Instant occurredAt, MessageVisibility visibility, String externalMessageId) {
         if (direction == null) {
             throw new AutotixException.ValidationException("direction must not be null");
         }
@@ -42,6 +50,7 @@ public final class Message {
         this.content = content.trim();
         this.occurredAt = occurredAt;
         this.visibility = visibility;
+        this.externalMessageId = externalMessageId;
     }
 
     /**
@@ -49,7 +58,7 @@ public final class Message {
      * All existing callers use this form.
      */
     public Message(MessageDirection direction, String author, String content, Instant occurredAt) {
-        this(direction, author, content, occurredAt, MessageVisibility.PUBLIC);
+        this(direction, author, content, occurredAt, MessageVisibility.PUBLIC, null);
     }
 
     public MessageDirection direction() { return direction; }
@@ -57,6 +66,8 @@ public final class Message {
     public String content() { return content; }
     public Instant occurredAt() { return occurredAt; }
     public MessageVisibility visibility() { return visibility; }
+    /** E2E-B: RFC 2822 Message-ID; null for non-email channels. */
+    public String externalMessageId() { return externalMessageId; }
 
     public boolean isInternal() {
         return visibility == MessageVisibility.INTERNAL;

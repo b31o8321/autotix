@@ -64,4 +64,11 @@ public interface TicketRepository {
      * Used by DeskController to match attachments to message DTOs.
      */
     List<Long> findMessageIdsByTicketIdOrdered(TicketId ticketId);
+
+    /**
+     * E2E-B: Look up the internal ticket id for a message identified by its RFC-2822 Message-ID header.
+     * Used by EmailInboxPoller to thread replies to existing tickets.
+     * Returns null if not found.
+     */
+    TicketId findTicketIdByEmailMessageId(String emailMessageId);
 }

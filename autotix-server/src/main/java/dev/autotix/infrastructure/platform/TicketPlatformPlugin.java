@@ -41,6 +41,26 @@ public interface TicketPlatformPlugin {
      */
     void sendReply(Channel channel, Ticket ticket, String formattedReply);
 
+    /**
+     * E2E-B: Extended send that also returns the platform-generated message ID (e.g. SMTP Message-ID).
+     * Default implementation calls sendReply() and returns SendResult with null externalMessageId.
+     * Override in EmailPlugin to capture the SMTP Message-ID for threading.
+     */
+    default SendResult sendReplyDetailed(Channel channel, Ticket ticket, String formattedReply) {
+        sendReply(channel, ticket, formattedReply);
+        return new SendResult(null);
+    }
+
+    /**
+     * E2E-B: Result of sendReplyDetailed.
+     */
+    final class SendResult {
+        public final String externalMessageId;  // nullable; non-null only for email
+        public SendResult(String externalMessageId) {
+            this.externalMessageId = externalMessageId;
+        }
+    }
+
     /** TODO: close ticket on platform side. */
     void close(Channel channel, Ticket ticket);
 

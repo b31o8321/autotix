@@ -50,6 +50,17 @@ services:
       timeout: 5s
       retries: 10
 
+  mail:
+    image: greenmail/standalone:2.0.0
+    profiles:
+      - mail
+    ports:
+      - "3025:3025"   # SMTP
+      - "3143:3143"   # IMAP
+      - "8088:8080"   # GreenMail API/Web UI
+    environment:
+      GREENMAIL_OPTS: "-Dgreenmail.setup.test.all -Dgreenmail.users=agent:secret:autotix.local,customer:secret:example.com -Dgreenmail.auth.disabled"
+
 volumes:
   autotix-data:
   mysql-data:

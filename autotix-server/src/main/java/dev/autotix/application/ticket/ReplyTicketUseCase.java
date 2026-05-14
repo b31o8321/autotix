@@ -17,6 +17,7 @@ import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.infrastructure.formatter.ReplyFormatter;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.platform.PluginRegistry;
+import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -143,9 +144,10 @@ public class ReplyTicketUseCase {
         // 2. Format reply per channel type
         String formattedReply = replyFormatter.format(channel.type(), markdownReply);
 
-        // 3. Send via platform plugin
+        // 3. Send via platform plugin (use sendReplyDetailed to capture email Message-ID)
+        TicketPlatformPlugin.SendResult sendResult;
         try {
-            pluginRegistry.get(channel.platform()).sendReply(channel, ticket, formattedReply);
+            sendResult = pluginRegistry.get(channel.platform()).sendReplyDetailed(channel, ticket, formattedReply);
         } catch (AutotixException e) {
             throw e;
         } catch (Exception e) {
@@ -153,13 +155,14 @@ public class ReplyTicketUseCase {
                     channel.platform().name(), "sendReply failed: " + e.getMessage(), e);
         }
 
-        // 4. Append outbound message (store markdown, not formatted)
+        // 4. Append outbound message (store markdown, not formatted); include email Message-ID if returned
         ticket.appendOutbound(new Message(
                 MessageDirection.OUTBOUND,
                 author,
                 markdownReply,
                 now,
-                MessageVisibility.PUBLIC));
+                MessageVisibility.PUBLIC,
+                sendResult.externalMessageId));
 
         // 5. Persist
         ticketRepository.save(ticket);

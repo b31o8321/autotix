@@ -45,9 +45,11 @@ CREATE TABLE IF NOT EXISTS ticket_message (
     author VARCHAR(128) NOT NULL,
     content CLOB NOT NULL,
     occurred_at TIMESTAMP NOT NULL,
-    visibility VARCHAR(16) NOT NULL DEFAULT 'PUBLIC'
+    visibility VARCHAR(16) NOT NULL DEFAULT 'PUBLIC',
+    email_message_id VARCHAR(512)
 );
 CREATE INDEX IF NOT EXISTS idx_msg_ticket ON ticket_message(ticket_id, occurred_at);
+CREATE INDEX IF NOT EXISTS idx_msg_email_message_id ON ticket_message(email_message_id);
 
 CREATE TABLE IF NOT EXISTS ticket_activity (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
