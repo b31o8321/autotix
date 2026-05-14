@@ -13,6 +13,8 @@ services:
       MYSQL_USER: ${MYSQL_USER:-autotix}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-autotix}
       MYSQL_DB: ${MYSQL_DB:-autotix}
+      # Email IMAP poll interval — shortened in dev/e2e (default 60s in prod is fine)
+      AUTOTIX_EMAIL_POLL_INTERVAL_MS: ${AUTOTIX_EMAIL_POLL_INTERVAL_MS:-15000}
     volumes:
       - autotix-data:/data
     extra_hosts:

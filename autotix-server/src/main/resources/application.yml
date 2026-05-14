@@ -47,6 +47,11 @@ autotix:
     # How often the SLA breach checker runs (ms). Default: 60 seconds.
     check-interval-ms: ${AUTOTIX_SLA_CHECK_INTERVAL_MS:60000}
 
+  email:
+    # IMAP poll cadence. Override via AUTOTIX_EMAIL_POLL_INTERVAL_MS env var
+    # (docker-compose sets 15s for dev/e2e; production 60s is fine).
+    poll-interval-ms: ${AUTOTIX_EMAIL_POLL_INTERVAL_MS:60000}
+
   storage:
     driver: local       # local | s3 | oss
     max-upload-bytes: 10485760   # 10 MB

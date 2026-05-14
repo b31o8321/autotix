@@ -80,7 +80,8 @@ TICKET_ID=""
 find_ticket_by_subject() {
   http GET "/api/desk/tickets?limit=100"
   local found_id
-  found_id=$(jq_extract "[.[] | select(.subject | test(\"E2E Email Test\"; \"i\"))] | .[0].id")
+  # Match the unique random suffix to avoid stale tickets from prior runs
+  found_id=$(jq_extract "[.[] | select(.subject != null and (.subject | contains(\"${SUBJECT}\")))] | .[0].id")
   if [ -n "$found_id" ] && [ "$found_id" != "null" ]; then
     TICKET_ID="$found_id"
     return 0

@@ -18,6 +18,16 @@ _check() {
   fi
 }
 
+# ── 0. Snapshot original config — restored at end ───────────────────────────
+info "${SCENARIO}: snapshotting AI config for restore"
+http GET /api/admin/ai
+ORIG_ENDPOINT=$(jq_extract '.endpoint')
+ORIG_MODEL=$(jq_extract '.model')
+ORIG_PROMPT=$(jq_extract '.systemPrompt')
+ORIG_TIMEOUT=$(jq_extract '.timeoutSeconds')
+ORIG_RETRIES=$(jq_extract '.maxRetries')
+ORIG_GLOBAL=$(jq_extract '.globalAutoReplyEnabled')
+
 # ── 1. GET masks apiKey ───────────────────────────────────────────────────────
 info "${SCENARIO}: GET /api/admin/ai"
 http GET /api/admin/ai
@@ -85,6 +95,19 @@ else
   http PUT /api/admin/ai '{"globalAutoReplyEnabled":true}'
   _check "PUT global flag back → 200" expect_status 200
   _check "globalAutoReplyEnabled=true" expect_json '.globalAutoReplyEnabled' "true"
+fi
+
+# ── 5. Restore original config (apiKey can't be restored since it was masked;
+#        scenarios that need real AI rely on host-side config preservation)
+info "${SCENARIO}: restoring original endpoint/model/prompt"
+RESTORE_PAYLOAD=$(printf '{"endpoint":"%s","model":"%s","systemPrompt":"%s","timeoutSeconds":%s,"maxRetries":%s,"globalAutoReplyEnabled":%s}' \
+  "${ORIG_ENDPOINT}" "${ORIG_MODEL}" "${ORIG_PROMPT//\"/\\\"}" "${ORIG_TIMEOUT}" "${ORIG_RETRIES}" "${ORIG_GLOBAL}")
+http PUT /api/admin/ai "$RESTORE_PAYLOAD"
+_check "Restore PUT → 200" expect_status 200
+
+# When SKIP_AI=1, keep autoReply disabled regardless (avoid blocking AI calls)
+if [ "${SKIP_AI:-}" = "1" ]; then
+  http PUT /api/admin/ai '{"globalAutoReplyEnabled":false}' >/dev/null
 fi
 
 # ── Result ────────────────────────────────────────────────────────────────────
