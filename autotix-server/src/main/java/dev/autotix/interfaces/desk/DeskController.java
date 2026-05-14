@@ -19,6 +19,15 @@ import java.util.stream.Collectors;
 /**
  * REST API for the human agent desk UI.
  * Auth: JWT (enforced by SecurityConfig — ROLE_AGENT or ROLE_ADMIN).
+ *
+ * Endpoints:
+ *  GET    /api/desk/tickets                   — list / search
+ *  GET    /api/desk/tickets/{id}              — detail
+ *  GET    /api/desk/tickets/{id}/messages     — messages
+ *  POST   /api/desk/tickets/{id}/reply        — send reply
+ *  POST   /api/desk/tickets/{id}/assign       — assign to agent
+ *  POST   /api/desk/tickets/{id}/solve        — solve (primary agent action; status → SOLVED)
+ *  POST   /api/desk/tickets/{id}/close        — permanently close (admin action; status → CLOSED)
  */
 @RestController
 @RequestMapping("/api/desk/tickets")
@@ -27,17 +36,20 @@ public class DeskController {
     private final ListTicketsUseCase listTickets;
     private final ReplyTicketUseCase replyTicket;
     private final AssignTicketUseCase assignTicket;
+    private final SolveTicketUseCase solveTicket;
     private final CloseTicketUseCase closeTicket;
     private final TicketRepository ticketRepository;
 
     public DeskController(ListTicketsUseCase listTickets,
                           ReplyTicketUseCase replyTicket,
                           AssignTicketUseCase assignTicket,
+                          SolveTicketUseCase solveTicket,
                           CloseTicketUseCase closeTicket,
                           TicketRepository ticketRepository) {
         this.listTickets = listTickets;
         this.replyTicket = replyTicket;
         this.assignTicket = assignTicket;
+        this.solveTicket = solveTicket;
         this.closeTicket = closeTicket;
         this.ticketRepository = ticketRepository;
     }
@@ -96,7 +108,8 @@ public class DeskController {
     public void reply(@PathVariable String ticketId, @RequestBody ReplyRequest req) {
         replyTicket.reply(new TicketId(ticketId), req.content, "agent");
         if (req.closeAfter) {
-            closeTicket.close(new TicketId(ticketId));
+            // "reply and close" in UI means solve
+            solveTicket.solve(new TicketId(ticketId));
         }
     }
 
@@ -105,6 +118,19 @@ public class DeskController {
         assignTicket.assign(new TicketId(ticketId), agentId);
     }
 
+    /**
+     * Primary agent "close" action: transitions to SOLVED.
+     * Customer can still reopen within the configured reopen window.
+     */
+    @PostMapping("/{ticketId}/solve")
+    public void solve(@PathVariable String ticketId) {
+        solveTicket.solve(new TicketId(ticketId));
+    }
+
+    /**
+     * Permanent close (admin action): transitions to CLOSED (terminal).
+     * Any subsequent inbound from the customer spawns a new ticket.
+     */
     @PostMapping("/{ticketId}/close")
     public void close(@PathVariable String ticketId) {
         closeTicket.close(new TicketId(ticketId));
@@ -127,6 +153,10 @@ public class DeskController {
         dto.tags = t.tags();
         dto.createdAt = t.createdAt();
         dto.updatedAt = t.updatedAt();
+        dto.solvedAt = t.solvedAt();
+        dto.closedAt = t.closedAt();
+        dto.parentTicketId = t.parentTicketId() != null ? t.parentTicketId().value() : null;
+        dto.reopenCount = t.reopenCount();
         return dto;
     }
 

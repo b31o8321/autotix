@@ -15,6 +15,10 @@ services:
       MYSQL_DB: ${MYSQL_DB:-autotix}
     volumes:
       - autotix-data:/data
+    extra_hosts:
+      # Cross-platform host alias: on macOS/Windows Docker Desktop this is automatic,
+      # on Linux this declaration is required for `host.docker.internal` to resolve.
+      - "host.docker.internal:host-gateway"
     depends_on:
       mysql:
         condition: service_healthy

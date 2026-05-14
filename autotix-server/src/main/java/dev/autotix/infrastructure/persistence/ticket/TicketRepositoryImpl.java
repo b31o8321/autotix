@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 /**
  * Implements TicketRepository port using MyBatis Plus.
  * Translates between domain Ticket and (TicketEntity + List<MessageEntity>).
- * Map status enum <-> string; tags <-> csv; messages handled in separate table.
  */
 @Repository
 public class TicketRepositoryImpl implements TicketRepository {
@@ -47,7 +46,6 @@ public class TicketRepositoryImpl implements TicketRepository {
             // INSERT — clear id so AUTO_INCREMENT kicks in
             entity.setId(null);
             ticketMapper.insert(entity);
-            // entity.getId() is populated by MyBatis Plus after insert
             TicketId newId = new TicketId(String.valueOf(entity.getId()));
             ticket.assignPersistedId(newId);
             saveNewMessages(entity.getId(), ticket.messages(), Collections.emptyList());
@@ -55,7 +53,6 @@ public class TicketRepositoryImpl implements TicketRepository {
         } else {
             // UPDATE
             ticketMapper.updateById(entity);
-            // Diff messages: load existing, insert only new ones
             Long ticketDbId = Long.parseLong(ticket.id().value());
             List<MessageEntity> existing = loadMessageEntities(ticketDbId);
             saveNewMessages(ticketDbId, ticket.messages(), existing);
@@ -74,17 +71,35 @@ public class TicketRepositoryImpl implements TicketRepository {
         return Optional.of(toDomain(entity, messageEntities));
     }
 
+    /**
+     * Returns the MOST RECENT ticket matching (channelId, externalNativeId).
+     * The unique constraint on this pair was dropped in Slice 8 to support
+     * "spawn new ticket from closed" behaviour.
+     */
     @Override
     public Optional<Ticket> findByChannelAndExternalId(ChannelId channelId, String externalNativeId) {
         QueryWrapper<TicketEntity> qw = new QueryWrapper<>();
         qw.eq("channel_id", channelId.value())
-          .eq("external_native_id", externalNativeId);
+          .eq("external_native_id", externalNativeId)
+          .orderByDesc("created_at")
+          .last("LIMIT 1");
         TicketEntity entity = ticketMapper.selectOne(qw);
         if (entity == null) {
             return Optional.empty();
         }
         List<MessageEntity> messageEntities = loadMessageEntities(entity.getId());
         return Optional.of(toDomain(entity, messageEntities));
+    }
+
+    @Override
+    public List<Ticket> findSolvedBefore(Instant cutoff) {
+        QueryWrapper<TicketEntity> qw = new QueryWrapper<>();
+        qw.eq("status", TicketStatus.SOLVED.name())
+          .lt("solved_at", cutoff);
+        List<TicketEntity> entities = ticketMapper.selectList(qw);
+        return entities.stream()
+                .map(e -> toDomain(e, Collections.emptyList()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -119,10 +134,6 @@ public class TicketRepositoryImpl implements TicketRepository {
     // Private helpers
     // -----------------------------------------------------------------------
 
-    /**
-     * Diff domain messages against already-persisted ones and insert only new rows.
-     * Match key: direction + author + content + occurredAt (all must match).
-     */
     private void saveNewMessages(Long ticketDbId, List<Message> domainMessages,
                                  List<MessageEntity> existingEntities) {
         Set<String> existingKeys = new HashSet<>();
@@ -169,6 +180,11 @@ public class TicketRepositoryImpl implements TicketRepository {
         e.setTagsCsv(tagsToString(t.tags()));
         e.setCreatedAt(t.createdAt());
         e.setUpdatedAt(t.updatedAt());
+        e.setSolvedAt(t.solvedAt());
+        e.setClosedAt(t.closedAt());
+        e.setParentTicketId(t.parentTicketId() != null
+                ? Long.parseLong(t.parentTicketId().value()) : null);
+        e.setReopenCount(t.reopenCount());
         return e;
     }
 
@@ -183,6 +199,9 @@ public class TicketRepositoryImpl implements TicketRepository {
             ));
         }
         Set<String> tags = stringToTags(e.getTagsCsv());
+        TicketId parentId = e.getParentTicketId() != null
+                ? new TicketId(String.valueOf(e.getParentTicketId())) : null;
+        int reopenCount = e.getReopenCount() != null ? e.getReopenCount() : 0;
         return Ticket.rehydrate(
                 new TicketId(String.valueOf(e.getId())),
                 new ChannelId(e.getChannelId()),
@@ -195,7 +214,11 @@ public class TicketRepositoryImpl implements TicketRepository {
                 messages,
                 tags,
                 e.getCreatedAt(),
-                e.getUpdatedAt()
+                e.getUpdatedAt(),
+                e.getSolvedAt(),
+                e.getClosedAt(),
+                parentId,
+                reopenCount
         );
     }
 

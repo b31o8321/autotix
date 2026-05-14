@@ -18,9 +18,11 @@ public class TicketDomainService {
 
     /**
      * Decide whether ticket qualifies for AI auto-reply.
-     * Simple rule: ticket must be OPEN and have at least one message.
+     * Ticket must be NEW or OPEN and have at least one message.
+     * WAITING_ON_CUSTOMER means we already replied; skip re-dispatching.
      */
     public boolean shouldAutoReply(Ticket ticket) {
-        return ticket.status() == TicketStatus.OPEN && !ticket.messages().isEmpty();
+        return (ticket.status() == TicketStatus.NEW || ticket.status() == TicketStatus.OPEN)
+                && !ticket.messages().isEmpty();
     }
 }

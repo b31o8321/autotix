@@ -11,7 +11,7 @@ COPY src ./src
 RUN mvn package -DskipTests -B --no-transfer-progress
 
 # Stage 2 — runtime
-FROM eclipse-temurin:8-jre-alpine AS runtime
+FROM amazoncorretto:8-alpine-jre AS runtime
 WORKDIR /app
 
 # SQLite data directory — mount a volume here for persistence

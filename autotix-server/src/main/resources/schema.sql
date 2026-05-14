@@ -1,5 +1,6 @@
--- TODO: initial DDL for H2 dev profile. Replace with Flyway/Liquibase migrations for prod.
---   Tables: ticket, ticket_message, channel, user, automation_rule
+-- Legacy schema (H2-compatible; kept for backward compat with older test profiles).
+-- Slice 8: UNIQUE(channel_id, external_native_id) dropped; new columns added.
+-- See schema-h2.sql for the canonical H2 DDL.
 
 CREATE TABLE IF NOT EXISTS ticket (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -8,14 +9,19 @@ CREATE TABLE IF NOT EXISTS ticket (
     subject VARCHAR(512),
     customer_identifier VARCHAR(256),
     customer_name VARCHAR(256),
-    status VARCHAR(16) NOT NULL,
+    status VARCHAR(32) NOT NULL,
     assignee_id VARCHAR(64),
     tags_csv VARCHAR(512),
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    UNIQUE (channel_id, external_native_id)
+    solved_at TIMESTAMP,
+    closed_at TIMESTAMP,
+    parent_ticket_id BIGINT,
+    reopen_count INT NOT NULL DEFAULT 0
 );
+CREATE INDEX IF NOT EXISTS idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_ticket_status_updated ON ticket(status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_ticket_status_solved ON ticket(status, solved_at);
 
 CREATE TABLE IF NOT EXISTS ticket_message (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -44,7 +50,6 @@ CREATE TABLE IF NOT EXISTS channel (
     UNIQUE (platform, webhook_token)
 );
 
--- TODO: user table — see domain/user
 CREATE TABLE IF NOT EXISTS app_user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(256) NOT NULL UNIQUE,
@@ -65,5 +70,17 @@ CREATE TABLE IF NOT EXISTS automation_rule (
     conditions_json CLOB,
     actions_json CLOB,
     created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Singleton AI config row (id always = 1)
+CREATE TABLE IF NOT EXISTS ai_config (
+    id BIGINT PRIMARY KEY,
+    endpoint VARCHAR(512) NOT NULL,
+    api_key VARCHAR(512),
+    model VARCHAR(128) NOT NULL,
+    system_prompt CLOB,
+    timeout_seconds INT,
+    max_retries INT,
     updated_at TIMESTAMP NOT NULL
 );

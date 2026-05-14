@@ -12,10 +12,28 @@ import {
 
 const { Text } = Typography;
 
+// Synced with backend PlatformType enum.
+// "Functional" comment marks plugins with real implementations; the rest are scaffolds
+// that throw UnsupportedOperationException on healthCheck and will fail to connect.
 const PLATFORM_OPTIONS = [
-  'ZENDESK', 'FRESHDESK', 'INTERCOM', 'HUBSPOT', 'SALESFORCE',
-  'EMAIL_IMAP', 'SLACK', 'WHATSAPP', 'TELEGRAM', 'CUSTOM',
-].map((p) => ({ label: p, value: p }));
+  { label: 'CUSTOM (test / generic webhook)', value: 'CUSTOM' },        // functional
+  { label: 'ZENDESK', value: 'ZENDESK' },                                // functional
+  { label: 'ZENDESK_SUNSHINE (stub)', value: 'ZENDESK_SUNSHINE' },
+  { label: 'FRESHDESK (stub)', value: 'FRESHDESK' },
+  { label: 'FRESHCHAT (stub)', value: 'FRESHCHAT' },
+  { label: 'GORGIAS (stub)', value: 'GORGIAS' },
+  { label: 'INTERCOM (stub)', value: 'INTERCOM' },
+  { label: 'LIVECHAT (stub)', value: 'LIVECHAT' },
+  { label: 'SHOPIFY (stub)', value: 'SHOPIFY' },
+  { label: 'AMAZON (stub)', value: 'AMAZON' },
+  { label: 'GMAIL (stub)', value: 'GMAIL' },
+  { label: 'OUTLOOK (stub)', value: 'OUTLOOK' },
+  { label: 'LINE (stub)', value: 'LINE' },
+  { label: 'WHATSAPP (stub)', value: 'WHATSAPP' },
+  { label: 'WECOM (stub)', value: 'WECOM' },
+  { label: 'WECHAT (stub)', value: 'WECHAT' },
+  { label: 'TIKTOK (stub)', value: 'TIKTOK' },
+];
 
 interface CredentialRow {
   key: string;

@@ -6,6 +6,7 @@ import dev.autotix.domain.ai.AIRequest;
 import dev.autotix.domain.ai.AIResponse;
 import dev.autotix.domain.channel.ChannelType;
 import dev.autotix.infrastructure.ai.AIConfig;
+import dev.autotix.infrastructure.persistence.ai.AIConfigStore;
 import dev.autotix.interfaces.admin.dto.AIConfigDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +19,7 @@ import java.util.Collections;
  * AI configuration admin REST endpoint.
  *
  * GET  /api/admin/ai       — return current effective config (apiKey masked).
- * PUT  /api/admin/ai       — update in-memory AIConfig. NOTE: not persisted to DB in v1;
- *                            changes are lost on restart. Persistence deferred.
+ * PUT  /api/admin/ai       — update in-memory AIConfig and persist to DB via AIConfigStore.
  * POST /api/admin/ai/test  — call AI with a sample prompt and return response + latency.
  */
 @RestController
@@ -31,10 +31,12 @@ public class AIConfigController {
 
     private final AIConfig aiConfig;
     private final AIReplyPort aiReplyPort;
+    private final AIConfigStore aiConfigStore;
 
-    public AIConfigController(AIConfig aiConfig, AIReplyPort aiReplyPort) {
+    public AIConfigController(AIConfig aiConfig, AIReplyPort aiReplyPort, AIConfigStore aiConfigStore) {
         this.aiConfig = aiConfig;
         this.aiReplyPort = aiReplyPort;
+        this.aiConfigStore = aiConfigStore;
     }
 
     @GetMapping
@@ -43,8 +45,8 @@ public class AIConfigController {
     }
 
     /**
-     * Update the in-memory AIConfig. Fields are applied directly to the mutable bean.
-     * NOTE: v1 does NOT persist to DB — changes are lost on restart.
+     * Update the in-memory AIConfig and persist to DB.
+     * Fields are applied directly to the mutable bean, then saved via AIConfigStore.
      */
     @PutMapping
     public AIConfigDTO update(@RequestBody AIConfigDTO dto) {
@@ -67,6 +69,7 @@ public class AIConfigController {
         if (dto.maxRetries >= 0) {
             aiConfig.setMaxRetries(dto.maxRetries);
         }
+        aiConfigStore.save(aiConfig);
         return toDTO(aiConfig);
     }
 

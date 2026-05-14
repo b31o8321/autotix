@@ -14,7 +14,6 @@ import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
-import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.domain.event.InboxEvent;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.lock.InMemoryLockProvider;
@@ -45,7 +44,7 @@ class DispatchAIReplyUseCaseTest {
     @Mock private ChannelRepository channelRepository;
     @Mock private AIReplyPort aiReplyPort;
     @Mock private ReplyTicketUseCase replyTicketUseCase;
-    @Mock private CloseTicketUseCase closeTicketUseCase;
+    @Mock private SolveTicketUseCase solveTicketUseCase;
     @Mock private InboxEventPublisher inboxPublisher;
 
     private LockProvider lockProvider;
@@ -60,7 +59,7 @@ class DispatchAIReplyUseCaseTest {
         lockProvider = new InMemoryLockProvider();
         useCase = new DispatchAIReplyUseCase(
                 ticketRepository, channelRepository, aiReplyPort,
-                replyTicketUseCase, closeTicketUseCase, lockProvider, inboxPublisher);
+                replyTicketUseCase, solveTicketUseCase, lockProvider, inboxPublisher);
 
         ticketId = new TicketId("10");
         channel = Channel.rehydrate(
@@ -83,7 +82,7 @@ class DispatchAIReplyUseCaseTest {
     }
 
     @Test
-    void happyPath_callsReplyAndTicketTransitionsToPending() {
+    void happyPath_callsReplyAndPublishesAiReplied() {
         when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(aiReplyPort.generate(any())).thenReturn(
@@ -93,7 +92,7 @@ class DispatchAIReplyUseCaseTest {
         useCase.dispatch(ticketId);
 
         verify(replyTicketUseCase).reply(eq(ticketId), eq("Here is the answer"), eq("ai"));
-        verify(closeTicketUseCase, never()).close(any());
+        verify(solveTicketUseCase, never()).solve(any());
         verify(inboxPublisher).publish(argThat(e -> e.kind == InboxEvent.Kind.AI_REPLIED));
     }
 
@@ -107,10 +106,9 @@ class DispatchAIReplyUseCaseTest {
 
         useCase.dispatch(ticketId);
 
-        // Ticket should be assigned to fallback queue
+        // Ticket should be assigned to fallback queue (status stays NEW/OPEN, only assigneeId changes)
         ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
         verify(ticketRepository).save(captor.capture());
-        assertEquals(TicketStatus.ASSIGNED, captor.getValue().status());
         assertEquals("ai-fallback-queue", captor.getValue().assigneeId());
 
         // Reply should NOT have been sent
@@ -134,7 +132,7 @@ class DispatchAIReplyUseCaseTest {
     }
 
     @Test
-    void aiReturnsClose_closesTicketAfterReply() {
+    void aiReturnsClose_solvesTicketAfterReply() {
         when(ticketRepository.findById(ticketId)).thenReturn(Optional.of(ticket));
         when(channelRepository.findById(new ChannelId("ch-1"))).thenReturn(Optional.of(channel));
         when(aiReplyPort.generate(any())).thenReturn(
@@ -144,6 +142,7 @@ class DispatchAIReplyUseCaseTest {
         useCase.dispatch(ticketId);
 
         verify(replyTicketUseCase).reply(eq(ticketId), eq("Solved!"), eq("ai"));
-        verify(closeTicketUseCase).close(eq(ticketId));
+        // AI CLOSE now calls SolveTicketUseCase, NOT CloseTicketUseCase
+        verify(solveTicketUseCase).solve(eq(ticketId));
     }
 }

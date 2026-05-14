@@ -31,3 +31,10 @@ autotix:
     system-prompt: |
       You are a professional customer support assistant.
       Reply politely and concisely in the customer's language.
+
+  ticket:
+    # Number of days a SOLVED ticket can be reopened by a new customer message.
+    # After this window the inbound spawns a new child ticket instead.
+    reopen-window-days: ${AUTOTIX_REOPEN_WINDOW_DAYS:7}
+    # How often the auto-close scheduler checks for expired SOLVED tickets (ms).
+    auto-close-check-interval-ms: ${AUTOTIX_AUTO_CLOSE_INTERVAL_MS:3600000}

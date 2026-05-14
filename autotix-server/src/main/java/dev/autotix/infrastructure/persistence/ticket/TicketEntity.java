@@ -9,10 +9,15 @@ import lombok.Data;
 import java.time.Instant;
 
 /**
- * TODO: MyBatis Plus entity for ticket.
- *  Schema indexes (declared in V1__init.sql / Flyway):
- *    - UNIQUE (channel_id, external_native_id) — idempotency
- *    - (status, updated_at)                    — desk listing
+ * MyBatis Plus entity for ticket.
+ * Schema indexes (declared in schema-*.sql):
+ *   - (channel_id, external_native_id, created_at) — most-recent lookup
+ *   - (status, updated_at)                         — desk listing
+ *   - (status, solved_at)                          — auto-close scheduler
+ *
+ * NOTE: The old UNIQUE(channel_id, external_native_id) constraint has been dropped.
+ * Duplicate externalNativeId rows are intentional when a closed ticket spawns a new one.
+ * Old status values: PENDING → WAITING_ON_CUSTOMER, ASSIGNED → OPEN (dev DBs wiped on restart).
  */
 @Data
 @TableName("ticket")
@@ -35,7 +40,7 @@ public class TicketEntity {
     @TableField("customer_name")
     private String customerName;
 
-    /** OPEN / PENDING / ASSIGNED / CLOSED */
+    /** NEW / OPEN / WAITING_ON_CUSTOMER / WAITING_ON_INTERNAL / SOLVED / CLOSED / SPAM */
     private String status;
 
     @TableField("assignee_id")
@@ -50,4 +55,23 @@ public class TicketEntity {
 
     @TableField("updated_at")
     private Instant updatedAt;
+
+    /** Timestamp when the ticket entered SOLVED status. Null if never solved. */
+    @TableField("solved_at")
+    private Instant solvedAt;
+
+    /** Timestamp when the ticket was permanently closed. Null if not closed. */
+    @TableField("closed_at")
+    private Instant closedAt;
+
+    /**
+     * FK (soft) to ticket.id — set when this ticket was spawned from a prior
+     * CLOSED/SPAM/expired-SOLVED ticket on the same externalNativeId.
+     */
+    @TableField("parent_ticket_id")
+    private Long parentTicketId;
+
+    /** Number of times this ticket has been reopened from SOLVED. */
+    @TableField("reopen_count")
+    private Integer reopenCount;
 }

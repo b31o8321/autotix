@@ -10,11 +10,13 @@ import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketDomainService;
 import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
 import dev.autotix.infrastructure.infra.idempotency.IdempotencyStore;
 import dev.autotix.infrastructure.infra.queue.QueueProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -28,12 +30,18 @@ import java.util.Optional;
  *
  * Flow:
  *   1. Idempotency check by (channelId, externalTicketId, occurredAt)
- *   2. Load or create Ticket
- *   3. Append inbound message
- *   4. Evaluate automation rules; apply outcome (tags, assign, close, skipAi)
- *   5. If autoReply enabled && shouldAutoReply && !skipAi && !immediateClosed -> enqueue DispatchAIReplyUseCase
+ *   2. Load most-recent matching Ticket (if any)
+ *   3. Decide: create / append / reopen / spawn based on existing ticket state
+ *   4. Evaluate automation rules; apply outcome (tags, assign, solve, skipAi)
+ *   5. If autoReply enabled && shouldAutoReply && !skipAi && !immediateSolved -> enqueue AI
  *   6. Persist Ticket
  *   7. Publish InboxEvent
+ *
+ * Spawn logic (Zendesk two-stage close):
+ *   - CLOSED or SPAM ticket         → spawn new ticket with parentTicketId
+ *   - SOLVED, within reopen window  → reopen then append
+ *   - SOLVED, past reopen window    → spawn new ticket with parentTicketId
+ *   - Any other active state        → append inbound
  */
 @Service
 public class ProcessWebhookUseCase {
@@ -46,6 +54,9 @@ public class ProcessWebhookUseCase {
     private final TicketDomainService ticketDomainService;
     private final EvaluateRulesUseCase evaluateRulesUseCase;
     private final InboxEventPublisher inboxEventPublisher;
+
+    @Value("${autotix.ticket.reopen-window-days:7}")
+    private int reopenWindowDays;
 
     public ProcessWebhookUseCase(TicketRepository ticketRepository,
                                  IdempotencyStore idempotencyStore,
@@ -73,7 +84,7 @@ public class ProcessWebhookUseCase {
             return;
         }
 
-        // 2. Load or create Ticket
+        // 2. Load most-recent ticket matching (channel, externalTicketId)
         Optional<Ticket> existing = ticketRepository.findByChannelAndExternalId(
                 channel.id(), event.externalTicketId());
 
@@ -85,15 +96,14 @@ public class ProcessWebhookUseCase {
                         ? event.messageBody() : "(no content)",
                 event.occurredAt());
 
+        Instant now = Instant.now();
+        Duration reopenWindow = Duration.ofDays(reopenWindowDays);
+
         boolean isNewTicket;
         Ticket ticket;
-        if (existing.isPresent()) {
-            // 3a. Append inbound message to existing ticket
-            ticket = existing.get();
-            ticket.appendInbound(inbound);
-            isNewTicket = false;
-        } else {
-            // 3b. Create new ticket
+
+        if (!existing.isPresent()) {
+            // 3a. Brand new externalTicketId — create fresh ticket
             ticket = Ticket.openFromInbound(
                     channel.id(),
                     event.externalTicketId(),
@@ -101,6 +111,50 @@ public class ProcessWebhookUseCase {
                     event.customerIdentifier(),
                     inbound);
             isNewTicket = true;
+
+        } else {
+            Ticket found = existing.get();
+            TicketStatus foundStatus = found.status();
+
+            if (foundStatus == TicketStatus.CLOSED || foundStatus == TicketStatus.SPAM) {
+                // 3b. Terminal ticket — spawn a new child ticket
+                log.info("Spawning new ticket from {} ticket id={}", foundStatus, found.id().value());
+                ticket = Ticket.spawnFromClosed(
+                        channel.id(),
+                        event.externalTicketId(),
+                        event.subject(),
+                        event.customerIdentifier(),
+                        inbound,
+                        found.id());
+                isNewTicket = true;
+
+            } else if (foundStatus == TicketStatus.SOLVED) {
+                if (found.isReopenable(now, reopenWindow)) {
+                    // 3c. Within reopen window — reopen then append
+                    log.info("Reopening ticket id={} (within {}d window)", found.id().value(), reopenWindowDays);
+                    found.reopen(now);
+                    found.appendInbound(inbound);
+                    ticket = found;
+                    isNewTicket = false;
+                } else {
+                    // 3d. Reopen window expired — spawn new child ticket
+                    log.info("Spawning new ticket from expired SOLVED ticket id={}", found.id().value());
+                    ticket = Ticket.spawnFromClosed(
+                            channel.id(),
+                            event.externalTicketId(),
+                            event.subject(),
+                            event.customerIdentifier(),
+                            inbound,
+                            found.id());
+                    isNewTicket = true;
+                }
+
+            } else {
+                // 3e. Active ticket — append inbound
+                found.appendInbound(inbound);
+                ticket = found;
+                isNewTicket = false;
+            }
         }
 
         // 4. Evaluate automation rules
@@ -115,18 +169,18 @@ public class ProcessWebhookUseCase {
             ticket.assignTo(outcome.assignee);
         }
 
-        boolean immediatelyClosed = false;
-        // Apply close action
+        boolean immediatelySolved = false;
+        // Apply close action from rules (mapped to solve)
         if (outcome.finalAction == AIAction.CLOSE) {
-            ticket.close();
-            immediatelyClosed = true;
+            ticket.solve(now);
+            immediatelySolved = true;
         }
 
         // 5. Persist
         ticketRepository.save(ticket);
 
-        // 6. Enqueue AI dispatch if conditions met (and not suppressed by rules)
-        if (!immediatelyClosed && !outcome.skipAi
+        // 6. Enqueue AI dispatch if conditions met
+        if (!immediatelySolved && !outcome.skipAi
                 && channel.isAutoReplyEnabled()
                 && ticketDomainService.shouldAutoReply(ticket)) {
             queueProvider.publish("ai.dispatch", ticket.id().value());
@@ -140,14 +194,14 @@ public class ProcessWebhookUseCase {
                     ticket.id().value(),
                     channel.id().value(),
                     event.subject(),
-                    Instant.now()));
+                    now));
         } else {
             inboxEventPublisher.publish(new InboxEvent(
                     InboxEvent.Kind.NEW_MESSAGE,
                     ticket.id().value(),
                     channel.id().value(),
                     "new inbound on #" + event.externalTicketId(),
-                    Instant.now()));
+                    now));
         }
     }
 }

@@ -34,7 +34,7 @@ import java.util.List;
  *   3. Build AIRequest from conversation history
  *   4. Call AIReplyPort.generate
  *   5. Pass result to ReplyTicketUseCase
- *   6. Apply optional AI action (close, tag)
+ *   6. Apply optional AI action (solve, tag) — AI CLOSE → solve (not permanent close)
  *   7. Release lock (try-with-resources)
  *   8. Publish InboxEvent (AI_REPLIED on success, ASSIGNED on fallback)
  *
@@ -49,7 +49,7 @@ public class DispatchAIReplyUseCase {
     private final ChannelRepository channelRepository;
     private final AIReplyPort aiReplyPort;
     private final ReplyTicketUseCase replyTicketUseCase;
-    private final CloseTicketUseCase closeTicketUseCase;
+    private final SolveTicketUseCase solveTicketUseCase;
     private final LockProvider lockProvider;
     private final InboxEventPublisher inboxEventPublisher;
 
@@ -57,14 +57,14 @@ public class DispatchAIReplyUseCase {
                                   ChannelRepository channelRepository,
                                   AIReplyPort aiReplyPort,
                                   ReplyTicketUseCase replyTicketUseCase,
-                                  CloseTicketUseCase closeTicketUseCase,
+                                  SolveTicketUseCase solveTicketUseCase,
                                   LockProvider lockProvider,
                                   InboxEventPublisher inboxEventPublisher) {
         this.ticketRepository = ticketRepository;
         this.channelRepository = channelRepository;
         this.aiReplyPort = aiReplyPort;
         this.replyTicketUseCase = replyTicketUseCase;
-        this.closeTicketUseCase = closeTicketUseCase;
+        this.solveTicketUseCase = solveTicketUseCase;
         this.lockProvider = lockProvider;
         this.inboxEventPublisher = inboxEventPublisher;
     }
@@ -96,7 +96,6 @@ public class DispatchAIReplyUseCase {
             for (int i = 0; i < messages.size(); i++) {
                 Message msg = messages.get(i);
                 if (i == messages.size() - 1 && msg.direction() == MessageDirection.INBOUND) {
-                    // Last message — this is the latest
                     latestMessage = msg.content();
                 } else {
                     String role = msg.direction() == MessageDirection.INBOUND ? "user" : "assistant";
@@ -112,7 +111,7 @@ public class DispatchAIReplyUseCase {
                     ticket.customerName() != null ? ticket.customerName() : ticket.customerIdentifier(),
                     latestMessage,
                     history,
-                    null); // no per-channel system prompt override yet
+                    null);
 
             // Call AI — on failure, escalate to human
             AIResponse response;
@@ -123,7 +122,6 @@ public class DispatchAIReplyUseCase {
                         ticketId.value(), e.getMessage(), e);
                 ticket.assignTo("ai-fallback-queue");
                 ticketRepository.save(ticket);
-                // Publish ASSIGNED event for fallback escalation
                 inboxEventPublisher.publish(new InboxEvent(
                         InboxEvent.Kind.ASSIGNED,
                         ticketId.value(),
@@ -133,8 +131,7 @@ public class DispatchAIReplyUseCase {
                 return;
             }
 
-            // Send reply via platform (ReplyTicketUseCase skips publish for "ai" author;
-            // we publish AI_REPLIED here explicitly)
+            // Send reply via platform
             replyTicketUseCase.reply(ticketId, response.reply(), "ai");
 
             // Publish AI_REPLIED event
@@ -145,19 +142,18 @@ public class DispatchAIReplyUseCase {
                     "AI replied",
                     Instant.now()));
 
-            // Apply optional action
+            // Apply optional action: CLOSE → solve (AI should not permanently close)
             if (response.action() == AIAction.CLOSE) {
-                closeTicketUseCase.close(ticketId);
+                solveTicketUseCase.solve(ticketId);
             }
 
             // Apply tags if any
             if (response.tags() != null && !response.tags().isEmpty()) {
-                // Reload ticket after reply (status may have changed)
                 Ticket reloaded = ticketRepository.findById(ticketId).orElse(ticket);
                 reloaded.addTags(new HashSet<>(response.tags()));
                 ticketRepository.save(reloaded);
             }
 
-        } // lock released here by try-with-resources
+        } // lock released here
     }
 }

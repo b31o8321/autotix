@@ -1,5 +1,9 @@
--- TODO: initial DDL for H2 dev profile. Replace with Flyway/Liquibase migrations for prod.
---   Tables: ticket, ticket_message, channel, user, automation_rule
+-- H2 DDL — used by application-h2.yml (dev/test profile)
+-- Slice 8: new status values (NEW/OPEN/WAITING_ON_CUSTOMER/WAITING_ON_INTERNAL/SOLVED/CLOSED/SPAM)
+--   Old values: PENDING → WAITING_ON_CUSTOMER, ASSIGNED → OPEN (dev DB is wiped on restart)
+-- Slice 8: UNIQUE(channel_id, external_native_id) dropped; replaced with regular index
+--   including created_at for most-recent lookup ORDER BY created_at DESC LIMIT 1
+-- Slice 8: new columns: solved_at, closed_at, parent_ticket_id, reopen_count
 
 CREATE TABLE IF NOT EXISTS ticket (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -8,14 +12,19 @@ CREATE TABLE IF NOT EXISTS ticket (
     subject VARCHAR(512),
     customer_identifier VARCHAR(256),
     customer_name VARCHAR(256),
-    status VARCHAR(16) NOT NULL,
+    status VARCHAR(32) NOT NULL,
     assignee_id VARCHAR(64),
     tags_csv VARCHAR(512),
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    UNIQUE (channel_id, external_native_id)
+    solved_at TIMESTAMP,
+    closed_at TIMESTAMP,
+    parent_ticket_id BIGINT,
+    reopen_count INT NOT NULL DEFAULT 0
 );
+CREATE INDEX IF NOT EXISTS idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_ticket_status_updated ON ticket(status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_ticket_status_solved ON ticket(status, solved_at);
 
 CREATE TABLE IF NOT EXISTS ticket_message (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -65,5 +74,17 @@ CREATE TABLE IF NOT EXISTS automation_rule (
     conditions_json CLOB,
     actions_json CLOB,
     created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Singleton AI config row (id always = 1)
+CREATE TABLE IF NOT EXISTS ai_config (
+    id BIGINT PRIMARY KEY,
+    endpoint VARCHAR(512) NOT NULL,
+    api_key VARCHAR(512),
+    model VARCHAR(128) NOT NULL,
+    system_prompt CLOB,
+    timeout_seconds INT,
+    max_retries INT,
     updated_at TIMESTAMP NOT NULL
 );

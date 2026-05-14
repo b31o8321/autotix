@@ -25,5 +25,7 @@ public enum PlatformType {
     WECOM,
     WECHAT,
     TIKTOK,
+    /** Generic test/custom platform — no external API; healthCheck always passes; sendReply logs only. */
+    CUSTOM,
     // TODO: add others as migrated from shulex-intelli
 }

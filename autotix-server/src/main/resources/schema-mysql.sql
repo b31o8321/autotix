@@ -1,5 +1,7 @@
 -- MySQL DDL — used by application-mysql.yml
 -- CLOB -> LONGTEXT; BOOLEAN -> TINYINT(1); TIMESTAMP stays
+-- Slice 8: UNIQUE KEY uq_ticket_channel_native dropped; regular index added (channel_id, external_native_id, created_at)
+-- Slice 8: new columns: solved_at, closed_at, parent_ticket_id, reopen_count
 
 CREATE TABLE IF NOT EXISTS ticket (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -8,14 +10,19 @@ CREATE TABLE IF NOT EXISTS ticket (
     subject VARCHAR(512),
     customer_identifier VARCHAR(256),
     customer_name VARCHAR(256),
-    status VARCHAR(16) NOT NULL,
+    status VARCHAR(32) NOT NULL,
     assignee_id VARCHAR(64),
     tags_csv VARCHAR(512),
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    UNIQUE KEY uq_ticket_channel_native (channel_id, external_native_id)
+    solved_at TIMESTAMP NULL,
+    closed_at TIMESTAMP NULL,
+    parent_ticket_id BIGINT,
+    reopen_count INT NOT NULL DEFAULT 0
 );
+CREATE INDEX idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
 CREATE INDEX idx_ticket_status_updated ON ticket(status, updated_at);
+CREATE INDEX idx_ticket_status_solved ON ticket(status, solved_at);
 
 CREATE TABLE IF NOT EXISTS ticket_message (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -64,5 +71,17 @@ CREATE TABLE IF NOT EXISTS automation_rule (
     conditions_json LONGTEXT,
     actions_json LONGTEXT,
     created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Singleton AI config row (id always = 1)
+CREATE TABLE IF NOT EXISTS ai_config (
+    id BIGINT PRIMARY KEY,
+    endpoint VARCHAR(512) NOT NULL,
+    api_key VARCHAR(512),
+    model VARCHAR(128) NOT NULL,
+    system_prompt LONGTEXT,
+    timeout_seconds INT,
+    max_retries INT,
     updated_at TIMESTAMP NOT NULL
 );

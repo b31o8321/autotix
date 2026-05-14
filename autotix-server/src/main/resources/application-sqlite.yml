@@ -1,16 +1,14 @@
 spring:
   datasource:
-    url: jdbc:sqlite:${SQLITE_PATH:./data/autotix.db}
+    # date_class=text → store timestamps as ISO strings so MyBatis InstantTypeHandler round-trips cleanly
+    url: "jdbc:sqlite:${SQLITE_PATH:./data/autotix.db}?date_class=text&date_string_format=yyyy-MM-dd HH:mm:ss.SSS"
     driver-class-name: org.sqlite.JDBC
+    initialization-mode: always
+    schema: classpath:schema-sqlite.sql
+    continue-on-error: true
     hikari:
       maximum-pool-size: 1        # SQLite only supports one writer at a time
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
       connection-init-sql: "PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;"
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema-sqlite.sql
-      data-locations: classpath:data.sql
-      continue-on-error: true

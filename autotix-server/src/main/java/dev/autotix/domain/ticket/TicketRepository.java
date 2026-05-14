@@ -18,8 +18,20 @@ public interface TicketRepository {
     /** TODO: find by internal id */
     Optional<Ticket> findById(TicketId id);
 
-    /** TODO: lookup for idempotency — by channel + native external id */
+    /**
+     * Lookup by channel + native external id.
+     * Returns the MOST RECENT ticket matching the pair (ORDER BY created_at DESC LIMIT 1).
+     * The unique constraint on (channel_id, external_native_id) has been dropped;
+     * multiple tickets can share the same externalNativeId when a closed ticket
+     * spawns a new one via {@link Ticket#spawnFromClosed}.
+     */
     Optional<Ticket> findByChannelAndExternalId(ChannelId channelId, String externalNativeId);
+
+    /**
+     * Find tickets in SOLVED status where solvedAt is older than the given cutoff.
+     * Used by AutoCloseSolvedTicketsScheduler.
+     */
+    List<Ticket> findSolvedBefore(java.time.Instant cutoff);
 
     /** TODO: paginated list for desk UI; filter params TBD (status, channel, assignee, ...) */
     List<Ticket> search(TicketSearchQuery query);

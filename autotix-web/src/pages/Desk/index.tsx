@@ -6,10 +6,13 @@ import { listTickets, type TicketDTO } from '@/services/ticket';
 import { listChannels, type ChannelDTO } from '@/services/channel';
 
 const STATUS_COLORS: Record<string, string> = {
+  NEW: 'cyan',
   OPEN: 'blue',
-  PENDING: 'orange',
-  ASSIGNED: 'purple',
+  WAITING_ON_CUSTOMER: 'orange',
+  WAITING_ON_INTERNAL: 'gold',
+  SOLVED: 'green',
   CLOSED: 'default',
+  SPAM: 'red',
 };
 
 const PAGE_SIZE = 20;
@@ -102,10 +105,13 @@ export default function DeskPage() {
             value={status}
             onChange={(v) => { setStatus(v); setOffset(0); }}
             options={[
+              { label: 'New', value: 'NEW' },
               { label: 'Open', value: 'OPEN' },
-              { label: 'Pending', value: 'PENDING' },
-              { label: 'Assigned', value: 'ASSIGNED' },
+              { label: 'Waiting on Customer', value: 'WAITING_ON_CUSTOMER' },
+              { label: 'Waiting on Internal', value: 'WAITING_ON_INTERNAL' },
+              { label: 'Solved', value: 'SOLVED' },
               { label: 'Closed', value: 'CLOSED' },
+              { label: 'Spam', value: 'SPAM' },
             ]}
           />
         </Col>

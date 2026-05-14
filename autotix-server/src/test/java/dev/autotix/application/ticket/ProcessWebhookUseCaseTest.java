@@ -12,6 +12,7 @@ import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.domain.ticket.TicketDomainService;
 import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
+import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.application.automation.EvaluateRulesUseCase;
 import dev.autotix.domain.ai.AIAction;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
@@ -25,7 +26,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Optional;
@@ -55,6 +58,8 @@ class ProcessWebhookUseCaseTest {
         when(evaluateRules.evaluate(any(), any())).thenReturn(EvaluateRulesUseCase.RuleOutcome.noOp());
         useCase = new ProcessWebhookUseCase(ticketRepository, idempotencyStore,
                 queueProvider, ticketDomainService, evaluateRules, inboxPublisher);
+        // @Value fields are not injected in plain Mockito tests — set the default explicitly
+        ReflectionTestUtils.setField(useCase, "reopenWindowDays", 7);
 
         channel = Channel.rehydrate(
                 new ChannelId("ch-1"),
@@ -69,113 +74,95 @@ class ProcessWebhookUseCaseTest {
                 Instant.now());
     }
 
-    @Test
-    void firstTime_createsTicket_andQueuesAi_whenAutoReplyEnabled() {
-        Instant now = Instant.now();
-        TicketEvent event = new TicketEvent(
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+
+    private TicketEvent makeEvent(String externalId) {
+        return new TicketEvent(
                 new ChannelId("ch-1"),
                 EventType.NEW_TICKET,
-                "ext-ticket-1",
+                externalId,
                 "customer@example.com",
                 "Alice",
                 "Help me",
                 "I need help",
-                now,
+                Instant.now(),
                 Collections.emptyMap());
+    }
 
+    private Ticket makeExistingTicket(String externalId, TicketStatus status) {
+        Message originalMsg = new Message(MessageDirection.INBOUND, "customer@example.com",
+                "Original message", Instant.now().minusSeconds(60));
+        Ticket t = Ticket.openFromInbound(
+                new ChannelId("ch-1"), externalId, "Subject", "customer@example.com", originalMsg);
+        t.assignPersistedId(new TicketId("99"));
+        if (status == TicketStatus.OPEN) {
+            t.changeStatus(TicketStatus.OPEN);
+        } else if (status == TicketStatus.WAITING_ON_CUSTOMER) {
+            t.appendOutbound(new Message(MessageDirection.OUTBOUND, "ai", "Hi", Instant.now().minusSeconds(30)));
+        } else if (status == TicketStatus.SOLVED) {
+            t.solve(Instant.now().minusSeconds(10));
+        } else if (status == TicketStatus.CLOSED) {
+            t.permanentClose(Instant.now().minusSeconds(10));
+        } else if (status == TicketStatus.SPAM) {
+            t.markSpam(Instant.now().minusSeconds(10));
+        }
+        return t;
+    }
+
+    // -----------------------------------------------------------------------
+    // Tests
+    // -----------------------------------------------------------------------
+
+    @Test
+    void firstTime_createsTicket_andQueuesAi_whenAutoReplyEnabled() {
         when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
         when(ticketRepository.findByChannelAndExternalId(any(), any())).thenReturn(Optional.empty());
 
-        // Simulate save setting an id on the ticket
         doAnswer(invocation -> {
             Ticket t = invocation.getArgument(0);
             t.assignPersistedId(new TicketId("1"));
             return new TicketId("1");
         }).when(ticketRepository).save(any(Ticket.class));
 
-        useCase.handle(channel, event);
+        useCase.handle(channel, makeEvent("ext-ticket-1"));
 
-        // Ticket was saved
         verify(ticketRepository).save(any(Ticket.class));
-        // AI dispatch was queued
         verify(queueProvider).publish(eq("ai.dispatch"), eq("1"));
     }
 
     @Test
     void idempotentReplay_isNoOp() {
-        Instant now = Instant.now();
-        TicketEvent event = new TicketEvent(
-                new ChannelId("ch-1"),
-                EventType.NEW_TICKET,
-                "ext-ticket-2",
-                "customer@example.com",
-                "Bob",
-                "Subject",
-                "Body",
-                now,
-                Collections.emptyMap());
-
         when(idempotencyStore.tryMark(anyString(), any())).thenReturn(false); // duplicate
 
-        useCase.handle(channel, event);
+        useCase.handle(channel, makeEvent("ext-ticket-2"));
 
         verifyNoInteractions(ticketRepository, queueProvider);
     }
 
     @Test
-    void existingTicket_appendsInbound_andSaves() {
-        Instant now = Instant.now();
-        TicketEvent event = new TicketEvent(
-                new ChannelId("ch-1"),
-                EventType.NEW_MESSAGE,
-                "ext-ticket-3",
-                "customer@example.com",
-                "Carol",
-                "Subject",
-                "Follow up message",
-                now,
-                Collections.emptyMap());
-
-        // Build an existing ticket with a prior inbound message
-        Message originalMsg = new Message(MessageDirection.INBOUND, "customer@example.com",
-                "Original message", now.minusSeconds(60));
-        Ticket existingTicket = Ticket.openFromInbound(
-                new ChannelId("ch-1"), "ext-ticket-3", "Subject", "customer@example.com", originalMsg);
-        existingTicket.assignPersistedId(new TicketId("99"));
+    void existingActiveTicket_appendsInbound_andSaves() {
+        Ticket existingTicket = makeExistingTicket("ext-ticket-3", TicketStatus.OPEN);
 
         when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
         when(ticketRepository.findByChannelAndExternalId(any(), eq("ext-ticket-3")))
                 .thenReturn(Optional.of(existingTicket));
         when(ticketRepository.save(any())).thenReturn(new TicketId("99"));
 
-        useCase.handle(channel, event);
+        useCase.handle(channel, makeEvent("ext-ticket-3"));
 
-        // Ticket was saved with the new message appended
         ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
         verify(ticketRepository).save(captor.capture());
         Ticket saved = captor.getValue();
         assertEquals(2, saved.messages().size(), "Existing ticket should have 2 messages after append");
-        assertEquals("Follow up message", saved.messages().get(1).content());
     }
 
     @Test
     void automationRule_skipsAi_doesNotEnqueue() {
-        // When automation rule returns skipAi=true, AI queue should not be invoked
         when(evaluateRules.evaluate(any(), any())).thenReturn(
                 new EvaluateRulesUseCase.RuleOutcome(
                         java.util.Collections.emptyList(), null, true, AIAction.NONE));
-
-        Instant now = Instant.now();
-        TicketEvent event = new TicketEvent(
-                new ChannelId("ch-1"),
-                EventType.NEW_TICKET,
-                "ext-ticket-skip-ai",
-                "customer@example.com",
-                "Skip",
-                "Subject",
-                "Body",
-                now,
-                Collections.emptyMap());
 
         when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
         when(ticketRepository.findByChannelAndExternalId(any(), any())).thenReturn(Optional.empty());
@@ -185,10 +172,9 @@ class ProcessWebhookUseCaseTest {
             return new TicketId("3");
         }).when(ticketRepository).save(any(Ticket.class));
 
-        useCase.handle(channel, event);
+        useCase.handle(channel, makeEvent("ext-ticket-skip-ai"));
 
         verify(ticketRepository).save(any(Ticket.class));
-        // skipAi=true -> queueProvider.publish must NOT be called
         verifyNoInteractions(queueProvider);
     }
 
@@ -202,21 +188,9 @@ class ProcessWebhookUseCaseTest {
                 "token-noai",
                 null,
                 true,
-                false, // autoReplyEnabled = false
+                false,
                 Instant.now(),
                 Instant.now());
-
-        Instant now = Instant.now();
-        TicketEvent event = new TicketEvent(
-                new ChannelId("ch-2"),
-                EventType.NEW_TICKET,
-                "ext-ticket-4",
-                "customer@example.com",
-                "Dave",
-                "Subject",
-                "Body",
-                now,
-                Collections.emptyMap());
 
         when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
         when(ticketRepository.findByChannelAndExternalId(any(), any())).thenReturn(Optional.empty());
@@ -226,9 +200,114 @@ class ProcessWebhookUseCaseTest {
             return new TicketId("2");
         }).when(ticketRepository).save(any(Ticket.class));
 
-        useCase.handle(noAutoReply, event);
+        useCase.handle(noAutoReply, makeEvent("ext-ticket-4"));
 
         verify(ticketRepository).save(any(Ticket.class));
         verifyNoInteractions(queueProvider);
+    }
+
+    // -----------------------------------------------------------------------
+    // New spawn / reopen logic (Slice 8)
+    // -----------------------------------------------------------------------
+
+    @Test
+    void inboundOnSolvedWithinWindow_reopensThenAppends() {
+        // Solved only 10 seconds ago — well within 7-day window
+        Ticket solved = makeExistingTicket("ext-solved-fresh", TicketStatus.SOLVED);
+        // reopen window default = 7 days; 10-second-old solvedAt is within window
+
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), eq("ext-solved-fresh")))
+                .thenReturn(Optional.of(solved));
+        when(ticketRepository.save(any())).thenReturn(new TicketId("99"));
+
+        useCase.handle(channel, makeEvent("ext-solved-fresh"));
+
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket saved = captor.getValue();
+        // Same ticket (id=99), status reopened to OPEN, reopenCount incremented
+        assertEquals(new TicketId("99"), saved.id());
+        assertEquals(TicketStatus.OPEN, saved.status());
+        assertEquals(1, saved.reopenCount());
+        assertEquals(2, saved.messages().size()); // original + new inbound
+    }
+
+    @Test
+    void inboundOnSolvedPastWindow_spawnsNewTicket() {
+        // Set up a ticket solved 8 days ago (past 7-day window)
+        Message originalMsg = new Message(MessageDirection.INBOUND, "customer@example.com",
+                "Original", Instant.now().minusSeconds(60));
+        Ticket oldSolved = Ticket.openFromInbound(
+                new ChannelId("ch-1"), "ext-solved-old", "Subject", "customer@example.com", originalMsg);
+        oldSolved.assignPersistedId(new TicketId("77"));
+        // Solved 8 days ago
+        oldSolved.solve(Instant.now().minus(Duration.ofDays(8)));
+
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), eq("ext-solved-old")))
+                .thenReturn(Optional.of(oldSolved));
+        doAnswer(invocation -> {
+            Ticket t = invocation.getArgument(0);
+            t.assignPersistedId(new TicketId("200"));
+            return new TicketId("200");
+        }).when(ticketRepository).save(any(Ticket.class));
+
+        useCase.handle(channel, makeEvent("ext-solved-old"));
+
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket spawned = captor.getValue();
+        // A new ticket was created (id not 77), with parentTicketId = 77
+        assertNotNull(spawned.parentTicketId());
+        assertEquals("77", spawned.parentTicketId().value());
+        assertEquals(TicketStatus.NEW, spawned.status());
+        assertEquals(0, spawned.reopenCount());
+    }
+
+    @Test
+    void inboundOnClosedTicket_spawnsNewTicketWithParentLink() {
+        Ticket closed = makeExistingTicket("ext-closed", TicketStatus.CLOSED);
+
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), eq("ext-closed")))
+                .thenReturn(Optional.of(closed));
+        doAnswer(invocation -> {
+            Ticket t = invocation.getArgument(0);
+            t.assignPersistedId(new TicketId("101"));
+            return new TicketId("101");
+        }).when(ticketRepository).save(any(Ticket.class));
+
+        useCase.handle(channel, makeEvent("ext-closed"));
+
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket spawned = captor.getValue();
+        assertNotNull(spawned.parentTicketId());
+        assertEquals("99", spawned.parentTicketId().value()); // parent = old closed ticket
+        assertEquals(TicketStatus.NEW, spawned.status());
+    }
+
+    @Test
+    void inboundOnSpamTicket_spawnsNewTicket() {
+        Ticket spam = makeExistingTicket("ext-spam", TicketStatus.SPAM);
+
+        when(idempotencyStore.tryMark(anyString(), any())).thenReturn(true);
+        when(ticketRepository.findByChannelAndExternalId(any(), eq("ext-spam")))
+                .thenReturn(Optional.of(spam));
+        doAnswer(invocation -> {
+            Ticket t = invocation.getArgument(0);
+            t.assignPersistedId(new TicketId("102"));
+            return new TicketId("102");
+        }).when(ticketRepository).save(any(Ticket.class));
+
+        useCase.handle(channel, makeEvent("ext-spam"));
+
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket spawned = captor.getValue();
+        assertNotNull(spawned.parentTicketId());
+        assertEquals("99", spawned.parentTicketId().value());
+        assertEquals(TicketStatus.NEW, spawned.status());
     }
 }

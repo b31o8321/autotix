@@ -43,7 +43,7 @@ const sampleTickets = [
     externalNativeId: 'ext-2',
     subject: 'Second ticket subject',
     customerIdentifier: 'another@test.com',
-    status: 'PENDING' as const,
+    status: 'WAITING_ON_CUSTOMER' as const,
     tags: [],
     createdAt: '2024-01-02T00:00:00Z',
     updatedAt: '2024-01-02T01:00:00Z',
@@ -69,7 +69,7 @@ describe('DeskPage', () => {
     render(<DeskPage />);
     await waitFor(() => {
       expect(screen.getByText('OPEN')).toBeInTheDocument();
-      expect(screen.getByText('PENDING')).toBeInTheDocument();
+      expect(screen.getByText('WAITING_ON_CUSTOMER')).toBeInTheDocument();
     });
   });
 

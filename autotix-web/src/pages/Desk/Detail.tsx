@@ -1,28 +1,36 @@
 import { useEffect, useState } from 'react';
-import { Card, Tag, Space, Descriptions, Button, Input, message, Spin, Divider, Typography } from 'antd';
-import { useParams } from 'umi';
-import { getTicket, replyTicket, closeTicket, assignTicket, type TicketDTO, type MessageDTO } from '@/services/ticket';
+import { Card, Tag, Space, Descriptions, Button, Input, message, Spin, Divider, Typography, Dropdown, Menu } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { useParams, history } from 'umi';
+import { getTicket, replyTicket, solveTicket, closeTicket, assignTicket, type TicketDTO, type MessageDTO } from '@/services/ticket';
 import { getCurrentUser } from '@/utils/auth';
 
 const { TextArea } = Input;
 const { Text } = Typography;
 
 const STATUS_COLORS: Record<string, string> = {
+  NEW: 'cyan',
   OPEN: 'blue',
-  PENDING: 'orange',
-  ASSIGNED: 'purple',
+  WAITING_ON_CUSTOMER: 'orange',
+  WAITING_ON_INTERNAL: 'gold',
+  SOLVED: 'green',
   CLOSED: 'default',
+  SPAM: 'red',
 };
+
+/** Statuses where the reply / action bar should be hidden */
+const TERMINAL_STATUSES = ['CLOSED', 'SPAM'];
 
 export default function TicketDetail() {
   const { ticketId } = useParams<{ ticketId: string }>();
   const [ticket, setTicket] = useState<TicketDTO | null>(null);
   const [loading, setLoading] = useState(false);
   const [replyContent, setReplyContent] = useState('');
-  const [closeAfter, setCloseAfter] = useState(false);
+  const [solveAfter, setSolveAfter] = useState(false);
   const [replying, setReplying] = useState(false);
 
   const currentUser = getCurrentUser();
+  const isAdmin = currentUser?.role === 'ADMIN';
 
   async function fetchTicket() {
     if (!ticketId) return;
@@ -44,9 +52,9 @@ export default function TicketDetail() {
     if (!ticketId || !replyContent.trim()) return;
     setReplying(true);
     try {
-      await replyTicket(ticketId, replyContent, closeAfter);
+      await replyTicket(ticketId, replyContent, solveAfter);
       setReplyContent('');
-      message.success(closeAfter ? 'Replied and closed' : 'Replied');
+      message.success(solveAfter ? 'Replied and solved' : 'Replied');
       await fetchTicket();
     } catch {
       message.error('Reply failed');
@@ -55,11 +63,22 @@ export default function TicketDetail() {
     }
   }
 
-  async function handleClose() {
+  async function handleSolve() {
+    if (!ticketId) return;
+    try {
+      await solveTicket(ticketId);
+      message.success('Ticket solved');
+      await fetchTicket();
+    } catch {
+      message.error('Solve failed');
+    }
+  }
+
+  async function handlePermanentClose() {
     if (!ticketId) return;
     try {
       await closeTicket(ticketId);
-      message.success('Ticket closed');
+      message.success('Ticket permanently closed');
       await fetchTicket();
     } catch {
       message.error('Close failed');
@@ -80,9 +99,35 @@ export default function TicketDetail() {
   if (loading) return <Spin size="large" />;
   if (!ticket) return <Text type="secondary">Ticket not found</Text>;
 
+  const isTerminal = TERMINAL_STATUSES.includes(ticket.status);
+  const isSolved = ticket.status === 'SOLVED';
+
+  const adminMenu = (
+    <Menu
+      items={[
+        {
+          key: 'permanent-close',
+          label: 'Permanently Close',
+          danger: true,
+          onClick: handlePermanentClose,
+        },
+      ]}
+    />
+  );
+
   return (
     <Space direction="vertical" style={{ width: '100%' }} size="middle">
       <Card>
+        {ticket.parentTicketId && (
+          <div style={{ marginBottom: 8 }}>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              Spawned from{' '}
+              <a onClick={() => history.push(`/desk/${ticket.parentTicketId}`)}>
+                #{ticket.parentTicketId}
+              </a>
+            </Text>
+          </div>
+        )}
         <Descriptions title={ticket.subject} column={2} size="small">
           <Descriptions.Item label="Status">
             <Tag color={STATUS_COLORS[ticket.status] || 'default'}>{ticket.status}</Tag>
@@ -92,6 +137,15 @@ export default function TicketDetail() {
           <Descriptions.Item label="Assignee">{ticket.assigneeId || '-'}</Descriptions.Item>
           <Descriptions.Item label="Created">{new Date(ticket.createdAt).toLocaleString()}</Descriptions.Item>
           <Descriptions.Item label="Updated">{new Date(ticket.updatedAt).toLocaleString()}</Descriptions.Item>
+          {ticket.solvedAt && (
+            <Descriptions.Item label="Solved">{new Date(ticket.solvedAt).toLocaleString()}</Descriptions.Item>
+          )}
+          {ticket.closedAt && (
+            <Descriptions.Item label="Closed">{new Date(ticket.closedAt).toLocaleString()}</Descriptions.Item>
+          )}
+          {ticket.reopenCount !== undefined && ticket.reopenCount > 0 && (
+            <Descriptions.Item label="Reopened">{ticket.reopenCount}x</Descriptions.Item>
+          )}
         </Descriptions>
       </Card>
 
@@ -137,36 +191,62 @@ export default function TicketDetail() {
         </Space>
       </Card>
 
-      {/* Action bar */}
-      {ticket.status !== 'CLOSED' && (
+      {/* Action bar — hidden for terminal statuses */}
+      {!isTerminal && (
         <Card title="Reply">
           <Space direction="vertical" style={{ width: '100%' }}>
-            <TextArea
-              rows={4}
-              placeholder="Type your reply here..."
-              value={replyContent}
-              onChange={(e) => setReplyContent(e.target.value)}
-            />
-            <Space wrap>
-              <Button
-                type="primary"
-                loading={replying}
-                onClick={() => { setCloseAfter(false); handleReply(); }}
-                disabled={!replyContent.trim()}
-              >
-                Reply
-              </Button>
-              <Button
-                loading={replying}
-                onClick={() => { setCloseAfter(true); handleReply(); }}
-                disabled={!replyContent.trim()}
-              >
-                Reply & Close
-              </Button>
-              <Divider type="vertical" />
-              <Button onClick={handleAssignToMe}>Assign to Me</Button>
-              <Button danger onClick={handleClose}>Close Ticket</Button>
-            </Space>
+            {!isSolved && (
+              <>
+                <TextArea
+                  rows={4}
+                  placeholder="Type your reply here..."
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                />
+                <Space wrap>
+                  <Button
+                    type="primary"
+                    loading={replying}
+                    onClick={() => { setSolveAfter(false); handleReply(); }}
+                    disabled={!replyContent.trim()}
+                  >
+                    Reply
+                  </Button>
+                  <Button
+                    loading={replying}
+                    onClick={() => { setSolveAfter(true); handleReply(); }}
+                    disabled={!replyContent.trim()}
+                  >
+                    Reply & Solve
+                  </Button>
+                  <Divider type="vertical" />
+                  <Button onClick={handleAssignToMe}>Assign to Me</Button>
+                  <Button onClick={handleSolve}>Solve</Button>
+                  {isAdmin && (
+                    <Dropdown overlay={adminMenu} trigger={['click']}>
+                      <Button danger>
+                        Admin Actions <DownOutlined />
+                      </Button>
+                    </Dropdown>
+                  )}
+                </Space>
+              </>
+            )}
+            {isSolved && (
+              <Space wrap>
+                <Text type="secondary">
+                  This ticket is solved. A new message from the customer will reopen it automatically.
+                </Text>
+                <Button onClick={handleSolve}>Re-Solve</Button>
+                {isAdmin && (
+                  <Dropdown overlay={adminMenu} trigger={['click']}>
+                    <Button danger>
+                      Admin Actions <DownOutlined />
+                    </Button>
+                  </Dropdown>
+                )}
+              </Space>
+            )}
           </Space>
         </Card>
       )}

@@ -1,6 +1,8 @@
 -- SQLite DDL — used by application-sqlite.yml
 -- INTEGER PRIMARY KEY AUTOINCREMENT acts as the rowid alias (bigint-compatible)
 -- BOOLEAN -> INTEGER (0/1); CLOB -> TEXT; TIMESTAMP -> TEXT (ISO-8601)
+-- Slice 8: UNIQUE(channel_id, external_native_id) dropped; regular index added
+-- Slice 8: new columns: solved_at, closed_at, parent_ticket_id, reopen_count
 
 CREATE TABLE IF NOT EXISTS ticket (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -9,14 +11,19 @@ CREATE TABLE IF NOT EXISTS ticket (
     subject VARCHAR(512),
     customer_identifier VARCHAR(256),
     customer_name VARCHAR(256),
-    status VARCHAR(16) NOT NULL,
+    status VARCHAR(32) NOT NULL,
     assignee_id VARCHAR(64),
     tags_csv VARCHAR(512),
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
-    UNIQUE (channel_id, external_native_id)
+    solved_at TEXT,
+    closed_at TEXT,
+    parent_ticket_id INTEGER,
+    reopen_count INTEGER NOT NULL DEFAULT 0
 );
+CREATE INDEX IF NOT EXISTS idx_ticket_channel_native_created ON ticket(channel_id, external_native_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_ticket_status_updated ON ticket(status, updated_at);
+CREATE INDEX IF NOT EXISTS idx_ticket_status_solved ON ticket(status, solved_at);
 
 CREATE TABLE IF NOT EXISTS ticket_message (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,5 +72,17 @@ CREATE TABLE IF NOT EXISTS automation_rule (
     conditions_json TEXT,
     actions_json TEXT,
     created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+-- Singleton AI config row (id always = 1)
+CREATE TABLE IF NOT EXISTS ai_config (
+    id INTEGER PRIMARY KEY,
+    endpoint VARCHAR(512) NOT NULL,
+    api_key VARCHAR(512),
+    model VARCHAR(128) NOT NULL,
+    system_prompt TEXT,
+    timeout_seconds INTEGER,
+    max_retries INTEGER,
     updated_at TEXT NOT NULL
 );

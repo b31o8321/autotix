@@ -17,11 +17,17 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 /**
- * Close a ticket locally AND remotely (via Plugin.close()).
+ * Permanently close a ticket — transitions to CLOSED (terminal state).
+ *
+ * After permanent close, any new inbound message from the customer on the same
+ * externalNativeId will spawn a new ticket (via ProcessWebhookUseCase).
+ *
  * Idempotent: closing an already-closed ticket is a no-op.
  *
- * If the remote platform close fails, we log a warning but still close locally —
- * the ticket state in Autotix must stay consistent.
+ * For the normal agent "resolve" action use {@link SolveTicketUseCase} instead.
+ * This use-case is for admin-only permanent termination or spam escalation.
+ *
+ * Endpoint: POST /api/desk/tickets/{id}/close  (admin/permanent action)
  */
 @Service
 public class CloseTicketUseCase {
@@ -43,12 +49,16 @@ public class CloseTicketUseCase {
         this.inboxEventPublisher = inboxEventPublisher;
     }
 
+    /**
+     * Permanently close the ticket locally AND remotely (via Plugin.close()).
+     * Idempotent: closing an already-closed ticket is a no-op.
+     */
     public void close(TicketId ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new AutotixException.NotFoundException(
                         "Ticket not found: " + ticketId.value()));
 
-        // Idempotent: already closed, nothing to do
+        // Idempotent: already permanently closed, nothing to do
         if (ticket.status() == TicketStatus.CLOSED) {
             return;
         }
@@ -68,17 +78,17 @@ public class CloseTicketUseCase {
                     ticketId.value(), e.getMessage());
         }
 
-        ticket.close();
+        Instant now = Instant.now();
+        ticket.permanentClose(now);
         ticketRepository.save(ticket);
 
-        // Publish STATUS_CHANGED event
         inboxEventPublisher.publish(new InboxEvent(
                 InboxEvent.Kind.STATUS_CHANGED,
                 ticketId.value(),
                 channel.id().value(),
-                "ticket closed",
-                Instant.now()));
+                "ticket permanently closed",
+                now));
 
-        log.debug("Ticket closed: {}", ticketId.value());
+        log.debug("Ticket permanently closed: {}", ticketId.value());
     }
 }

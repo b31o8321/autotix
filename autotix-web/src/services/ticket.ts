@@ -10,12 +10,17 @@ export interface TicketDTO {
   subject: string;
   customerIdentifier: string;
   customerName?: string;
-  status: 'OPEN' | 'PENDING' | 'ASSIGNED' | 'CLOSED';
+  status: 'NEW' | 'OPEN' | 'WAITING_ON_CUSTOMER' | 'WAITING_ON_INTERNAL' | 'SOLVED' | 'CLOSED' | 'SPAM';
   assigneeId?: string;
   tags: string[];
   messages?: MessageDTO[];
   createdAt: string;
   updatedAt: string;
+  // Slice 8: new fields
+  solvedAt?: string;
+  closedAt?: string;
+  parentTicketId?: string;
+  reopenCount?: number;
 }
 
 export interface MessageDTO {
@@ -34,17 +39,14 @@ export interface ListParams {
   limit?: number;
 }
 
-// TODO: implement
 export async function listTickets(params: ListParams): Promise<TicketDTO[]> {
   return request('/api/desk/tickets', { method: 'GET', params });
 }
 
-// TODO: implement
 export async function getTicket(ticketId: string): Promise<TicketDTO> {
   return request(`/api/desk/tickets/${ticketId}`, { method: 'GET' });
 }
 
-// TODO: implement
 export async function replyTicket(ticketId: string, content: string, closeAfter = false) {
   return request(`/api/desk/tickets/${ticketId}/reply`, {
     method: 'POST',
@@ -52,7 +54,6 @@ export async function replyTicket(ticketId: string, content: string, closeAfter 
   });
 }
 
-// TODO: implement
 export async function assignTicket(ticketId: string, agentId: string) {
   return request(`/api/desk/tickets/${ticketId}/assign`, {
     method: 'POST',
@@ -60,7 +61,12 @@ export async function assignTicket(ticketId: string, agentId: string) {
   });
 }
 
-// TODO: implement
+/** Primary agent "close" action — transitions to SOLVED (customer can reopen). */
+export async function solveTicket(ticketId: string) {
+  return request(`/api/desk/tickets/${ticketId}/solve`, { method: 'POST' });
+}
+
+/** Permanent close (admin) — transitions to CLOSED (terminal). */
 export async function closeTicket(ticketId: string) {
   return request(`/api/desk/tickets/${ticketId}/close`, { method: 'POST' });
 }

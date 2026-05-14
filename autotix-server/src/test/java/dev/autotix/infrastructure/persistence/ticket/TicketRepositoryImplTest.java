@@ -68,7 +68,8 @@ class TicketRepositoryImplTest {
         assertTrue(loaded.isPresent());
 
         Ticket t = loaded.get();
-        assertEquals(TicketStatus.PENDING, t.status()); // after outbound: OPEN -> PENDING
+        // After openFromInbound (NEW) + appendOutbound → WAITING_ON_CUSTOMER
+        assertEquals(TicketStatus.WAITING_ON_CUSTOMER, t.status());
         assertEquals("Test Subject", t.subject());
         assertEquals("customer@example.com", t.customerIdentifier());
         assertEquals(TEST_CHANNEL, t.channelId());
@@ -82,7 +83,7 @@ class TicketRepositoryImplTest {
     }
 
     @Test
-    void findByChannelAndExternalId_returnsCorrectTicket() {
+    void findByChannelAndExternalId_returnsMostRecentTicket() {
         String extId = uniqueExtId();
         Ticket ticket = Ticket.openFromInbound(TEST_CHANNEL, extId, "Lookup Test",
                 "lookup@example.com", inboundMsg("Find me"));
@@ -98,22 +99,22 @@ class TicketRepositoryImplTest {
     void search_byStatus_returnsOnlyMatchingRows() {
         ChannelId searchChannel = new ChannelId("ch-search-" + UUID.randomUUID().toString().substring(0, 4));
 
-        // Create an OPEN ticket
-        String openExtId = uniqueExtId();
-        Ticket openTicket = Ticket.openFromInbound(searchChannel, openExtId, "Open Ticket",
-                "open@example.com", inboundMsg("open msg"));
-        ticketRepository.save(openTicket);
+        // Create a NEW ticket
+        String newExtId = uniqueExtId();
+        Ticket newTicket = Ticket.openFromInbound(searchChannel, newExtId, "New Ticket",
+                "new@example.com", inboundMsg("new msg"));
+        ticketRepository.save(newTicket);
 
         // Create a CLOSED ticket
         String closedExtId = uniqueExtId();
         Ticket closedTicket = Ticket.openFromInbound(searchChannel, closedExtId, "Closed Ticket",
                 "closed@example.com", inboundMsg("closed msg"));
-        closedTicket.close();
+        closedTicket.permanentClose(Instant.now());
         ticketRepository.save(closedTicket);
 
-        // Search for OPEN tickets in this channel
+        // Search for NEW tickets in this channel
         TicketSearchQuery query = new TicketSearchQuery();
-        query.status = TicketStatus.OPEN;
+        query.status = TicketStatus.NEW;
         query.channelId = searchChannel;
         query.limit = 20;
 
@@ -121,7 +122,7 @@ class TicketRepositoryImplTest {
 
         assertTrue(results.size() >= 1);
         for (Ticket t : results) {
-            assertEquals(TicketStatus.OPEN, t.status());
+            assertEquals(TicketStatus.NEW, t.status());
         }
 
         // Search for CLOSED tickets
@@ -148,11 +149,34 @@ class TicketRepositoryImplTest {
         Optional<Ticket> loaded = ticketRepository.findById(savedId);
         assertTrue(loaded.isPresent());
         Ticket reloaded = loaded.get();
-        reloaded.close();
+        reloaded.permanentClose(Instant.now());
         ticketRepository.save(reloaded);
 
         Optional<Ticket> updated = ticketRepository.findById(savedId);
         assertTrue(updated.isPresent());
         assertEquals(TicketStatus.CLOSED, updated.get().status());
+    }
+
+    @Test
+    void saveAndFindById_preservesNewFields() {
+        String extId = uniqueExtId();
+        Ticket ticket = Ticket.openFromInbound(TEST_CHANNEL, extId, "Solved Test",
+                "solved@example.com", inboundMsg("solve me"));
+        TicketId savedId = ticketRepository.save(ticket);
+
+        // Solve it
+        Optional<Ticket> loaded = ticketRepository.findById(savedId);
+        assertTrue(loaded.isPresent());
+        Ticket t = loaded.get();
+        Instant solveTime = Instant.now();
+        t.solve(solveTime);
+        ticketRepository.save(t);
+
+        // Check round-trip of solvedAt, reopenCount
+        Optional<Ticket> afterSolve = ticketRepository.findById(savedId);
+        assertTrue(afterSolve.isPresent());
+        assertEquals(TicketStatus.SOLVED, afterSolve.get().status());
+        assertNotNull(afterSolve.get().solvedAt());
+        assertEquals(0, afterSolve.get().reopenCount());
     }
 }

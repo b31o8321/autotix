@@ -4,14 +4,11 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${MYSQL_USER:autotix}
     password: ${MYSQL_PASSWORD:autotix}
+    initialization-mode: always
+    schema: classpath:schema-mysql.sql
+    continue-on-error: true
     hikari:
       maximum-pool-size: 10
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema-mysql.sql
-      data-locations: classpath:data.sql
-      continue-on-error: true
