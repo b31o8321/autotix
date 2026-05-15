@@ -99,6 +99,14 @@ export default function PlatformChannelsPage() {
       key: 'actions',
       render: (_: unknown, r: ChannelDTO) => (
         <Space>
+          <Tooltip title="Edit channel">
+            <Button
+              size="small"
+              onClick={() => history.push(`/settings/channels/${r.platform}/${r.id}/edit`)}
+            >
+              Edit
+            </Button>
+          </Tooltip>
           {r.platform === 'LIVECHAT' && (
             <Tooltip title="Open test widget in new tab">
               <Button

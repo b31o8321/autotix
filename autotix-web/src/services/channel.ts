@@ -57,3 +57,10 @@ export async function setAutoReply(channelId: string, enabled: boolean) {
 export async function rotateWebhook(channelId: string) {
   return request(`/api/admin/channels/${channelId}/rotate-webhook`, { method: 'POST' });
 }
+
+export async function renameChannel(channelId: string, displayName: string) {
+  return request(`/api/admin/channels/${channelId}/name`, {
+    method: 'PUT',
+    params: { displayName },
+  });
+}
