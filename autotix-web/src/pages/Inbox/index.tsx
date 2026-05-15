@@ -40,6 +40,7 @@ import { history } from 'umi';
 import type { TicketDTO, AttachmentDTO, TicketActivity } from '@/services/ticket';
 import { listTicketActivity } from '@/services/ticket';
 import {
+  assignTicket,
   closeTicket,
   escalateTicket,
   getTicket,
@@ -624,7 +625,34 @@ export default function InboxPage() {
   // ──────────────────────────────────────────────
   // Middle column "More" dropdown
   // ──────────────────────────────────────────────
+  async function handleAssignToMe() {
+    if (!currentTicket || !currentUser?.id) return;
+    try {
+      await assignTicket(currentTicket.id, currentUser.id);
+      message.success('Assigned to you');
+      await fetchTicketDetail(currentTicket.id);
+      await fetchTickets();
+    } catch {
+      message.error('Failed to assign');
+    }
+  }
+  async function handleUnassign() {
+    if (!currentTicket) return;
+    try {
+      await assignTicket(currentTicket.id, '');
+      message.success('Unassigned');
+      await fetchTicketDetail(currentTicket.id);
+      await fetchTickets();
+    } catch {
+      message.error('Failed to unassign');
+    }
+  }
+  const isAssignedToMe =
+    !!currentUser?.id && currentTicket?.assigneeId === currentUser.id;
   const moreMenuItems = [
+    isAssignedToMe
+      ? { key: 'unassign', label: 'Unassign', onClick: handleUnassign }
+      : { key: 'assign_me', label: 'Assign to me', onClick: handleAssignToMe },
     {
       key: 'escalate',
       label: 'Escalate to human',
