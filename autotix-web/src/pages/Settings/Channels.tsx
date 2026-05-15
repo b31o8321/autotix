@@ -258,46 +258,96 @@ export default function ChannelsPage() {
           >
             <Input placeholder="e.g. Support Mailbox" />
           </Form.Item>
-          <Form.Item label="Credentials">
-            <Space direction="vertical" style={{ width: '100%' }}>
-              {credentials.map((row, idx) => (
-                <Space key={idx}>
-                  <Input
-                    placeholder="Key (e.g. apiKey)"
-                    value={row.key}
-                    onChange={(e) => {
-                      const next = [...credentials];
-                      next[idx] = { ...row, key: e.target.value };
-                      setCredentials(next);
-                    }}
-                  />
-                  <Input
-                    placeholder="Value"
-                    value={row.value}
-                    onChange={(e) => {
-                      const next = [...credentials];
-                      next[idx] = { ...row, value: e.target.value };
-                      setCredentials(next);
-                    }}
-                  />
-                  {credentials.length > 1 && (
-                    <Button
-                      danger
-                      size="small"
-                      onClick={() => setCredentials(credentials.filter((_, i) => i !== idx))}
-                    >
-                      Remove
-                    </Button>
-                  )}
+          <Form.Item
+            noStyle
+            shouldUpdate={(prev, curr) => prev.platform !== curr.platform}
+          >
+            {({ getFieldValue }) => (getFieldValue('platform') === 'EMAIL' ? (
+              <>
+                <Typography.Title level={5} style={{ marginTop: 4 }}>IMAP (incoming)</Typography.Title>
+                <Form.Item label="IMAP host" name={['credentials','imap_host']} rules={[{ required: true }]}>
+                  <Input placeholder="mail (docker network name) or imap.gmail.com" />
+                </Form.Item>
+                <Space style={{ width: '100%' }} size="middle">
+                  <Form.Item label="Port" name={['credentials','imap_port']} initialValue="3143" rules={[{ required: true }]}>
+                    <Input style={{ width: 100 }} />
+                  </Form.Item>
+                  <Form.Item label="Use SSL" name={['credentials','imap_use_ssl']} initialValue="false">
+                    <Select style={{ width: 100 }} options={[{label:'No',value:'false'},{label:'Yes',value:'true'}]} />
+                  </Form.Item>
                 </Space>
-              ))}
-              <Button
-                size="small"
-                onClick={() => setCredentials([...credentials, { key: '', value: '' }])}
-              >
-                Add Row
-              </Button>
-            </Space>
+                <Form.Item label="IMAP user" name={['credentials','imap_user']} rules={[{ required: true }]}>
+                  <Input placeholder="agent" />
+                </Form.Item>
+                <Form.Item label="IMAP password" name={['credentials','imap_password']} rules={[{ required: true }]}>
+                  <Input.Password placeholder="secret" />
+                </Form.Item>
+
+                <Typography.Title level={5} style={{ marginTop: 4 }}>SMTP (outgoing)</Typography.Title>
+                <Form.Item label="SMTP host" name={['credentials','smtp_host']} rules={[{ required: true }]}>
+                  <Input placeholder="mail or smtp.gmail.com" />
+                </Form.Item>
+                <Space style={{ width: '100%' }} size="middle">
+                  <Form.Item label="Port" name={['credentials','smtp_port']} initialValue="3025" rules={[{ required: true }]}>
+                    <Input style={{ width: 100 }} />
+                  </Form.Item>
+                  <Form.Item label="Use TLS" name={['credentials','smtp_use_tls']} initialValue="false">
+                    <Select style={{ width: 100 }} options={[{label:'No',value:'false'},{label:'Yes',value:'true'}]} />
+                  </Form.Item>
+                </Space>
+                <Form.Item label="SMTP user" name={['credentials','smtp_user']} rules={[{ required: true }]}>
+                  <Input placeholder="agent" />
+                </Form.Item>
+                <Form.Item label="SMTP password" name={['credentials','smtp_password']} rules={[{ required: true }]}>
+                  <Input.Password placeholder="secret" />
+                </Form.Item>
+                <Form.Item label="From address" name={['credentials','from_address']} rules={[{ required: true, type: 'email' }]}>
+                  <Input placeholder="agent@autotix.local" />
+                </Form.Item>
+              </>
+            ) : (
+              <Form.Item label="Credentials">
+                <Space direction="vertical" style={{ width: '100%' }}>
+                  {credentials.map((row, idx) => (
+                    <Space key={idx}>
+                      <Input
+                        placeholder="Key (e.g. apiKey)"
+                        value={row.key}
+                        onChange={(e) => {
+                          const next = [...credentials];
+                          next[idx] = { ...row, key: e.target.value };
+                          setCredentials(next);
+                        }}
+                      />
+                      <Input
+                        placeholder="Value"
+                        value={row.value}
+                        onChange={(e) => {
+                          const next = [...credentials];
+                          next[idx] = { ...row, value: e.target.value };
+                          setCredentials(next);
+                        }}
+                      />
+                      {credentials.length > 1 && (
+                        <Button
+                          danger
+                          size="small"
+                          onClick={() => setCredentials(credentials.filter((_, i) => i !== idx))}
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </Space>
+                  ))}
+                  <Button
+                    size="small"
+                    onClick={() => setCredentials([...credentials, { key: '', value: '' }])}
+                  >
+                    Add Row
+                  </Button>
+                </Space>
+              </Form.Item>
+            ))}
           </Form.Item>
         </Form>
       </Modal>
