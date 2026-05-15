@@ -24,7 +24,7 @@ export default function LoginPage() {
       } catch {
         // ignore; token already set
       }
-      history.push('/desk');
+      history.push('/inbox');
     } catch (err: unknown) {
       const e = err as { message?: string };
       message.error(e?.message || 'Login failed');
