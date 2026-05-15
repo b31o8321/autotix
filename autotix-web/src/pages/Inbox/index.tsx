@@ -25,12 +25,15 @@ import {
 import {
   CloseOutlined,
   EllipsisOutlined,
+  HistoryOutlined,
   LeftOutlined,
   LoadingOutlined,
   MailOutlined,
   MessageOutlined,
   PaperClipOutlined,
+  PlusOutlined,
   RightOutlined,
+  RobotOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { history } from 'umi';
@@ -283,7 +286,18 @@ export default function InboxPage() {
   const [viewedTicketIds] = useState<Set<string>>(new Set());
 
   // ── Right panel state ─────────────────────────
-  const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  type RailPane = 'properties' | 'ai' | 'activity' | null;
+  const [activeRail, setActiveRail] = useState<RailPane>('properties');
+  const rightPanelOpen = activeRail !== null;
+  const setRightPanelOpen = (_v: boolean | ((p: boolean) => boolean)) => {
+    // legacy compat — collapsing closes pane, expanding opens default
+    if (typeof _v === 'function') {
+      const next = _v(rightPanelOpen);
+      setActiveRail(next ? 'properties' : null);
+    } else {
+      setActiveRail(_v ? 'properties' : null);
+    }
+  };
   const [tagDefs, setTagDefs] = useState<TagDTO[]>([]);
   const [customFieldSchema, setCustomFieldSchema] = useState<CustomFieldDTO[]>([]);
 
@@ -1156,47 +1170,16 @@ export default function InboxPage() {
         )}
       </div>
 
-      {/* ── Right column: customer + tags + custom fields + AI ── */}
+      {/* ── Right column: content pane (collapsible) ── */}
       <div
         style={{
           width: rightPanelOpen ? 320 : 0,
-          transition: 'width 0.2s ease',
+          transition: 'width 0.18s ease',
           overflow: 'hidden',
           flexShrink: 0,
           position: 'relative',
         }}
       >
-        {/* Toggle button — sticks to viewport right edge so it's reachable when collapsed */}
-        <Tooltip title={rightPanelOpen ? 'Collapse panel' : 'Expand panel'} placement="left">
-          <button
-            onClick={() => setRightPanelOpen((v) => !v)}
-            style={{
-              position: 'fixed',
-              top: 80,
-              right: rightPanelOpen ? 320 - 12 : 0,
-              zIndex: 1000,
-              width: 24,
-              height: 48,
-              borderTopLeftRadius: rightPanelOpen ? 12 : 0,
-              borderBottomLeftRadius: rightPanelOpen ? 12 : 0,
-              borderTopRightRadius: rightPanelOpen ? 12 : 0,
-              borderBottomRightRadius: rightPanelOpen ? 12 : 0,
-              border: '1px solid #EEF2F6',
-              borderRight: rightPanelOpen ? '1px solid #EEF2F6' : 'none',
-              background: '#FFFFFF',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 12,
-              padding: 0,
-              boxShadow: '-2px 2px 6px rgba(0,0,0,0.06)',
-              transition: 'right 0.2s ease',
-            }}
-          >
-            {rightPanelOpen ? <RightOutlined /> : <LeftOutlined />}
-          </button>
-        </Tooltip>
 
         <div
           style={{
@@ -1512,6 +1495,64 @@ export default function InboxPage() {
             </>
           )}
         </div>
+      </div>
+
+      {/* ── Right icon rail (always visible) ── */}
+      <div
+        style={{
+          width: 48,
+          flexShrink: 0,
+          borderLeft: '1px solid #EEF2F6',
+          background: '#FFFFFF',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '8px 0',
+          gap: 4,
+        }}
+      >
+        {([
+          { key: 'properties', icon: <UserOutlined />,    label: 'Customer / tags / fields' },
+          { key: 'ai',         icon: <RobotOutlined />,   label: 'AI Draft' },
+          { key: 'activity',   icon: <HistoryOutlined />, label: 'Activity (coming soon)' },
+        ] as Array<{ key: RailPane; icon: React.ReactNode; label: string }>).map((it) => {
+          const isActive = activeRail === it.key;
+          return (
+            <Tooltip key={it.key ?? 'x'} title={it.label} placement="left">
+              <button
+                onClick={() => setActiveRail(isActive ? null : it.key)}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 8,
+                  border: 'none',
+                  background: isActive ? '#EFF6FF' : 'transparent',
+                  color: isActive ? '#2962FF' : '#5A6B7D',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 16,
+                }}
+              >
+                {it.icon}
+              </button>
+            </Tooltip>
+          );
+        })}
+        <div style={{ flex: 1 }} />
+        <Tooltip title="More modules coming" placement="left">
+          <button
+            style={{
+              width: 36, height: 36, borderRadius: 8, border: 'none',
+              background: 'transparent', color: '#9BAAB8', cursor: 'not-allowed',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14,
+            }}
+            disabled
+          >
+            <PlusOutlined />
+          </button>
+        </Tooltip>
       </div>
 
       {/* Escalate modal */}
