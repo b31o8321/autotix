@@ -130,7 +130,6 @@ export default function AutomationPage() {
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography.Title level={4} style={{ margin: 0 }}>Automation Rules</Typography.Title>
         <Button type="primary" onClick={() => setModalOpen(true)}>Add Rule</Button>
       </div>
 

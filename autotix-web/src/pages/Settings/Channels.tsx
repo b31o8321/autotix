@@ -15,25 +15,35 @@ const { Text } = Typography;
 // Synced with backend PlatformType enum.
 // "Functional" comment marks plugins with real implementations; the rest are scaffolds
 // that throw UnsupportedOperationException on healthCheck and will fail to connect.
-const PLATFORM_OPTIONS = [
-  { label: 'CUSTOM (test / generic webhook)', value: 'CUSTOM' },        // functional
-  { label: 'ZENDESK', value: 'ZENDESK' },                                // functional
-  { label: 'ZENDESK_SUNSHINE (stub)', value: 'ZENDESK_SUNSHINE' },
-  { label: 'FRESHDESK (stub)', value: 'FRESHDESK' },
-  { label: 'FRESHCHAT (stub)', value: 'FRESHCHAT' },
-  { label: 'GORGIAS (stub)', value: 'GORGIAS' },
-  { label: 'INTERCOM (stub)', value: 'INTERCOM' },
-  { label: 'LIVECHAT (stub)', value: 'LIVECHAT' },
-  { label: 'SHOPIFY (stub)', value: 'SHOPIFY' },
-  { label: 'AMAZON (stub)', value: 'AMAZON' },
-  { label: 'GMAIL (stub)', value: 'GMAIL' },
-  { label: 'OUTLOOK (stub)', value: 'OUTLOOK' },
-  { label: 'LINE (stub)', value: 'LINE' },
-  { label: 'WHATSAPP (stub)', value: 'WHATSAPP' },
-  { label: 'WECOM (stub)', value: 'WECOM' },
-  { label: 'WECHAT (stub)', value: 'WECHAT' },
-  { label: 'TIKTOK (stub)', value: 'TIKTOK' },
+// (label, value, defaultChannelType, lockType)
+// lockType=true → channelType field disabled (auto-set from platform);
+// CUSTOM and EMAIL only ones where multiple types are conceptually valid.
+type Plat = {
+  label: string; value: string;
+  defaultChannelType: 'EMAIL' | 'CHAT';
+  allowedChannelTypes: Array<'EMAIL' | 'CHAT'>;
+};
+const PLATFORMS: Plat[] = [
+  { label: 'EMAIL (IMAP/SMTP)',                value: 'EMAIL',            defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'CUSTOM (test / generic webhook)',  value: 'CUSTOM',           defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT', 'EMAIL'] },
+  { label: 'ZENDESK',                          value: 'ZENDESK',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'ZENDESK_SUNSHINE (stub)',          value: 'ZENDESK_SUNSHINE', defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'FRESHDESK (stub)',                 value: 'FRESHDESK',        defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'FRESHCHAT (stub)',                 value: 'FRESHCHAT',        defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'GORGIAS (stub)',                   value: 'GORGIAS',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'INTERCOM (stub)',                  value: 'INTERCOM',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'LIVECHAT (stub)',                  value: 'LIVECHAT',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'SHOPIFY (stub)',                   value: 'SHOPIFY',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'AMAZON (stub)',                    value: 'AMAZON',           defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'GMAIL (stub)',                     value: 'GMAIL',            defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'OUTLOOK (stub)',                   value: 'OUTLOOK',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'LINE (stub)',                      value: 'LINE',             defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'WHATSAPP (stub)',                  value: 'WHATSAPP',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'WECOM (stub)',                     value: 'WECOM',            defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'WECHAT (stub)',                    value: 'WECHAT',           defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'TIKTOK (stub)',                    value: 'TIKTOK',           defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
 ];
+const PLATFORM_OPTIONS = PLATFORMS.map(p => ({ label: p.label, value: p.value }));
 
 interface CredentialRow {
   key: string;
@@ -180,7 +190,6 @@ export default function ChannelsPage() {
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography.Title level={4} style={{ margin: 0 }}>Channels</Typography.Title>
         <Button type="primary" onClick={() => setModalOpen(true)}>Add Channel</Button>
       </div>
 
@@ -206,20 +215,41 @@ export default function ChannelsPage() {
             label="Platform"
             rules={[{ required: true }]}
           >
-            <Select options={PLATFORM_OPTIONS} placeholder="Select platform" />
+            <Select
+              options={PLATFORM_OPTIONS}
+              placeholder="Select platform"
+              showSearch
+              optionFilterProp="label"
+              onChange={(val) => {
+                const p = PLATFORMS.find(x => x.value === val);
+                if (p) form.setFieldsValue({ channelType: p.defaultChannelType });
+              }}
+            />
           </Form.Item>
           <Form.Item
-            name="channelType"
-            label="Channel Type"
-            rules={[{ required: true }]}
+            noStyle
+            shouldUpdate={(prev, curr) => prev.platform !== curr.platform}
           >
-            <Select
-              options={[
-                { label: 'Email', value: 'EMAIL' },
-                { label: 'Chat', value: 'CHAT' },
-              ]}
-              placeholder="Select type"
-            />
+            {({ getFieldValue }) => {
+              const selectedPlatform = getFieldValue('platform');
+              const p = PLATFORMS.find(x => x.value === selectedPlatform);
+              const opts = (p?.allowedChannelTypes ?? ['EMAIL', 'CHAT']).map(t => ({
+                label: t === 'EMAIL' ? 'Email' : 'Chat', value: t,
+              }));
+              const lockType = p ? p.allowedChannelTypes.length === 1 : false;
+              return (
+                <Form.Item
+                  name="channelType"
+                  label="Channel Type"
+                  rules={[{ required: true }]}
+                  extra={lockType
+                    ? `Auto-set by platform (${p?.value} only supports ${p?.allowedChannelTypes[0]}).`
+                    : 'Pick the conversation style.'}
+                >
+                  <Select options={opts} placeholder="Select type" disabled={lockType} />
+                </Form.Item>
+              );
+            }}
           </Form.Item>
           <Form.Item
             name="displayName"

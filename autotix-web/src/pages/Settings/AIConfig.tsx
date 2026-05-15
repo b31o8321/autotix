@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import {
-  Form, Input, InputNumber, Button, Card, Space, message, Alert, Typography, Spin, Radio,
+  Form, Input, InputNumber, Button, Card, Space, message, Alert, Typography, Spin, Select,
 } from 'antd';
 import { getAIConfig, updateAIConfig, testAIConfig, type AIConfigDTO, type AITestResult } from '@/services/ai';
 
@@ -24,9 +24,17 @@ Output:
 - For straightforward replies, output plain text.
 - For replies that should trigger an action, output JSON: {"reply": "...", "action": "CLOSE|ASSIGN|TAG|NONE", "tags": ["..."]}.`;
 
-// Heuristic: any non-empty key (or a previously-saved masked key) → cloud; otherwise ollama
-function inferProvider(apiKey: string | undefined | null): Provider {
-  return apiKey && apiKey.trim() !== '' ? 'cloud' : 'ollama';
+const PROVIDER_STORAGE_KEY = 'autotix.ai.provider';
+
+// Detect provider from saved endpoint + a localStorage hint (so refresh keeps the user's choice).
+function inferProvider(cfg: { endpoint?: string; apiKey?: string | null }): Provider {
+  const fromStorage = localStorage.getItem(PROVIDER_STORAGE_KEY) as Provider | null;
+  if (fromStorage === 'ollama' || fromStorage === 'cloud') return fromStorage;
+  const ep = (cfg.endpoint ?? '').toLowerCase();
+  if (ep.includes('11434') || ep.includes('ollama') || ep.includes('localhost') || ep.includes('host.docker.internal')) {
+    return 'ollama';
+  }
+  return 'cloud';
 }
 
 export default function AIConfigPage() {
@@ -43,7 +51,7 @@ export default function AIConfigPage() {
     getAIConfig()
       .then((cfg) => {
         originalApiKey.current = cfg.apiKey;
-        setProvider(inferProvider(cfg.apiKey));
+        setProvider(inferProvider(cfg));
         form.setFieldsValue({
           ...cfg,
           systemPrompt: cfg.systemPrompt || DEFAULT_SYSTEM_PROMPT,
@@ -55,6 +63,7 @@ export default function AIConfigPage() {
 
   function handleProviderChange(next: Provider) {
     setProvider(next);
+    localStorage.setItem(PROVIDER_STORAGE_KEY, next);
     // Suggest endpoint defaults when switching
     const current = form.getFieldsValue();
     if (next === 'ollama') {
@@ -115,27 +124,24 @@ export default function AIConfigPage() {
 
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
-      <Typography.Title level={4} style={{ margin: 0 }}>AI Configuration</Typography.Title>
 
       <Card>
         <Form<AIConfigDTO> form={form} layout="vertical">
-          <Form.Item label="Provider">
-            <Radio.Group
+          <Form.Item
+            label="Provider"
+            extra={provider === 'ollama'
+              ? 'Ollama runs locally — only the endpoint is needed, no API key.'
+              : 'Any OpenAI-compatible cloud (OpenAI / DeepSeek / Claude via proxy / etc.) — endpoint + API key required.'}
+          >
+            <Select
               value={provider}
-              onChange={(e) => handleProviderChange(e.target.value)}
-              optionType="button"
-              buttonStyle="solid"
-            >
-              <Radio.Button value="ollama">Local (Ollama)</Radio.Button>
-              <Radio.Button value="cloud">Cloud (OpenAI-compatible)</Radio.Button>
-            </Radio.Group>
-            <div style={{ marginTop: 4 }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                {provider === 'ollama'
-                  ? 'Ollama runs locally — only the endpoint is needed, no API key.'
-                  : 'Any OpenAI-compatible cloud (OpenAI, Anthropic via proxy, DeepSeek, etc.) — endpoint + API key required.'}
-              </Text>
-            </div>
+              onChange={(v: Provider) => handleProviderChange(v)}
+              style={{ maxWidth: 360 }}
+              options={[
+                { value: 'ollama', label: 'Local — Ollama (no API key)' },
+                { value: 'cloud',  label: 'Cloud — OpenAI-compatible (API key required)' },
+              ]}
+            />
           </Form.Item>
 
           <Form.Item name="endpoint" label="Endpoint" rules={[{ required: true }]}>

@@ -163,7 +163,14 @@ export default function AppLayout() {
           </Dropdown>
         </Header>
 
-        <Content style={{ flex: 1, overflow: 'hidden', background: '#F7F9FB' }}>
+        <Content
+          style={{
+            flex: 1,
+            overflow: location.pathname.startsWith('/inbox') ? 'hidden' : 'auto',
+            background: '#F7F9FB',
+            padding: location.pathname.startsWith('/inbox') ? 0 : 24,
+          }}
+        >
           <Outlet />
         </Content>
       </Layout>

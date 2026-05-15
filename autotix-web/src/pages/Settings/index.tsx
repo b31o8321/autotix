@@ -7,7 +7,6 @@ export default function SettingsIndex() {
 
   return (
     <div style={{ padding: 24 }}>
-      <Typography.Title level={4}>Settings</Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={8}>
           <Link to="/settings/channels">

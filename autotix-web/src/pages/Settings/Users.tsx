@@ -127,7 +127,6 @@ export default function UsersPage() {
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography.Title level={4} style={{ margin: 0 }}>Users</Typography.Title>
         <Button type="primary" onClick={() => setModalOpen(true)}>Add User</Button>
       </div>
 

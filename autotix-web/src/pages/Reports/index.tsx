@@ -6,7 +6,6 @@ import { Card, Col, Row, Statistic, Typography } from 'antd';
 export default function ReportsPage() {
   return (
     <div>
-      <Typography.Title level={4}>Reports</Typography.Title>
       <Row gutter={[16, 16]}>
         <Col span={8}>
           <Card>
