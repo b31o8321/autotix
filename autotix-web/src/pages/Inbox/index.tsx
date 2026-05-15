@@ -77,8 +77,25 @@ function relativeTime(isoString: string): string {
 }
 
 // ──────────────────────────────────────────────
-// Helper: left-bar color for message direction/type
+// Helper: derive role + style tokens for message
 // ──────────────────────────────────────────────
+type MessageRole = 'CUSTOMER' | 'AI' | 'AGENT' | 'INTERNAL';
+function messageRole(
+  direction: 'INBOUND' | 'OUTBOUND',
+  author: string,
+  visibility?: string,
+): MessageRole {
+  if (visibility === 'INTERNAL') return 'INTERNAL';
+  if (direction === 'INBOUND') return 'CUSTOMER';
+  if (author.toLowerCase() === 'ai' || author.toLowerCase().startsWith('ai')) return 'AI';
+  return 'AGENT';
+}
+const ROLE_STYLES: Record<MessageRole, { bar: string; bg: string; chip: string; chipFg: string; label: string }> = {
+  CUSTOMER: { bar: '#9BAAB8', bg: '#F7F9FB', chip: '#EEF2F6', chipFg: '#5A6B7D', label: 'Customer' },
+  AI:       { bar: '#2962FF', bg: '#EFF6FF', chip: '#2962FF', chipFg: '#FFFFFF', label: 'AI' },
+  AGENT:    { bar: '#16A34A', bg: '#F0FDF4', chip: '#16A34A', chipFg: '#FFFFFF', label: 'Agent' },
+  INTERNAL: { bar: '#F59E0B', bg: '#FFFBEB', chip: '#FEF3C7', chipFg: '#92400E', label: 'Internal Note' },
+};
 function messageBarColor(
   direction: 'INBOUND' | 'OUTBOUND',
   author: string,
@@ -896,29 +913,29 @@ export default function InboxPage() {
                 <div style={{ textAlign: 'center', color: '#9BAAB8', fontSize: 12 }}>Loading…</div>
               )}
               {currentTicket?.messages?.map((msg, idx) => {
-                const barColor = messageBarColor(msg.direction, msg.author, msg.visibility);
-                const isInternal = msg.visibility === 'INTERNAL';
+                const role = messageRole(msg.direction, msg.author, msg.visibility);
+                const s = ROLE_STYLES[role];
                 return (
                   <div
                     key={idx}
                     style={{
                       borderRadius: 8,
-                      border: '1px solid #EEF2F6',
-                      background: isInternal ? '#FFFBEB' : '#FFFFFF',
+                      border: `1px solid ${s.bg === '#FFFFFF' ? '#EEF2F6' : s.bg}`,
+                      background: s.bg,
                       overflow: 'hidden',
                       display: 'flex',
                     }}
                   >
-                    {/* 4px left color bar */}
+                    {/* 6px left color bar */}
                     <div
                       style={{
-                        width: 4,
+                        width: 6,
                         flexShrink: 0,
-                        background: barColor,
+                        background: s.bar,
                       }}
                     />
                     <div style={{ flex: 1, padding: '10px 14px' }}>
-                      {/* Header: author + time + internal badge */}
+                      {/* Header: role chip + author + time */}
                       <div
                         style={{
                           display: 'flex',
@@ -927,24 +944,23 @@ export default function InboxPage() {
                           marginBottom: 6,
                         }}
                       >
-                        <MessageOutlined style={{ fontSize: 12, color: '#9BAAB8' }} />
-                        <Text style={{ fontWeight: 600, fontSize: 12, color: '#0B1426' }}>
+                        <Tag
+                          style={{
+                            fontSize: 11,
+                            background: s.chip,
+                            color: s.chipFg,
+                            border: 'none',
+                            padding: '0 6px',
+                            lineHeight: '18px',
+                            margin: 0,
+                            fontWeight: 600,
+                          }}
+                        >
+                          {s.label}
+                        </Tag>
+                        <Text style={{ fontWeight: 500, fontSize: 12, color: '#0B1426' }}>
                           {msg.author}
                         </Text>
-                        {isInternal && (
-                          <Tag
-                            style={{
-                              fontSize: 11,
-                              background: '#FEF3C7',
-                              color: '#92400E',
-                              border: 'none',
-                              padding: '0 4px',
-                              lineHeight: '16px',
-                            }}
-                          >
-                            Internal
-                          </Tag>
-                        )}
                         <Text style={{ fontSize: 11, color: '#9BAAB8', marginLeft: 'auto' }}>
                           {new Date(msg.occurredAt).toLocaleString()}
                         </Text>
@@ -1164,27 +1180,32 @@ export default function InboxPage() {
           position: 'relative',
         }}
       >
-        {/* Toggle button */}
-        <Tooltip title={rightPanelOpen ? 'Collapse panel' : 'Expand panel'}>
+        {/* Toggle button — sticks to viewport right edge so it's reachable when collapsed */}
+        <Tooltip title={rightPanelOpen ? 'Collapse panel' : 'Expand panel'} placement="left">
           <button
             onClick={() => setRightPanelOpen((v) => !v)}
             style={{
-              position: 'absolute',
-              top: 8,
-              left: rightPanelOpen ? -16 : -24,
-              zIndex: 10,
+              position: 'fixed',
+              top: 80,
+              right: rightPanelOpen ? 320 - 12 : 0,
+              zIndex: 1000,
               width: 24,
-              height: 24,
-              borderRadius: '50%',
+              height: 48,
+              borderTopLeftRadius: rightPanelOpen ? 12 : 0,
+              borderBottomLeftRadius: rightPanelOpen ? 12 : 0,
+              borderTopRightRadius: rightPanelOpen ? 12 : 0,
+              borderBottomRightRadius: rightPanelOpen ? 12 : 0,
               border: '1px solid #EEF2F6',
+              borderRight: rightPanelOpen ? '1px solid #EEF2F6' : 'none',
               background: '#FFFFFF',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 10,
+              fontSize: 12,
               padding: 0,
-              boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+              boxShadow: '-2px 2px 6px rgba(0,0,0,0.06)',
+              transition: 'right 0.2s ease',
             }}
           >
             {rightPanelOpen ? <RightOutlined /> : <LeftOutlined />}
