@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             .and()
             .authorizeRequests()
-                .antMatchers("/v2/webhook/**", "/api/auth/**", "/error").permitAll()
+                .antMatchers("/v2/webhook/**", "/api/auth/**", "/error", "/ws/livechat/**", "/widget/**", "/demo/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/desk/**", "/api/inbox/**").hasAnyRole("ADMIN", "AGENT")
                 .antMatchers("/api/reports/**").hasAnyRole("ADMIN", "AGENT", "VIEWER")

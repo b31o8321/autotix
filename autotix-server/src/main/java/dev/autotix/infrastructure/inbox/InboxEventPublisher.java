@@ -1,9 +1,11 @@
 package dev.autotix.infrastructure.inbox;
 
 import com.alibaba.fastjson.JSON;
+import dev.autotix.application.livechat.LiveChatStatusBridge;
 import dev.autotix.domain.event.InboxEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,13 @@ public class InboxEventPublisher {
 
     /** key = userId, value = list of active emitters for that user */
     private final Map<String, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
+
+    /**
+     * LiveChatStatusBridge is optional (field-injected to avoid circular dependency issues).
+     * It receives STATUS_CHANGED events and forwards them to open WebSocket sessions.
+     */
+    @Autowired(required = false)
+    private LiveChatStatusBridge liveChatStatusBridge;
 
     /**
      * Called by SSE controller when a new client connects.
@@ -83,6 +92,11 @@ public class InboxEventPublisher {
             // Remove failed emitters after iteration
             entry.getValue().removeAll(toRemove);
             toRemove.clear();
+        }
+
+        // Forward to LiveChat WebSocket sessions when status changes
+        if (liveChatStatusBridge != null) {
+            liveChatStatusBridge.onInboxEvent(event);
         }
     }
 

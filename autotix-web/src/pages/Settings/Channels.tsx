@@ -32,7 +32,7 @@ const PLATFORMS: Plat[] = [
   { label: 'FRESHCHAT (stub)',                 value: 'FRESHCHAT',        defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'GORGIAS (stub)',                   value: 'GORGIAS',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'INTERCOM (stub)',                  value: 'INTERCOM',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
-  { label: 'LIVECHAT (stub)',                  value: 'LIVECHAT',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'LIVECHAT (native widget)',          value: 'LIVECHAT',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'SHOPIFY (stub)',                   value: 'SHOPIFY',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'AMAZON (stub)',                    value: 'AMAZON',           defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'GMAIL (stub)',                     value: 'GMAIL',            defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
@@ -133,7 +133,7 @@ export default function ChannelsPage() {
       title: 'Webhook Token',
       dataIndex: 'webhookToken',
       key: 'webhookToken',
-      render: (token: string) => (
+      render: (token: string, r: ChannelDTO) => (
         <Space size="small">
           <Text code style={{ fontSize: 11 }}>{token?.slice(0, 12)}...</Text>
           <Tooltip title="Copy token">
@@ -143,6 +143,31 @@ export default function ChannelsPage() {
               onClick={() => { navigator.clipboard.writeText(token); message.success('Copied'); }}
             />
           </Tooltip>
+          {r.platform === 'LIVECHAT' && (
+            <Tooltip title="Copy embed snippet">
+              <Button
+                size="small"
+                onClick={() => {
+                  const host = window.location.origin;
+                  const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${token}" async></script>`;
+                  navigator.clipboard.writeText(snippet);
+                  message.success('Embed snippet copied!');
+                }}
+              >
+                Copy snippet
+              </Button>
+            </Tooltip>
+          )}
+          {r.platform === 'LIVECHAT' && (
+            <Tooltip title="Open demo page">
+              <Button
+                size="small"
+                onClick={() => window.open(`/demo/livechat.html?token=${token}`, '_blank')}
+              >
+                Test
+              </Button>
+            </Tooltip>
+          )}
         </Space>
       ),
     },
