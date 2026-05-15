@@ -700,55 +700,43 @@ export default function InboxPage() {
           overflow: 'hidden',
         }}
       >
-        {/* Smart view list (vertical) */}
+        {/* Smart view selector (dropdown) */}
         <div
           style={{
-            padding: '8px 4px',
+            padding: '8px 12px',
             borderBottom: '1px solid #EEF2F6',
           }}
         >
-          {([
-            { key: 'mine',        label: 'Mine',        count: tabCounts.mine },
-            { key: 'unassigned',  label: 'Unassigned',  count: tabCounts.unassigned },
-            { key: 'open',        label: 'Open',        count: tabCounts.open },
-            { key: 'needs_human', label: 'Needs human', count: tabCounts.needs_human },
-            { key: 'all',         label: 'All',         count: tabCounts.all },
-          ] as Array<{ key: SmartView; label: string; count: number }>).map((v) => {
-            const active = currentView === v.key;
-            return (
-              <div
-                key={v.key}
-                onClick={() => setCurrentView(v.key)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '6px 12px',
-                  marginBottom: 2,
-                  borderRadius: 6,
-                  background: active ? '#EFF6FF' : 'transparent',
-                  color: active ? '#2962FF' : '#0B1426',
-                  fontWeight: active ? 600 : 400,
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  borderLeft: active ? '3px solid #2962FF' : '3px solid transparent',
-                  paddingLeft: 9,
-                }}
-              >
-                <span>{v.label}</span>
-                {v.count > 0 && (
-                  <Badge
-                    count={v.count}
-                    size="small"
-                    style={{
-                      background: active ? '#2962FF' : '#9BAAB8',
-                      boxShadow: 'none',
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })}
+          <Select
+            value={currentView}
+            onChange={(v) => setCurrentView(v as SmartView)}
+            style={{ width: '100%' }}
+            size="middle"
+            options={([
+              { key: 'mine',        label: 'Mine',        count: tabCounts.mine },
+              { key: 'unassigned',  label: 'Unassigned',  count: tabCounts.unassigned },
+              { key: 'open',        label: 'Open',        count: tabCounts.open },
+              { key: 'needs_human', label: 'Needs human', count: tabCounts.needs_human },
+              { key: 'all',         label: 'All',         count: tabCounts.all },
+            ] as Array<{ key: SmartView; label: string; count: number }>).map((v) => ({
+              value: v.key,
+              label: (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{v.label}</span>
+                  {v.count > 0 && (
+                    <Badge
+                      count={v.count}
+                      size="small"
+                      style={{
+                        background: currentView === v.key ? '#2962FF' : '#9BAAB8',
+                        boxShadow: 'none',
+                      }}
+                    />
+                  )}
+                </div>
+              ),
+            }))}
+          />
         </div>
 
         {/* Secondary status filter */}
