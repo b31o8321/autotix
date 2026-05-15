@@ -17,6 +17,7 @@ export default defineConfig({
         { path: 'settings/channels', component: '@/pages/Settings/Channels/index' },
         { path: 'settings/channels/:platform', component: '@/pages/Settings/Channels/PlatformChannels' },
         { path: 'settings/channels/:platform/new', component: '@/pages/Settings/Channels/PlatformAdd' },
+        { path: 'settings/channels/:platform/:channelId/edit', component: '@/pages/Settings/Channels/PlatformEdit' },
         { path: 'settings/ai', component: '@/pages/Settings/AIConfig' },
         { path: 'settings/users', component: '@/pages/Settings/Users' },
         { path: 'settings/automation', component: '@/pages/Settings/Automation' },
