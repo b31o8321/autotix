@@ -99,6 +99,18 @@ export default function PlatformChannelsPage() {
       key: 'actions',
       render: (_: unknown, r: ChannelDTO) => (
         <Space>
+          {r.platform === 'LIVECHAT' && (
+            <Tooltip title="Open test widget in new tab">
+              <Button
+                size="small"
+                type="primary"
+                ghost
+                onClick={() => window.open(`/demo/livechat.html?token=${r.webhookToken}`, '_blank')}
+              >
+                Test
+              </Button>
+            </Tooltip>
+          )}
           <Tooltip title="Rotate webhook token">
             <Button size="small" icon={<ReloadOutlined />} onClick={() => handleRotate(r.id)} />
           </Tooltip>
