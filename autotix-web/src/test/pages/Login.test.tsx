@@ -58,7 +58,7 @@ describe('LoginPage', () => {
     });
   });
 
-  it('redirects to /desk after successful login', async () => {
+  it('redirects to /inbox after successful login', async () => {
     const user = userEvent.setup();
     render(<LoginPage />);
 
@@ -67,7 +67,7 @@ describe('LoginPage', () => {
     await user.click(screen.getByRole('button', { name: /login/i }));
 
     await waitFor(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith('/desk');
+      expect(mockHistoryPush).toHaveBeenCalledWith('/inbox');
     });
   });
 });
