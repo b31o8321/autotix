@@ -37,7 +37,8 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { history } from 'umi';
-import type { TicketDTO, AttachmentDTO } from '@/services/ticket';
+import type { TicketDTO, AttachmentDTO, TicketActivity } from '@/services/ticket';
+import { listTicketActivity } from '@/services/ticket';
 import {
   closeTicket,
   escalateTicket,
@@ -288,6 +289,20 @@ export default function InboxPage() {
   // ── Right panel state ─────────────────────────
   type RailPane = 'properties' | 'ai' | 'activity' | null;
   const [activeRail, setActiveRail] = useState<RailPane>('properties');
+  const [activity, setActivity] = useState<TicketActivity[]>([]);
+  const [activityLoading, setActivityLoading] = useState(false);
+
+  // Fetch activity log when activity rail is opened or ticket changes
+  useEffect(() => {
+    if (activeRail !== 'activity' || !currentTicket?.id) {
+      return;
+    }
+    setActivityLoading(true);
+    listTicketActivity(currentTicket.id, 0, 100)
+      .then(setActivity)
+      .catch(() => setActivity([]))
+      .finally(() => setActivityLoading(false));
+  }, [activeRail, currentTicket?.id]);
   const rightPanelOpen = activeRail !== null;
   const setRightPanelOpen = (_v: boolean | ((p: boolean) => boolean)) => {
     // legacy compat — collapsing closes pane, expanding opens default
@@ -381,6 +396,8 @@ export default function InboxPage() {
 
     const token = getAccessToken();
     if (!token) return;
+
+    // intentionally no-op — activity fetch is wired in a dedicated effect below
 
     const unsubscribe = subscribeInbox(token, (event) => {
       const refreshEvents = ['TICKET_CREATED', 'STATUS_CHANGED', 'AI_REPLIED', 'AGENT_REPLIED'];
@@ -1187,6 +1204,8 @@ export default function InboxPage() {
             <Text style={{ color: '#9BAAB8', fontSize: 12 }}>No ticket selected</Text>
           ) : (
             <>
+              {activeRail === 'properties' && (
+              <>
               {/* Customer section */}
               <div>
                 <Text style={{ fontSize: 12, fontWeight: 600, color: '#5A6B7D', textTransform: 'uppercase', letterSpacing: 0.5 }}>
@@ -1373,10 +1392,11 @@ export default function InboxPage() {
                 )}
               </div>
 
-              <div style={{ height: 16 }} />
-              <Divider style={{ margin: 0 }} />
-              <div style={{ height: 16 }} />
+              </>
+              )}
 
+              {activeRail === 'ai' && (
+              <>
               {/* AI Draft section */}
               <Card
                 size="small"
@@ -1480,6 +1500,54 @@ export default function InboxPage() {
                   </div>
                 )}
               </Card>
+              </>
+              )}
+
+              {activeRail === 'activity' && (
+                <div>
+                  <Text style={{ fontSize: 12, fontWeight: 600, color: '#5A6B7D', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                    Activity
+                  </Text>
+                  <Divider style={{ margin: '6px 0' }} />
+                  {activityLoading ? (
+                    <Text style={{ fontSize: 12, color: '#9BAAB8' }}>Loading…</Text>
+                  ) : activity.length === 0 ? (
+                    <Text style={{ fontSize: 12, color: '#9BAAB8' }}>No activity yet.</Text>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {activity.map((a) => (
+                        <div
+                          key={a.id}
+                          style={{
+                            paddingLeft: 10,
+                            borderLeft: '2px solid #EEF2F6',
+                          }}
+                        >
+                          <div style={{ fontSize: 12, fontWeight: 600, color: '#0B1426' }}>
+                            {a.action.replaceAll('_', ' ')}
+                          </div>
+                          <div style={{ fontSize: 11, color: '#5A6B7D' }}>
+                            by <span style={{ fontWeight: 500 }}>{a.actor}</span> · {new Date(a.occurredAt).toLocaleString()}
+                          </div>
+                          {a.details && (
+                            <div
+                              style={{
+                                fontSize: 11,
+                                color: '#5A6B7D',
+                                marginTop: 2,
+                                fontFamily: 'monospace',
+                                wordBreak: 'break-all',
+                              }}
+                            >
+                              {a.details}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
         </div>
