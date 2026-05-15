@@ -72,6 +72,16 @@ public class ChannelRepositoryImpl implements ChannelRepository {
     }
 
     @Override
+    public List<Channel> findByPlatform(PlatformType platform) {
+        QueryWrapper<ChannelEntity> qw = new QueryWrapper<>();
+        qw.eq("platform", platform.name());
+        return channelMapper.selectList(qw)
+                .stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(ChannelId id) {
         // Soft delete: set enabled=false and stamp updatedAt
         ChannelEntity entity = new ChannelEntity();

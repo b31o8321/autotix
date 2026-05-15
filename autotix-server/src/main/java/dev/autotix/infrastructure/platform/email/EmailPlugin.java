@@ -4,6 +4,7 @@ import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelCredential;
 import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
 import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Attachment;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -161,5 +163,42 @@ public class EmailPlugin implements TicketPlatformPlugin {
         } catch (NumberFormatException e) {
             return defaultValue;
         }
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.EMAIL,
+                "Email (IMAP/SMTP)",
+                "email",
+                ChannelType.EMAIL,
+                Collections.singletonList(ChannelType.EMAIL),
+                PlatformDescriptor.AuthMethod.EMAIL_BASIC,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("imap_host", "IMAP Host", "string", true)
+                                .placeholder("imap.gmail.com"),
+                        PlatformDescriptor.AuthField.of("imap_port", "IMAP Port", "number", true)
+                                .defaultValue("993"),
+                        PlatformDescriptor.AuthField.of("imap_use_ssl", "IMAP Use SSL", "boolean", false)
+                                .defaultValue("true"),
+                        PlatformDescriptor.AuthField.of("imap_user", "IMAP User", "string", true)
+                                .placeholder("you@example.com"),
+                        PlatformDescriptor.AuthField.of("imap_password", "IMAP Password", "password", true),
+                        PlatformDescriptor.AuthField.of("smtp_host", "SMTP Host", "string", true)
+                                .placeholder("smtp.gmail.com"),
+                        PlatformDescriptor.AuthField.of("smtp_port", "SMTP Port", "number", true)
+                                .defaultValue("587"),
+                        PlatformDescriptor.AuthField.of("smtp_use_tls", "SMTP Use TLS", "boolean", false)
+                                .defaultValue("true"),
+                        PlatformDescriptor.AuthField.of("smtp_user", "SMTP User", "string", true)
+                                .placeholder("you@example.com"),
+                        PlatformDescriptor.AuthField.of("smtp_password", "SMTP Password", "password", true),
+                        PlatformDescriptor.AuthField.of("from_address", "From Address", "string", true)
+                                .placeholder("support@example.com")
+                                .help("The email address shown in the From: header")
+                ),
+                true,
+                null
+        );
     }
 }

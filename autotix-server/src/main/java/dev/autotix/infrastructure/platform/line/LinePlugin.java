@@ -1,11 +1,17 @@
 package dev.autotix.infrastructure.platform.line;
 
-import dev.autotix.domain.channel.*;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelCredential;
+import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
+import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -39,5 +45,23 @@ public class LinePlugin implements TicketPlatformPlugin {
     @Override public boolean healthCheck(ChannelCredential credential) {
         // TODO: GET /v2/bot/info
         throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.LINE,
+                "LINE",
+                "chat",
+                ChannelType.CHAT,
+                Collections.singletonList(ChannelType.CHAT),
+                PlatformDescriptor.AuthMethod.API_KEY,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("channelAccessToken", "Channel Access Token", "password", true)
+                                .placeholder("Long-lived channel access token from LINE Developers console")
+                ),
+                false,
+                "https://developers.line.biz/en/docs/messaging-api/"
+        );
     }
 }

@@ -20,6 +20,9 @@ public interface ChannelRepository {
     /** TODO: list all (for Settings page); only return non-deleted */
     List<Channel> findAll();
 
+    /** Find all channels for a specific platform (non-deleted). */
+    List<Channel> findByPlatform(PlatformType platform);
+
     /** TODO: soft delete */
     void delete(ChannelId id);
 }

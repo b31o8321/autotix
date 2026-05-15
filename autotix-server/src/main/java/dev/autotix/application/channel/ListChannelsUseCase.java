@@ -2,6 +2,7 @@ package dev.autotix.application.channel;
 
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelRepository;
+import dev.autotix.domain.channel.PlatformType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,5 +21,10 @@ public class ListChannelsUseCase {
 
     public List<Channel> list() {
         return channelRepository.findAll();
+    }
+
+    /** Returns channels filtered to a specific platform. */
+    public List<Channel> listByPlatform(PlatformType platform) {
+        return channelRepository.findByPlatform(platform);
     }
 }

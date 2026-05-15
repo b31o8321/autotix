@@ -1,11 +1,17 @@
 package dev.autotix.infrastructure.platform.freshdesk;
 
-import dev.autotix.domain.channel.*;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelCredential;
+import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
+import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -41,5 +47,26 @@ public class FreshdeskPlugin implements TicketPlatformPlugin {
     public boolean healthCheck(ChannelCredential credential) {
         // TODO: GET /api/v2/agents/me
         throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.FRESHDESK,
+                "Freshdesk",
+                "ticket",
+                ChannelType.EMAIL,
+                Collections.singletonList(ChannelType.EMAIL),
+                PlatformDescriptor.AuthMethod.API_KEY,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("apiKey", "API Key", "password", true)
+                                .placeholder("Your Freshdesk API key"),
+                        PlatformDescriptor.AuthField.of("subdomain", "Subdomain", "string", true)
+                                .placeholder("yourcompany")
+                                .help("yourcompany.freshdesk.com")
+                ),
+                false,
+                "https://developers.freshdesk.com/api/"
+        );
     }
 }

@@ -48,9 +48,16 @@ export default function AppLayout() {
     history.push('/login');
   }
 
-  const pageTitle =
-    PAGE_TITLES[location.pathname] ||
-    (location.pathname.startsWith('/inbox') ? 'Inbox' : 'Autotix');
+  const pageTitle = (() => {
+    if (PAGE_TITLES[location.pathname]) return PAGE_TITLES[location.pathname];
+    if (location.pathname.startsWith('/inbox')) return 'Inbox';
+    // Dynamic channel routes: /settings/channels/:platform/new or /settings/channels/:platform
+    const channelNewMatch = location.pathname.match(/^\/settings\/channels\/([^/]+)\/new$/);
+    if (channelNewMatch) return `Add ${channelNewMatch[1]} Channel`;
+    const channelMatch = location.pathname.match(/^\/settings\/channels\/([^/]+)$/);
+    if (channelMatch) return `${channelMatch[1]} Channels`;
+    return 'Autotix';
+  })();
 
   const userMenuItems = [
     {

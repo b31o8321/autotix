@@ -39,7 +39,14 @@ public class ChannelAdminController {
     }
 
     @GetMapping
-    public List<ChannelDTO> list() {
+    public List<ChannelDTO> list(@RequestParam(required = false) String platform) {
+        // Optional filter by platform — v1 passes credentials through as-is (no strict validation)
+        if (platform != null && !platform.isEmpty()) {
+            PlatformType pt = PlatformType.valueOf(platform.toUpperCase());
+            return listChannels.listByPlatform(pt).stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
+        }
         return listChannels.list().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());

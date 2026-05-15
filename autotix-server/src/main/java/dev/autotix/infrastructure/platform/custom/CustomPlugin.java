@@ -7,6 +7,7 @@ import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelCredential;
 import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
 import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.EventType;
 import dev.autotix.domain.event.TicketEvent;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -162,5 +165,20 @@ public class CustomPlugin implements TicketPlatformPlugin {
     public boolean healthCheck(ChannelCredential credential) {
         // No external API → always healthy. Useful for connecting via the Add Channel UI.
         return true;
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.CUSTOM,
+                "Custom / Test",
+                "test",
+                ChannelType.CHAT,
+                Arrays.asList(ChannelType.CHAT, ChannelType.EMAIL),
+                PlatformDescriptor.AuthMethod.NONE,
+                Collections.emptyList(),
+                true,
+                null
+        );
     }
 }

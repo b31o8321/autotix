@@ -12,9 +12,11 @@ export interface ChannelDTO {
   connectedAt: string;
 }
 
-// TODO: implement
-export async function listChannels(): Promise<ChannelDTO[]> {
-  return request('/api/admin/channels', { method: 'GET' });
+export async function listChannels(platform?: string): Promise<ChannelDTO[]> {
+  return request('/api/admin/channels', {
+    method: 'GET',
+    params: platform ? { platform } : undefined,
+  });
 }
 
 // TODO: implement

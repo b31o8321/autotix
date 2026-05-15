@@ -1,11 +1,17 @@
 package dev.autotix.infrastructure.platform.shopify;
 
-import dev.autotix.domain.channel.*;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelCredential;
+import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
+import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -40,5 +46,25 @@ public class ShopifyPlugin implements TicketPlatformPlugin {
     @Override public boolean healthCheck(ChannelCredential credential) {
         // TODO: GET /admin/api/2025-01/shop.json
         throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.SHOPIFY,
+                "Shopify",
+                "ecommerce",
+                ChannelType.EMAIL,
+                Collections.singletonList(ChannelType.EMAIL),
+                PlatformDescriptor.AuthMethod.API_KEY,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("apiKey", "Admin API Key", "password", true)
+                                .placeholder("shpat_xxx"),
+                        PlatformDescriptor.AuthField.of("shopDomain", "Shop Domain", "string", true)
+                                .placeholder("yourstore.myshopify.com")
+                ),
+                false,
+                "https://shopify.dev/docs/api/admin-rest"
+        );
     }
 }

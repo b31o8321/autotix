@@ -4,7 +4,7 @@
 import React from 'react';
 
 export async function getRoutes() {
-  const routes = {"1":{"path":"/login","id":"1"},"2":{"path":"/","id":"2"},"3":{"path":"/","redirect":"/inbox","parentId":"2","id":"3"},"4":{"path":"inbox","parentId":"2","id":"4"},"5":{"path":"reports","parentId":"2","id":"5"},"6":{"path":"settings","parentId":"2","id":"6"},"7":{"path":"settings/channels","parentId":"2","id":"7"},"8":{"path":"settings/ai","parentId":"2","id":"8"},"9":{"path":"settings/users","parentId":"2","id":"9"},"10":{"path":"settings/automation","parentId":"2","id":"10"},"11":{"path":"settings/sla","parentId":"2","id":"11"},"12":{"path":"settings/tags","parentId":"2","id":"12"},"13":{"path":"settings/custom-fields","parentId":"2","id":"13"},"14":{"path":"settings/general","parentId":"2","id":"14"}} as const;
+  const routes = {"1":{"path":"/login","id":"1"},"2":{"path":"/","id":"2"},"3":{"path":"/","redirect":"/inbox","parentId":"2","id":"3"},"4":{"path":"inbox","parentId":"2","id":"4"},"5":{"path":"reports","parentId":"2","id":"5"},"6":{"path":"settings","parentId":"2","id":"6"},"7":{"path":"settings/channels","parentId":"2","id":"7"},"8":{"path":"settings/channels/:platform","parentId":"2","id":"8"},"9":{"path":"settings/channels/:platform/new","parentId":"2","id":"9"},"10":{"path":"settings/ai","parentId":"2","id":"10"},"11":{"path":"settings/users","parentId":"2","id":"11"},"12":{"path":"settings/automation","parentId":"2","id":"12"},"13":{"path":"settings/sla","parentId":"2","id":"13"},"14":{"path":"settings/tags","parentId":"2","id":"14"},"15":{"path":"settings/custom-fields","parentId":"2","id":"15"},"16":{"path":"settings/general","parentId":"2","id":"16"}} as const;
   return {
     routes,
     routeComponents: {
@@ -14,14 +14,16 @@ export async function getRoutes() {
 '4': React.lazy(() => import(/* webpackChunkName: "p__Inbox__index" */'@/pages/Inbox/index.tsx')),
 '5': React.lazy(() => import(/* webpackChunkName: "p__Reports__index" */'@/pages/Reports/index.tsx')),
 '6': React.lazy(() => import(/* webpackChunkName: "p__Settings__index" */'@/pages/Settings/index.tsx')),
-'7': React.lazy(() => import(/* webpackChunkName: "p__Settings__Channels" */'@/pages/Settings/Channels.tsx')),
-'8': React.lazy(() => import(/* webpackChunkName: "p__Settings__AIConfig" */'@/pages/Settings/AIConfig.tsx')),
-'9': React.lazy(() => import(/* webpackChunkName: "p__Settings__Users" */'@/pages/Settings/Users.tsx')),
-'10': React.lazy(() => import(/* webpackChunkName: "p__Settings__Automation" */'@/pages/Settings/Automation.tsx')),
-'11': React.lazy(() => import(/* webpackChunkName: "p__Settings__SLA" */'@/pages/Settings/SLA.tsx')),
-'12': React.lazy(() => import(/* webpackChunkName: "p__Settings__Tags" */'@/pages/Settings/Tags.tsx')),
-'13': React.lazy(() => import(/* webpackChunkName: "p__Settings__CustomFields" */'@/pages/Settings/CustomFields.tsx')),
-'14': React.lazy(() => import(/* webpackChunkName: "p__Settings__General" */'@/pages/Settings/General.tsx')),
+'7': React.lazy(() => import(/* webpackChunkName: "p__Settings__Channels__index" */'@/pages/Settings/Channels/index.tsx')),
+'8': React.lazy(() => import(/* webpackChunkName: "p__Settings__Channels__PlatformChannels" */'@/pages/Settings/Channels/PlatformChannels.tsx')),
+'9': React.lazy(() => import(/* webpackChunkName: "p__Settings__Channels__PlatformAdd" */'@/pages/Settings/Channels/PlatformAdd.tsx')),
+'10': React.lazy(() => import(/* webpackChunkName: "p__Settings__AIConfig" */'@/pages/Settings/AIConfig.tsx')),
+'11': React.lazy(() => import(/* webpackChunkName: "p__Settings__Users" */'@/pages/Settings/Users.tsx')),
+'12': React.lazy(() => import(/* webpackChunkName: "p__Settings__Automation" */'@/pages/Settings/Automation.tsx')),
+'13': React.lazy(() => import(/* webpackChunkName: "p__Settings__SLA" */'@/pages/Settings/SLA.tsx')),
+'14': React.lazy(() => import(/* webpackChunkName: "p__Settings__Tags" */'@/pages/Settings/Tags.tsx')),
+'15': React.lazy(() => import(/* webpackChunkName: "p__Settings__CustomFields" */'@/pages/Settings/CustomFields.tsx')),
+'16': React.lazy(() => import(/* webpackChunkName: "p__Settings__General" */'@/pages/Settings/General.tsx')),
 },
   };
 }

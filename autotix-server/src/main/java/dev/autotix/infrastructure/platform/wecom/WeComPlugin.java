@@ -1,11 +1,17 @@
 package dev.autotix.infrastructure.platform.wecom;
 
-import dev.autotix.domain.channel.*;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelCredential;
+import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
+import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -39,5 +45,24 @@ public class WeComPlugin implements TicketPlatformPlugin {
     @Override public boolean healthCheck(ChannelCredential credential) {
         // TODO: GET access_token endpoint
         throw new UnsupportedOperationException("TODO");
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.WECOM,
+                "WeCom (企业微信)",
+                "chat",
+                ChannelType.CHAT,
+                Collections.singletonList(ChannelType.CHAT),
+                PlatformDescriptor.AuthMethod.APP_CREDENTIALS,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("corpId", "Corp ID", "string", true)
+                                .placeholder("ww..."),
+                        PlatformDescriptor.AuthField.of("corpSecret", "Corp Secret", "password", true)
+                ),
+                false,
+                "https://developer.work.weixin.qq.com/document/path/90556"
+        );
     }
 }

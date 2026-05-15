@@ -1,13 +1,19 @@
 package dev.autotix.infrastructure.platform.zendesk;
 
 import dev.autotix.domain.AutotixException;
-import dev.autotix.domain.channel.*;
+import dev.autotix.domain.channel.Channel;
+import dev.autotix.domain.channel.ChannelCredential;
+import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
+import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
 import dev.autotix.infrastructure.platform.TicketPlatformPlugin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -100,5 +106,27 @@ public class ZendeskPlugin implements TicketPlatformPlugin {
     @Override
     public ChannelCredential exchangeCode(String code) {
         throw new UnsupportedOperationException("Zendesk OAuth implemented in v2");
+    }
+
+    @Override
+    public PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                PlatformType.ZENDESK,
+                "Zendesk",
+                "ticket",
+                ChannelType.EMAIL,
+                Collections.singletonList(ChannelType.EMAIL),
+                PlatformDescriptor.AuthMethod.OAUTH2,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("subdomain", "Zendesk Subdomain", "string", true)
+                                .placeholder("yourcompany")
+                                .help("The subdomain part of your Zendesk URL: yourcompany.zendesk.com"),
+                        PlatformDescriptor.AuthField.of("client_id", "OAuth Client ID", "string", true)
+                                .placeholder("zendesk_client_id"),
+                        PlatformDescriptor.AuthField.of("client_secret", "OAuth Client Secret", "password", true)
+                ),
+                true,
+                "https://developer.zendesk.com/documentation/ticketing/ticketing-api/ticketing-api-overview/"
+        );
     }
 }

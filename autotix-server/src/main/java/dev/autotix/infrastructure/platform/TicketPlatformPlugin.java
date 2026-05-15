@@ -3,10 +3,13 @@ package dev.autotix.infrastructure.platform;
 import dev.autotix.domain.channel.Channel;
 import dev.autotix.domain.channel.ChannelCredential;
 import dev.autotix.domain.channel.ChannelType;
+import dev.autotix.domain.channel.PlatformDescriptor;
 import dev.autotix.domain.channel.PlatformType;
 import dev.autotix.domain.event.TicketEvent;
 import dev.autotix.domain.ticket.Ticket;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -76,4 +79,26 @@ public interface TicketPlatformPlugin {
 
     /** TODO: cheap call to verify credentials are valid (used by connectWithApiKey). */
     boolean healthCheck(ChannelCredential credential);
+
+    /**
+     * Returns the platform's descriptor (display name, category, auth method, field schema).
+     * Override in each plugin for a precise schema.
+     * Default derives a minimal API_KEY stub descriptor for platforms with no custom implementation.
+     */
+    default PlatformDescriptor descriptor() {
+        return new PlatformDescriptor(
+                platform(),
+                platform().name().charAt(0) + platform().name().substring(1).toLowerCase().replace('_', ' '),
+                "other",
+                defaultChannelType(),
+                Collections.singletonList(defaultChannelType()),
+                PlatformDescriptor.AuthMethod.API_KEY,
+                Arrays.asList(
+                        PlatformDescriptor.AuthField.of("apiKey", "API Key", "password", true)
+                                .placeholder("Your API key")
+                ),
+                false,
+                null
+        );
+    }
 }
