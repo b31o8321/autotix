@@ -55,14 +55,26 @@ public class WeComPlugin implements TicketPlatformPlugin {
                 "chat",
                 ChannelType.CHAT,
                 Collections.singletonList(ChannelType.CHAT),
-                PlatformDescriptor.AuthMethod.APP_CREDENTIALS,
+                PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
-                        PlatformDescriptor.AuthField.of("corpId", "Corp ID", "string", true)
-                                .placeholder("ww..."),
-                        PlatformDescriptor.AuthField.of("corpSecret", "Corp Secret", "password", true)
+                        PlatformDescriptor.AuthField.of("corp_id", "Corp ID", "string", true)
+                                .placeholder("ww…")
+                                .help("企业ID，在企业微信管理后台首页可查"),
+                        PlatformDescriptor.AuthField.of("corp_secret", "Corp Secret", "password", true)
+                                .placeholder("应用的Secret")
+                                .help("自建应用的Secret"),
+                        PlatformDescriptor.AuthField.of("agent_id", "Agent ID", "string", false)
+                                .placeholder("1000001")
+                                .help("自建应用的AgentId（可选）")
                 ),
                 false,
-                "https://developer.work.weixin.qq.com/document/path/90556"
+                "https://developer.work.weixin.qq.com/document/path/90556",
+                "1. 登录企业微信管理后台 (https://work.weixin.qq.com/wework_admin/)。\n" +
+                "2. 进入「应用管理」→「自建应用」，选择或创建应用。\n" +
+                "3. 在应用详情页复制「AgentId」。\n" +
+                "4. 点击应用下的「查看」（Secret），扫码后复制 Secret。\n" +
+                "5. 在首页「我的企业」→「企业信息」复制企业 ID（CorpID）。\n" +
+                "Docs: https://developer.work.weixin.qq.com/document/path/90556"
         );
     }
 }

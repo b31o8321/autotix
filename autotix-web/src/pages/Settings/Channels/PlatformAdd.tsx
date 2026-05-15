@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  Alert, Breadcrumb, Button, Form, Input, Select, Space, Spin, Typography, message,
+  Alert, Breadcrumb, Button, Collapse, Form, Input, Select, Space, Spin, Typography, message,
 } from 'antd';
 import { history, useParams } from 'umi';
 import { getPlatforms, type PlatformDescriptorDTO } from '@/services/platform';
@@ -106,6 +106,10 @@ export default function PlatformAddPage() {
         Add {descriptor.displayName} Channel
       </Typography.Title>
 
+      {descriptor.setupGuide && (
+        <SetupGuideAlert platform={descriptor.displayName} guide={descriptor.setupGuide} />
+      )}
+
       {oauthComingSoon && (
         <Alert
           type="info"
@@ -188,16 +192,14 @@ function renderCredentialsForm(descriptor: PlatformDescriptorDTO) {
       return <EmailCredentialsForm />;
 
     case 'OAUTH2':
-      // Render app credentials form (client_id, client_secret, subdomain, etc.)
-      // plus the Start OAuth button (in the parent submit area)
+      // No platform currently uses OAUTH2 — kept as a dead branch for future use.
       return (
-        <>
-          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
-            Enter your {descriptor.displayName} app credentials, then click "Start OAuth" to
-            authorize access.
-          </Typography.Paragraph>
-          <AuthFieldRenderer fields={descriptor.authFields} />
-        </>
+        <Alert
+          type="info"
+          showIcon
+          message="OAuth coming in v2"
+          description={`OAuth for ${descriptor.displayName} is not yet available in self-hosted mode. Please use API token credentials instead.`}
+        />
       );
 
     case 'API_KEY':
@@ -205,4 +207,57 @@ function renderCredentialsForm(descriptor: PlatformDescriptorDTO) {
     default:
       return <AuthFieldRenderer fields={descriptor.authFields} />;
   }
+}
+
+/**
+ * Renders the platform setup guide as an expandable Alert.
+ * Lines starting with a digit+period are rendered as a numbered list.
+ * Bare URLs are rendered as clickable links.
+ * Collapsed by default when the guide is longer than 200 characters.
+ */
+function SetupGuideAlert({ platform, guide }: { platform: string; guide: string }) {
+  const COLLAPSE_THRESHOLD = 200;
+  const shouldCollapse = guide.length > COLLAPSE_THRESHOLD;
+
+  const lines = guide.split('\n');
+
+  const renderedLines = lines.map((line, idx) => {
+    // Split line by URL-like patterns and make them clickable
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    const parts = line.split(urlPattern);
+    const content = parts.map((part, i) =>
+      urlPattern.test(part)
+        ? <a key={i} href={part} target="_blank" rel="noopener noreferrer">{part}</a>
+        : part
+    );
+    return (
+      <Typography.Paragraph key={idx} style={{ marginBottom: 4 }}>
+        {content}
+      </Typography.Paragraph>
+    );
+  });
+
+  const body = <div>{renderedLines}</div>;
+
+  if (!shouldCollapse) {
+    return (
+      <Alert
+        type="info"
+        showIcon
+        message={`How to get credentials for ${platform}`}
+        description={body}
+      />
+    );
+  }
+
+  return (
+    <Collapse
+      size="small"
+      items={[{
+        key: '1',
+        label: <span style={{ color: '#1677ff' }}>How to get credentials for {platform}</span>,
+        children: body,
+      }]}
+    />
+  );
 }

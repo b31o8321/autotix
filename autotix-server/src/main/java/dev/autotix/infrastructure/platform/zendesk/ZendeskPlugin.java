@@ -116,17 +116,23 @@ public class ZendeskPlugin implements TicketPlatformPlugin {
                 "ticket",
                 ChannelType.EMAIL,
                 Collections.singletonList(ChannelType.EMAIL),
-                PlatformDescriptor.AuthMethod.OAUTH2,
+                PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
                         PlatformDescriptor.AuthField.of("subdomain", "Zendesk Subdomain", "string", true)
                                 .placeholder("yourcompany")
                                 .help("The subdomain part of your Zendesk URL: yourcompany.zendesk.com"),
-                        PlatformDescriptor.AuthField.of("client_id", "OAuth Client ID", "string", true)
-                                .placeholder("zendesk_client_id"),
-                        PlatformDescriptor.AuthField.of("client_secret", "OAuth Client Secret", "password", true)
+                        PlatformDescriptor.AuthField.of("email", "Agent Email", "string", true)
+                                .placeholder("you@yourcompany.com")
+                                .help("The email of the Zendesk agent account used for API calls"),
+                        PlatformDescriptor.AuthField.of("api_token", "API Token", "password", true)
+                                .placeholder("Paste the token shown once in Zendesk Admin Center")
                 ),
                 true,
-                "https://developer.zendesk.com/documentation/ticketing/ticketing-api/ticketing-api-overview/"
+                "https://support.zendesk.com/hc/en-us/articles/4408889192858",
+                "1. In Zendesk Admin Center → Apps and integrations → APIs → API tokens, click \"Add API token\".\n" +
+                "2. Set a description (e.g. \"Autotix\") and copy the generated token (shown once).\n" +
+                "3. Paste the token + your Zendesk login email + your subdomain (the xxx in xxx.zendesk.com) below.\n" +
+                "Docs: https://support.zendesk.com/hc/en-us/articles/4408889192858"
         );
     }
 }

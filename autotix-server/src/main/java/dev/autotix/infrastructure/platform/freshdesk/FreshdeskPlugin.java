@@ -59,14 +59,19 @@ public class FreshdeskPlugin implements TicketPlatformPlugin {
                 Collections.singletonList(ChannelType.EMAIL),
                 PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
-                        PlatformDescriptor.AuthField.of("apiKey", "API Key", "password", true)
-                                .placeholder("Your Freshdesk API key"),
-                        PlatformDescriptor.AuthField.of("subdomain", "Subdomain", "string", true)
-                                .placeholder("yourcompany")
-                                .help("yourcompany.freshdesk.com")
+                        PlatformDescriptor.AuthField.of("domain", "Freshdesk Domain", "string", true)
+                                .placeholder("acme.freshdesk.com")
+                                .help("Your Freshdesk domain, e.g. acme.freshdesk.com"),
+                        PlatformDescriptor.AuthField.of("api_key", "API Key", "password", true)
+                                .placeholder("Your Freshdesk API key")
                 ),
                 false,
-                "https://developers.freshdesk.com/api/"
+                "https://developers.freshdesk.com/api/",
+                "1. Log in to Freshdesk.\n" +
+                "2. Click your profile icon (top right) → Profile settings.\n" +
+                "3. On the right side of the page, find the \"Your API Key\" panel and copy the key.\n" +
+                "4. Paste the key and your Freshdesk domain (e.g. acme.freshdesk.com) below.\n" +
+                "Docs: https://developers.freshdesk.com/api/"
         );
     }
 }

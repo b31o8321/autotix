@@ -17,6 +17,7 @@ public class PlatformDescriptorDTO {
     public List<AuthFieldDTO> authFields;
     public boolean functional;
     public String docsUrl;
+    public String setupGuide;
 
     public static class AuthFieldDTO {
         public String key;

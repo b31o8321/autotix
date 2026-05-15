@@ -58,13 +58,21 @@ public class ShopifyPlugin implements TicketPlatformPlugin {
                 Collections.singletonList(ChannelType.EMAIL),
                 PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
-                        PlatformDescriptor.AuthField.of("apiKey", "Admin API Key", "password", true)
-                                .placeholder("shpat_xxx"),
-                        PlatformDescriptor.AuthField.of("shopDomain", "Shop Domain", "string", true)
-                                .placeholder("yourstore.myshopify.com")
+                        PlatformDescriptor.AuthField.of("shop", "Shop Domain", "string", true)
+                                .placeholder("acme.myshopify.com")
+                                .help("Your Shopify store domain, e.g. acme.myshopify.com"),
+                        PlatformDescriptor.AuthField.of("admin_api_token", "Admin API Token", "password", true)
+                                .placeholder("shpat_…")
+                                .help("The token starting with shpat_ from your custom app installation")
                 ),
                 false,
-                "https://shopify.dev/docs/api/admin-rest"
+                "https://shopify.dev/docs/api/admin-rest",
+                "1. In Shopify Admin → Settings → Apps and sales channels, click \"Develop apps\".\n" +
+                "2. Click \"Create an app\", give it a name (e.g. Autotix).\n" +
+                "3. Click \"Configure Admin API scopes\" and enable the scopes you need (e.g. read_orders, write_orders).\n" +
+                "4. Click \"Install app\".\n" +
+                "5. Under \"API credentials\", click \"Reveal token once\" and copy the Admin API access token (starts with shpat_).\n" +
+                "Docs: https://shopify.dev/docs/api/admin-rest"
         );
     }
 }

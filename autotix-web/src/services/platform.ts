@@ -22,6 +22,7 @@ export interface PlatformDescriptorDTO {
   authFields: AuthFieldDTO[];
   functional: boolean;
   docsUrl?: string;
+  setupGuide?: string;
 }
 
 export async function getPlatforms(): Promise<PlatformDescriptorDTO[]> {

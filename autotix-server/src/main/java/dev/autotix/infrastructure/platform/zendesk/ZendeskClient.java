@@ -3,6 +3,7 @@ package dev.autotix.infrastructure.platform.zendesk;
 import com.alibaba.fastjson.JSONObject;
 import dev.autotix.domain.AutotixException;
 import dev.autotix.domain.channel.ChannelCredential;
+import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -11,6 +12,7 @@ import okhttp3.Response;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,7 +73,7 @@ public class ZendeskClient {
         String url = buildUrl(credential, "/api/v2/tickets/" + ticketId + ".json");
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "Bearer " + credential.accessToken())
+                .header("Authorization", buildAuthHeader(credential))
                 .header("Content-Type", "application/json")
                 .put(RequestBody.create(body.toJSONString(), JSON_MEDIA_TYPE))
                 .build();
@@ -96,7 +98,7 @@ public class ZendeskClient {
         String url = buildUrl(credential, "/api/v2/tickets/" + ticketId + ".json");
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "Bearer " + credential.accessToken())
+                .header("Authorization", buildAuthHeader(credential))
                 .header("Content-Type", "application/json")
                 .put(RequestBody.create(body.toJSONString(), JSON_MEDIA_TYPE))
                 .build();
@@ -113,7 +115,7 @@ public class ZendeskClient {
         String url = buildUrl(credential, "/api/v2/users/me.json");
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "Bearer " + credential.accessToken())
+                .header("Authorization", buildAuthHeader(credential))
                 .get()
                 .build();
         try {
@@ -143,6 +145,25 @@ public class ZendeskClient {
     // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------
+
+    /**
+     * Builds the Authorization header value.
+     * Prefers HTTP Basic ({email}/token:{api_token}) when api_token is present in attributes;
+     * falls back to Bearer {accessToken} for back-compat with credentials created before this change.
+     */
+    String buildAuthHeader(ChannelCredential credential) {
+        Map<String, String> attrs = credential.attributes();
+        if (attrs != null) {
+            String apiToken = attrs.get("api_token");
+            String email = attrs.get("email");
+            if (apiToken != null && !apiToken.isEmpty() && email != null && !email.isEmpty()) {
+                // Zendesk API token basic auth: username = "{email}/token", password = "{api_token}"
+                return Credentials.basic(email + "/token", apiToken);
+            }
+        }
+        // Legacy / OAuth path
+        return "Bearer " + credential.accessToken();
+    }
 
     private String buildUrl(ChannelCredential credential, String path) {
         if (baseUrlOverride != null) {

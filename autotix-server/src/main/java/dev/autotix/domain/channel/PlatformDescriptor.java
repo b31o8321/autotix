@@ -21,6 +21,13 @@ public final class PlatformDescriptor {
     public final boolean functional;
     /** Optional documentation URL. */
     public final String docsUrl;
+    /**
+     * Step-by-step guide shown in the Add Channel form so the operator knows where to find
+     * credentials in the platform's admin UI.  Plain text; lines starting with a digit+period
+     * become a numbered list in the frontend; bare URLs become clickable links.
+     * Null for platforms that have no guide yet (CUSTOM, EMAIL, stubs).
+     */
+    public final String setupGuide;
 
     public PlatformDescriptor(
             PlatformType platform,
@@ -32,6 +39,21 @@ public final class PlatformDescriptor {
             List<AuthField> authFields,
             boolean functional,
             String docsUrl) {
+        this(platform, displayName, category, defaultChannelType, allowedChannelTypes,
+                authMethod, authFields, functional, docsUrl, null);
+    }
+
+    public PlatformDescriptor(
+            PlatformType platform,
+            String displayName,
+            String category,
+            ChannelType defaultChannelType,
+            List<ChannelType> allowedChannelTypes,
+            AuthMethod authMethod,
+            List<AuthField> authFields,
+            boolean functional,
+            String docsUrl,
+            String setupGuide) {
         this.platform = platform;
         this.displayName = displayName;
         this.category = category;
@@ -41,6 +63,7 @@ public final class PlatformDescriptor {
         this.authFields = Collections.unmodifiableList(authFields);
         this.functional = functional;
         this.docsUrl = docsUrl;
+        this.setupGuide = setupGuide;
     }
 
     // -------------------------------------------------------------------------

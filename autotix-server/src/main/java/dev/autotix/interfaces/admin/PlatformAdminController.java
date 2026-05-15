@@ -74,6 +74,7 @@ public class PlatformAdminController {
         dto.authFields = d.authFields.stream().map(this::toFieldDTO).collect(Collectors.toList());
         dto.functional = d.functional;
         dto.docsUrl = d.docsUrl;
+        dto.setupGuide = d.setupGuide;
         return dto;
     }
 
@@ -105,11 +106,12 @@ public class PlatformAdminController {
                 Collections.singletonList(ChannelType.EMAIL),
                 PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
-                        PlatformDescriptor.AuthField.of("apiKey", "API Key", "password", true)
+                        PlatformDescriptor.AuthField.of("api_key", "API Key", "password", true)
                                 .placeholder("Your API key")
                 ),
                 false,
-                null
+                null,
+                "This platform integration is a stub — please add a TicketPlatformPlugin implementation. Documentation: (none)."
         );
     }
 }

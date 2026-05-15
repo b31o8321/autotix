@@ -13,7 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,6 +51,15 @@ class ZendeskClientTest {
                 null,
                 null,
                 Collections.singletonMap("subdomain", "testco"));
+    }
+
+    /** Builds a credential that uses the new API-token path (email + api_token). */
+    private ChannelCredential apiTokenCredential() {
+        Map<String, String> attrs = new HashMap<>();
+        attrs.put("subdomain", "testco");
+        attrs.put("email", "agent@testco.com");
+        attrs.put("api_token", "secret-token-123");
+        return new ChannelCredential(null, null, null, attrs);
     }
 
     @AfterEach
@@ -120,5 +133,51 @@ class ZendeskClientTest {
         // Second call: 401
         server.enqueue(new MockResponse().setResponseCode(401));
         assertFalse(client.ping(credential), "Should return false on 401");
+    }
+
+    // -----------------------------------------------------------------------
+    // buildAuthHeader: legacy Bearer path vs new API-token Basic path
+    // -----------------------------------------------------------------------
+
+    @Test
+    void buildAuthHeader_legacyBearerToken() {
+        String header = client.buildAuthHeader(credential);
+        assertEquals("Bearer access-token-xyz", header,
+                "Legacy credential (accessToken, no api_token attr) should produce Bearer header");
+    }
+
+    @Test
+    void buildAuthHeader_apiTokenBasicAuth() {
+        ChannelCredential cred = apiTokenCredential();
+        String header = client.buildAuthHeader(cred);
+        // Expected: Basic base64("agent@testco.com/token:secret-token-123")
+        String expectedRaw = "agent@testco.com/token:secret-token-123";
+        String expectedEncoded = Base64.getEncoder().encodeToString(
+                expectedRaw.getBytes(StandardCharsets.ISO_8859_1));
+        assertEquals("Basic " + expectedEncoded, header,
+                "API-token credential should produce HTTP Basic auth with email/token:{api_token}");
+    }
+
+    @Test
+    void postComment_withApiToken_usesBasicAuth() throws InterruptedException {
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("{\"ticket\":{\"id\":99}}"));
+
+        ChannelCredential cred = apiTokenCredential();
+        client.postComment(cred, "99", "<p>reply</p>");
+
+        RecordedRequest recorded = server.takeRequest();
+        String authHeader = recorded.getHeader("Authorization");
+        assertNotNull(authHeader);
+        assertTrue(authHeader.startsWith("Basic "),
+                "API-token postComment should use Basic auth, got: " + authHeader);
+        // Decode and verify the username part contains "/token"
+        String decoded = new String(Base64.getDecoder().decode(authHeader.substring(6)),
+                StandardCharsets.ISO_8859_1);
+        assertTrue(decoded.contains("/token:"),
+                "Decoded Basic auth should contain '/token:', got: " + decoded);
+        assertTrue(decoded.startsWith("agent@testco.com"),
+                "Decoded Basic auth username should be email, got: " + decoded);
     }
 }

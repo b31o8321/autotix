@@ -57,11 +57,22 @@ public class LinePlugin implements TicketPlatformPlugin {
                 Collections.singletonList(ChannelType.CHAT),
                 PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
-                        PlatformDescriptor.AuthField.of("channelAccessToken", "Channel Access Token", "password", true)
-                                .placeholder("Long-lived channel access token from LINE Developers console")
+                        PlatformDescriptor.AuthField.of("channel_id", "Channel ID", "string", true)
+                                .placeholder("1234567890")
+                                .help("Numeric Channel ID from LINE Developers Console"),
+                        PlatformDescriptor.AuthField.of("channel_secret", "Channel Secret", "password", true)
+                                .placeholder("Channel secret from LINE Developers Console"),
+                        PlatformDescriptor.AuthField.of("channel_access_token", "Channel Access Token (Long-lived)", "password", true)
+                                .placeholder("Long-lived channel access token")
                 ),
                 false,
-                "https://developers.line.biz/en/docs/messaging-api/"
+                "https://developers.line.biz/en/docs/messaging-api/",
+                "1. Go to LINE Developers Console (https://developers.line.biz/) and log in.\n" +
+                "2. Select your provider and open your Messaging API channel.\n" +
+                "3. Under the \"Basic settings\" tab, copy the Channel ID and Channel secret.\n" +
+                "4. Go to the \"Messaging API\" tab, scroll to \"Channel access token (long-lived)\" and click \"Issue\".\n" +
+                "5. Copy the issued token and paste all three values below.\n" +
+                "Docs: https://developers.line.biz/en/docs/messaging-api/"
         );
     }
 }

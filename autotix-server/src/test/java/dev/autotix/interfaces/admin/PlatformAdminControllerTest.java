@@ -94,6 +94,68 @@ class PlatformAdminControllerTest {
     }
 
     @Test
+    void zendesk_hasApiKeyAuthAndExpectedFields() {
+        String adminToken = getAdminToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+
+        ResponseEntity<PlatformDescriptorDTO[]> resp = rest.exchange(
+                base() + "/api/admin/platforms",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                PlatformDescriptorDTO[].class);
+
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+        PlatformDescriptorDTO[] platforms = resp.getBody();
+        assertNotNull(platforms);
+
+        PlatformDescriptorDTO zendesk = Arrays.stream(platforms)
+                .filter(p -> "ZENDESK".equals(p.platform))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("ZENDESK not found"));
+
+        assertEquals("API_KEY", zendesk.authMethod, "ZENDESK should use API_KEY auth");
+        assertNotNull(zendesk.authFields);
+
+        boolean hasSubdomain = zendesk.authFields.stream().anyMatch(f -> "subdomain".equals(f.key));
+        boolean hasEmail = zendesk.authFields.stream().anyMatch(f -> "email".equals(f.key));
+        boolean hasApiToken = zendesk.authFields.stream().anyMatch(f -> "api_token".equals(f.key));
+        assertTrue(hasSubdomain, "ZENDESK authFields should contain 'subdomain'");
+        assertTrue(hasEmail, "ZENDESK authFields should contain 'email'");
+        assertTrue(hasApiToken, "ZENDESK authFields should contain 'api_token'");
+
+        assertNotNull(zendesk.setupGuide, "ZENDESK should have a non-null setupGuide");
+        assertFalse(zendesk.setupGuide.isEmpty(), "ZENDESK setupGuide should be non-empty");
+    }
+
+    @Test
+    void functionalPlatforms_haveNonEmptySetupGuide() {
+        String adminToken = getAdminToken();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+
+        ResponseEntity<PlatformDescriptorDTO[]> resp = rest.exchange(
+                base() + "/api/admin/platforms",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                PlatformDescriptorDTO[].class);
+
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+        PlatformDescriptorDTO[] platforms = resp.getBody();
+        assertNotNull(platforms);
+
+        // CUSTOM and EMAIL are exempt from the setup guide requirement
+        for (PlatformDescriptorDTO p : platforms) {
+            if (p.functional && !"CUSTOM".equals(p.platform) && !"EMAIL".equals(p.platform)) {
+                assertNotNull(p.setupGuide,
+                        "Functional platform " + p.platform + " should have a setupGuide");
+                assertFalse(p.setupGuide.isEmpty(),
+                        "Functional platform " + p.platform + " setupGuide should not be empty");
+            }
+        }
+    }
+
+    @Test
     void list_functionalPlatformsAppearFirst() {
         String adminToken = getAdminToken();
         HttpHeaders headers = new HttpHeaders();

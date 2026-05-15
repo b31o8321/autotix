@@ -94,11 +94,12 @@ public interface TicketPlatformPlugin {
                 Collections.singletonList(defaultChannelType()),
                 PlatformDescriptor.AuthMethod.API_KEY,
                 Arrays.asList(
-                        PlatformDescriptor.AuthField.of("apiKey", "API Key", "password", true)
+                        PlatformDescriptor.AuthField.of("api_key", "API Key", "password", true)
                                 .placeholder("Your API key")
                 ),
                 false,
-                null
+                null,
+                "This platform integration is a stub — please add a TicketPlatformPlugin implementation. Documentation: (none)."
         );
     }
 }
