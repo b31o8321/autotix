@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
-  Alert, Breadcrumb, Button, Collapse, Form, Input, Select, Space, Spin, Typography, message,
+  Alert, Breadcrumb, Button, Card, Collapse, Form, Input, Select, Space, Spin, Typography, message,
 } from 'antd';
 import { history, useParams } from 'umi';
 import { getPlatforms, type PlatformDescriptorDTO } from '@/services/platform';
-import { connectWithApiKey, startOAuth } from '@/services/channel';
+import { connectWithApiKey, listChannels, startOAuth } from '@/services/channel';
 import AuthFieldRenderer from '@/components/AuthFieldRenderer';
 import EmailCredentialsForm from '@/components/EmailCredentialsForm';
 
@@ -14,6 +14,7 @@ export default function PlatformAddPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [oauthComingSoon, setOauthComingSoon] = useState(false);
+  const [createdLivechat, setCreatedLivechat] = useState<{ id: string; token: string } | null>(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -40,13 +41,23 @@ export default function PlatformAddPage() {
           if (v !== undefined && v !== null) credentials[k] = String(v);
         });
       }
-      await connectWithApiKey({
+      const resp = await connectWithApiKey({
         platform: platform!,
         channelType: values.channelType,
         displayName: values.displayName,
         credentials,
       });
       message.success('Channel connected');
+      // For LIVECHAT: stay on this page and show the embed snippet + test link
+      if (platform === 'LIVECHAT') {
+        const channels = await listChannels(platform);
+        const created = channels.find((c) => c.id === (resp as { channelId?: string })?.channelId)
+          ?? channels[channels.length - 1];
+        if (created) {
+          setCreatedLivechat({ id: created.id, token: created.webhookToken });
+          return; // don't navigate away
+        }
+      }
       history.push(`/settings/channels/${platform}`);
     } catch {
       message.error('Failed to connect channel');
@@ -92,6 +103,44 @@ export default function PlatformAddPage() {
     value: t,
   }));
   const lockType = descriptor.allowedChannelTypes.length === 1;
+
+  if (createdLivechat) {
+    const host = window.location.origin;
+    const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${createdLivechat.token}" async></script>`;
+    const testUrl = `/demo/livechat.html?token=${createdLivechat.token}`;
+    return (
+      <Space direction="vertical" style={{ width: '100%', maxWidth: 720 }} size="middle">
+        <Breadcrumb
+          items={[
+            { title: <a onClick={() => history.push('/settings/channels')}>Channels</a> },
+            { title: <a onClick={() => history.push(`/settings/channels/${platform}`)}>{platform}</a> },
+            { title: 'New' },
+          ]}
+        />
+        <Alert
+          type="success"
+          showIcon
+          message="LiveChat channel created"
+          description="Embed the snippet on any page, or click Test to open the live demo with this token preloaded."
+        />
+        <Card title="Embed snippet" size="small">
+          <pre style={{ background:'#F7F9FB', padding:12, borderRadius:6, fontSize:12, overflow:'auto', margin:0 }}>{snippet}</pre>
+          <Space style={{ marginTop:8 }}>
+            <Button onClick={() => { navigator.clipboard.writeText(snippet); message.success('Copied'); }}>Copy</Button>
+            <Button type="primary" onClick={() => window.open(testUrl, '_blank')}>Test in new tab</Button>
+            <Button onClick={() => history.push(`/settings/channels/${platform}`)}>Back to list</Button>
+          </Space>
+        </Card>
+        <Card title="Live test (embedded)" size="small" bodyStyle={{ padding:0 }}>
+          <iframe
+            src={testUrl}
+            title="LiveChat demo"
+            style={{ width:'100%', height:600, border:0, display:'block' }}
+          />
+        </Card>
+      </Space>
+    );
+  }
 
   return (
     <Space direction="vertical" style={{ width: '100%', maxWidth: 560 }} size="middle">
