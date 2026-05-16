@@ -60,6 +60,13 @@ export default function SettingsIndex() {
               </Link>
             </Col>
             <Col span={8}>
+              <Link to="/settings/macros">
+                <Card title="Macros" hoverable>
+                  Manage saved-reply templates for agents
+                </Card>
+              </Link>
+            </Col>
+            <Col span={8}>
               <Link to="/settings/general">
                 <Card title="General" hoverable>
                   Global AI auto-reply toggle and system settings

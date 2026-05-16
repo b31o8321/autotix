@@ -23,6 +23,7 @@ export default defineConfig({
         { path: 'settings/automation', component: '@/pages/Settings/Automation' },
         { path: 'settings/sla', component: '@/pages/Settings/SLA' },
         { path: 'settings/tags', component: '@/pages/Settings/Tags' },
+        { path: 'settings/macros', component: '@/pages/Settings/Macros' },
         { path: 'settings/custom-fields', component: '@/pages/Settings/CustomFields' },
         { path: 'settings/general', component: '@/pages/Settings/General' },
       ],

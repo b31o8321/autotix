@@ -58,6 +58,8 @@ import { generateAIDraft } from '@/services/ai';
 import { subscribeInbox } from '@/services/inbox';
 import type { CustomerDetailDTO } from '@/services/customer';
 import { getTagSuggestions } from '@/services/tag';
+import type { MacroDTO } from '@/services/macro';
+import { listMacros, recordMacroUsage } from '@/services/macro';
 import { getCustomFieldSchema } from '@/services/customfield';
 import type { TagDTO } from '@/services/tag';
 import type { CustomFieldDTO } from '@/services/customfield';
@@ -323,6 +325,12 @@ export default function InboxPage() {
   const [pendingAttachments, setPendingAttachments] = useState<AttachmentDTO[]>([]);
   const [sendingReply, setSendingReply] = useState(false);
 
+  // ── Macro picker state ────────────────────────
+  const [macros, setMacros] = useState<MacroDTO[]>([]);
+  const [macroPickerOpen, setMacroPickerOpen] = useState(false);
+  const [macroPickerFilter, setMacroPickerFilter] = useState('');
+  const replyTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
   // ── Escalate modal state ──────────────────────
   const [escalateVisible, setEscalateVisible] = useState(false);
   const [escalateReason, setEscalateReason] = useState('');
@@ -390,6 +398,11 @@ export default function InboxPage() {
       .then(setTagDefs)
       .catch(() => {});
 
+    // Load macros for / picker
+    listMacros()
+      .then(setMacros)
+      .catch(() => {});
+
     // Load custom field schema
     getCustomFieldSchema('TICKET')
       .then(setCustomFieldSchema)
@@ -454,6 +467,43 @@ export default function InboxPage() {
     needs_human: applySmartView(allTickets, 'needs_human', currentUser?.id).length,
     all: allTickets.length,
   };
+
+  // ──────────────────────────────────────────────
+  // Macro picker
+  // ──────────────────────────────────────────────
+  const MACRO_TRIGGER_RE = /(^|\n)\/([^\n]*)$/;
+
+  function handleReplyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const value = e.target.value;
+    setReplyContent(value);
+    const match = value.match(MACRO_TRIGGER_RE);
+    if (match) {
+      setMacroPickerFilter(match[2]);
+      setMacroPickerOpen(true);
+    } else {
+      setMacroPickerOpen(false);
+      setMacroPickerFilter('');
+    }
+  }
+
+  function handleInsertMacro(macro: MacroDTO) {
+    // Replace the /xxx trigger prefix at end of text with the macro body
+    const updated = replyContent.replace(MACRO_TRIGGER_RE, (_, prefix) => {
+      return prefix + macro.bodyMarkdown;
+    });
+    setReplyContent(updated);
+    setMacroPickerOpen(false);
+    setMacroPickerFilter('');
+    // Record usage (fire-and-forget)
+    recordMacroUsage(macro.id).catch(() => {});
+    // Refocus textarea
+    setTimeout(() => replyTextAreaRef.current?.focus(), 50);
+  }
+
+  const filteredMacros = macros.filter((m) =>
+    macroPickerFilter.length === 0 ||
+    m.name.toLowerCase().includes(macroPickerFilter.toLowerCase()),
+  );
 
   // ──────────────────────────────────────────────
   // Select ticket
@@ -1058,12 +1108,72 @@ export default function InboxPage() {
                   padding: '12px 16px',
                   background: '#FFFFFF',
                   flexShrink: 0,
+                  position: 'relative',
                 }}
               >
+                {/* Macro picker */}
+                {macroPickerOpen && filteredMacros.length > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 'calc(100% - 12px)',
+                      left: 16,
+                      right: 16,
+                      maxHeight: 220,
+                      overflowY: 'auto',
+                      background: '#FFFFFF',
+                      border: '1px solid #EEF2F6',
+                      borderRadius: 6,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                      zIndex: 100,
+                    }}
+                  >
+                    {filteredMacros.map((macro) => (
+                      <div
+                        key={macro.id}
+                        onClick={() => handleInsertMacro(macro)}
+                        style={{
+                          padding: '8px 12px',
+                          cursor: 'pointer',
+                          borderBottom: '1px solid #F7F9FB',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 2,
+                        }}
+                        onMouseEnter={(e) => {
+                          (e.currentTarget as HTMLDivElement).style.background = '#F7F9FB';
+                        }}
+                        onMouseLeave={(e) => {
+                          (e.currentTarget as HTMLDivElement).style.background = '';
+                        }}
+                      >
+                        <span style={{ fontSize: 13, fontWeight: 500, color: '#0B1426' }}>
+                          {macro.name}
+                        </span>
+                        <span style={{ fontSize: 11, color: '#9BAAB8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {macro.bodyMarkdown.split('\n')[0]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <Input.TextArea
+                  ref={(node) => {
+                    // Grab the underlying textarea element for focus control
+                    if (node) {
+                      const el = (node as any).resizableTextArea?.textArea;
+                      if (el) replyTextAreaRef.current = el;
+                    }
+                  }}
                   value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  placeholder={internalNote ? 'Type internal note...' : 'Type your reply...'}
+                  onChange={handleReplyChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setMacroPickerOpen(false);
+                      setMacroPickerFilter('');
+                    }
+                  }}
+                  placeholder={internalNote ? 'Type internal note... (type / to insert a macro)' : 'Type your reply... (type / to insert a macro)'}
                   autoSize={{ minRows: 3, maxRows: 8 }}
                   style={{
                     borderRadius: 6,
@@ -1552,7 +1662,7 @@ export default function InboxPage() {
                           }}
                         >
                           <div style={{ fontSize: 12, fontWeight: 600, color: '#0B1426' }}>
-                            {a.action.replaceAll('_', ' ')}
+                            {a.action.split('_').join(' ')}
                           </div>
                           <div style={{ fontSize: 11, color: '#5A6B7D' }}>
                             by <span style={{ fontWeight: 500 }}>{a.actor}</span> · {new Date(a.occurredAt).toLocaleString()}

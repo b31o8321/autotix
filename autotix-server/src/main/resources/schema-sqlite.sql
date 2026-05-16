@@ -148,6 +148,18 @@ CREATE TABLE IF NOT EXISTS customer_identifier (
 );
 CREATE INDEX IF NOT EXISTS idx_customer_identifier_customer ON customer_identifier(customer_id);
 
+-- Macros: saved-reply templates
+CREATE TABLE IF NOT EXISTS macro (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(128) NOT NULL UNIQUE,
+    body_markdown TEXT NOT NULL,
+    category VARCHAR(64),
+    available_to VARCHAR(16) NOT NULL DEFAULT 'AGENT',
+    usage_count INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
 -- Slice 12: tag definition
 CREATE TABLE IF NOT EXISTS tag_definition (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
