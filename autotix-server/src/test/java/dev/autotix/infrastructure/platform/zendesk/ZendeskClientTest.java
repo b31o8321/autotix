@@ -158,6 +158,49 @@ class ZendeskClientTest {
                 "API-token credential should produce HTTP Basic auth with email/token:{api_token}");
     }
 
+    // -----------------------------------------------------------------------
+    // postComment: 500 → IntegrationException
+    // -----------------------------------------------------------------------
+
+    @Test
+    void postComment_500_throwsIntegrationException() {
+        server.enqueue(new MockResponse().setResponseCode(500).setBody("{\"error\":\"Internal\"}"));
+
+        assertThrows(dev.autotix.domain.AutotixException.IntegrationException.class,
+                () -> client.postComment(credential, "99", "<p>bad</p>"),
+                "Non-2xx should throw IntegrationException");
+    }
+
+    // -----------------------------------------------------------------------
+    // fetchAttachment: returns bytes on 200, null on non-2xx, null on error
+    // -----------------------------------------------------------------------
+
+    @Test
+    void fetchAttachment_returns_bytes_on_200() {
+        byte[] content = "hello attachment".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .addHeader("Content-Type", "image/png")
+                .setBody(new okio.Buffer().write(content)));
+
+        String url = server.url("/path/to/file.png").toString();
+        ZendeskClient.AttachmentDownload result = client.fetchAttachment(credential, url);
+
+        assertNotNull(result, "Should return AttachmentDownload on 200");
+        assertArrayEquals(content, result.bytes);
+        assertEquals("image/png", result.contentType);
+    }
+
+    @Test
+    void fetchAttachment_returnsNull_on_401() {
+        server.enqueue(new MockResponse().setResponseCode(401));
+
+        String url = server.url("/private/file.pdf").toString();
+        ZendeskClient.AttachmentDownload result = client.fetchAttachment(credential, url);
+
+        assertNull(result, "Should return null on 401");
+    }
+
     @Test
     void postComment_withApiToken_usesBasicAuth() throws InterruptedException {
         server.enqueue(new MockResponse()

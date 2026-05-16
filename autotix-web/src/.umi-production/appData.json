@@ -45,7 +45,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -75,7 +75,7 @@
             0
           ]
         },
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -136,10 +136,10 @@
       "time": {
         "hooks": {
           "modifyAppData": [
-            9
+            12
           ]
         },
-        "register": 13
+        "register": 15
       },
       "enableBy": "register"
     },
@@ -166,10 +166,10 @@
       "time": {
         "hooks": {
           "onCheckConfig": [
-            0
+            1
           ],
           "onCheck": [
-            0
+            1
           ]
         },
         "register": 0
@@ -186,7 +186,7 @@
       "time": {
         "hooks": {
           "onCheck": [
-            1
+            0
           ]
         },
         "register": 0
@@ -202,7 +202,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -219,7 +219,7 @@
             0
           ]
         },
-        "register": 4
+        "register": 5
       },
       "enableBy": "register"
     },
@@ -1114,7 +1114,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 39
+        "register": 45
       },
       "enableBy": "register"
     },
@@ -1140,7 +1140,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 8
+        "register": 9
       },
       "enableBy": "config"
     },
@@ -1170,7 +1170,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1183,7 +1183,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -1196,7 +1196,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 17
+        "register": 21
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa": {
@@ -1288,7 +1288,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1301,7 +1301,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -1314,7 +1314,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1391,7 +1391,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1417,7 +1417,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "config"
     },
@@ -1430,7 +1430,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1443,7 +1443,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 4
+        "register": 3
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/monorepo/redirect": {
@@ -1455,7 +1455,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 11
+        "register": 12
       },
       "enableBy": "config"
     },
@@ -1468,7 +1468,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/clickToComponent/clickToComponent": {
@@ -1534,7 +1534,7 @@
             0
           ]
         },
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1596,7 +1596,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 14
+        "register": 15
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/forget/forget": {
@@ -1634,7 +1634,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1647,7 +1647,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 17
+        "register": 20
       },
       "enableBy": "register"
     },
@@ -1660,7 +1660,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 20
+        "register": 21
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help": {
@@ -1698,7 +1698,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1711,7 +1711,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1737,7 +1737,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1763,7 +1763,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1776,7 +1776,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1802,7 +1802,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1854,7 +1854,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1867,7 +1867,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1893,7 +1893,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1906,7 +1906,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 11
+        "register": 13
       },
       "enableBy": "register"
     },
@@ -1932,7 +1932,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1945,7 +1945,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     }
@@ -2260,7 +2260,7 @@
       "parentId": "2",
       "id": "10",
       "absPath": "/settings/channels/:platform/:channelId/edit",
-      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Alert, Breadcrumb, Button, Card, Form, Input, Space, Spin, Switch, Typography, message,\n} from 'antd';\nimport { history, useParams } from 'umi';\nimport {\n  listChannels, renameChannel, setAutoReply, rotateWebhook,\n  type ChannelDTO,\n} from '@/services/channel';\n\nexport default function PlatformEdit() {\n  const { platform, channelId } = useParams<{ platform: string; channelId: string }>();\n  const [channel, setChannel] = useState<ChannelDTO | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [saving, setSaving] = useState(false);\n  const [form] = Form.useForm<{ displayName: string }>();\n\n  async function load() {\n    if (!platform || !channelId) return;\n    setLoading(true);\n    const all = await listChannels(platform);\n    const found = all.find((c) => c.id === channelId);\n    setChannel(found ?? null);\n    if (found) form.setFieldsValue({ displayName: found.displayName });\n    setLoading(false);\n  }\n\n  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [channelId, platform]);\n\n  async function handleSave() {\n    const values = await form.validateFields();\n    setSaving(true);\n    try {\n      await renameChannel(channelId!, values.displayName);\n      message.success('Saved');\n      await load();\n    } catch {\n      message.error('Save failed');\n    } finally {\n      setSaving(false);\n    }\n  }\n\n  async function handleToggleAutoReply(v: boolean) {\n    if (!channel) return;\n    try {\n      await setAutoReply(channel.id, v);\n      message.success(v ? 'Auto-reply ON' : 'Auto-reply OFF');\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleRotate() {\n    if (!channel) return;\n    try {\n      const r = await rotateWebhook(channel.id) as { webhookToken?: string };\n      message.success(`Token rotated${r?.webhookToken ? `: ${r.webhookToken.slice(0, 8)}…` : ''}`);\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  if (loading) return <Spin />;\n  if (!channel) return <Alert type=\"error\" message=\"Channel not found\" />;\n\n  const isLivechat = channel.platform === 'LIVECHAT';\n  const host = window.location.origin;\n  const snippet = `<script src=\"${host}/widget/autotix-widget.js\" data-channel-token=\"${channel.webhookToken}\" async></script>`;\n  const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%', maxWidth: 720 }} size=\"middle\">\n      <Breadcrumb\n        items={[\n          { title: <a onClick={() => history.push('/settings/channels')}>Channels</a> },\n          { title: <a onClick={() => history.push(`/settings/channels/${platform}`)}>{platform}</a> },\n          { title: 'Edit' },\n        ]}\n      />\n      <Typography.Title level={4} style={{ margin: 0 }}>Edit Channel</Typography.Title>\n\n      <Card title=\"Basic\" size=\"small\">\n        <Form form={form} layout=\"vertical\">\n          <Form.Item label=\"Display name\" name=\"displayName\" rules={[{ required: true }]}>\n            <Input />\n          </Form.Item>\n          <Space>\n            <Button type=\"primary\" loading={saving} onClick={handleSave}>Save</Button>\n            <Button onClick={() => history.push(`/settings/channels/${platform}`)}>Back</Button>\n          </Space>\n        </Form>\n        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>\n          <span>Auto reply</span>\n          <Switch checked={channel.autoReplyEnabled} onChange={handleToggleAutoReply} />\n        </div>\n        <div style={{ marginTop: 8, fontSize: 12, color: '#5A6B7D' }}>\n          Webhook token: <code>{channel.webhookToken}</code>{' '}\n          <Button size=\"small\" onClick={handleRotate}>Rotate</Button>\n        </div>\n      </Card>\n\n      {isLivechat && (\n        <>\n          <Card title=\"Embed snippet\" size=\"small\">\n            <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 12, overflow: 'auto', margin: 0 }}>{snippet}</pre>\n            <Space style={{ marginTop: 8 }}>\n              <Button onClick={() => { navigator.clipboard.writeText(snippet); message.success('Copied'); }}>Copy</Button>\n              <Button type=\"primary\" onClick={() => window.open(testUrl, '_blank')}>Test in new tab</Button>\n            </Space>\n            <Typography.Paragraph type=\"secondary\" style={{ fontSize: 12, marginTop: 8, marginBottom: 0 }}>\n              Paste the snippet into any HTML page. The widget loads automatically and connects via WebSocket.\n            </Typography.Paragraph>\n          </Card>\n          <Card title=\"Live test (embedded)\" size=\"small\" bodyStyle={{ padding: 0 }}>\n            <iframe src={testUrl} title=\"LiveChat demo\" style={{ width: '100%', height: 600, border: 0, display: 'block' }} />\n          </Card>\n        </>\n      )}\n    </Space>\n  );\n}\n",
+      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Alert, Breadcrumb, Button, Card, Form, Input, Space, Spin, Switch, Typography, message,\n} from 'antd';\nimport { history, useParams } from 'umi';\nimport {\n  listChannels, renameChannel, setAutoReply, rotateWebhook, setChannelSecret,\n  type ChannelDTO,\n} from '@/services/channel';\n\nexport default function PlatformEdit() {\n  const { platform, channelId } = useParams<{ platform: string; channelId: string }>();\n  const [channel, setChannel] = useState<ChannelDTO | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [saving, setSaving] = useState(false);\n  const [savingSecret, setSavingSecret] = useState(false);\n  const [form] = Form.useForm<{ displayName: string }>();\n  const [secretForm] = Form.useForm<{ secret: string }>();\n\n  async function load() {\n    if (!platform || !channelId) return;\n    setLoading(true);\n    const all = await listChannels(platform);\n    const found = all.find((c) => c.id === channelId);\n    setChannel(found ?? null);\n    if (found) form.setFieldsValue({ displayName: found.displayName });\n    setLoading(false);\n  }\n\n  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [channelId, platform]);\n\n  async function handleSave() {\n    const values = await form.validateFields();\n    setSaving(true);\n    try {\n      await renameChannel(channelId!, values.displayName);\n      message.success('Saved');\n      await load();\n    } catch {\n      message.error('Save failed');\n    } finally {\n      setSaving(false);\n    }\n  }\n\n  async function handleToggleAutoReply(v: boolean) {\n    if (!channel) return;\n    try {\n      await setAutoReply(channel.id, v);\n      message.success(v ? 'Auto-reply ON' : 'Auto-reply OFF');\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleRotate() {\n    if (!channel) return;\n    try {\n      const r = await rotateWebhook(channel.id) as { webhookToken?: string };\n      message.success(`Token rotated${r?.webhookToken ? `: ${r.webhookToken.slice(0, 8)}…` : ''}`);\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleSaveSecret() {\n    const values = await secretForm.validateFields();\n    setSavingSecret(true);\n    try {\n      await setChannelSecret(channelId!, values.secret ?? '');\n      message.success('Webhook secret saved');\n      secretForm.resetFields();\n    } catch {\n      message.error('Failed to save secret');\n    } finally {\n      setSavingSecret(false);\n    }\n  }\n\n  if (loading) return <Spin />;\n  if (!channel) return <Alert type=\"error\" message=\"Channel not found\" />;\n\n  const isLivechat = channel.platform === 'LIVECHAT';\n  const isZendesk = channel.platform === 'ZENDESK';\n  const host = window.location.origin;\n  const snippet = `<script src=\"${host}/widget/autotix-widget.js\" data-channel-token=\"${channel.webhookToken}\" async></script>`;\n  const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;\n  const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%', maxWidth: 720 }} size=\"middle\">\n      <Breadcrumb\n        items={[\n          { title: <a onClick={() => history.push('/settings/channels')}>Channels</a> },\n          { title: <a onClick={() => history.push(`/settings/channels/${platform}`)}>{platform}</a> },\n          { title: 'Edit' },\n        ]}\n      />\n      <Typography.Title level={4} style={{ margin: 0 }}>Edit Channel</Typography.Title>\n\n      <Card title=\"Basic\" size=\"small\">\n        <Form form={form} layout=\"vertical\">\n          <Form.Item label=\"Display name\" name=\"displayName\" rules={[{ required: true }]}>\n            <Input />\n          </Form.Item>\n          <Space>\n            <Button type=\"primary\" loading={saving} onClick={handleSave}>Save</Button>\n            <Button onClick={() => history.push(`/settings/channels/${platform}`)}>Back</Button>\n          </Space>\n        </Form>\n        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>\n          <span>Auto reply</span>\n          <Switch checked={channel.autoReplyEnabled} onChange={handleToggleAutoReply} />\n        </div>\n        <div style={{ marginTop: 8, fontSize: 12, color: '#5A6B7D' }}>\n          Webhook token: <code>{channel.webhookToken}</code>{' '}\n          <Button size=\"small\" onClick={handleRotate}>Rotate</Button>\n        </div>\n      </Card>\n\n      {isZendesk && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            Create a Zendesk Webhook (Admin → Apps and integrations → Webhooks) pointing at this URL.\n            Add a Signing Secret in Zendesk and paste it below to enable signature verification.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {zendeskInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(zendeskInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Signing Secret\" name=\"secret\">\n              <Input.Password placeholder=\"Paste the signing secret from Zendesk Webhook settings\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isLivechat && (\n        <>\n          <Card title=\"Embed snippet\" size=\"small\">\n            <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 12, overflow: 'auto', margin: 0 }}>{snippet}</pre>\n            <Space style={{ marginTop: 8 }}>\n              <Button onClick={() => { navigator.clipboard.writeText(snippet); message.success('Copied'); }}>Copy</Button>\n              <Button type=\"primary\" onClick={() => window.open(testUrl, '_blank')}>Test in new tab</Button>\n            </Space>\n            <Typography.Paragraph type=\"secondary\" style={{ fontSize: 12, marginTop: 8, marginBottom: 0 }}>\n              Paste the snippet into any HTML page. The widget loads automatically and connects via WebSocket.\n            </Typography.Paragraph>\n          </Card>\n          <Card title=\"Live test (embedded)\" size=\"small\" bodyStyle={{ padding: 0 }}>\n            <iframe src={testUrl} title=\"LiveChat demo\" style={{ width: '100%', height: 600, border: 0, display: 'block' }} />\n          </Card>\n        </>\n      )}\n    </Space>\n  );\n}\n",
       "__isJSFile": true,
       "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/Channels/PlatformEdit.tsx"
     },

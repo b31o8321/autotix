@@ -142,6 +142,47 @@ public class ZendeskClient {
         throw new UnsupportedOperationException("OAuth flow implemented in v2");
     }
 
+    /**
+     * Download an arbitrary URL (e.g. Zendesk attachment content_url) using the credential's auth header.
+     *
+     * @return {@link AttachmentDownload} with raw bytes and content-type, or {@code null} on non-2xx
+     */
+    public AttachmentDownload fetchAttachment(ChannelCredential credential, String url) {
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", buildAuthHeader(credential))
+                .get()
+                .build();
+        try {
+            Response response = httpClient.newCall(request).execute();
+            try {
+                if (!response.isSuccessful()) {
+                    return null;
+                }
+                byte[] bytes = response.body() != null ? response.body().bytes() : new byte[0];
+                String contentType = response.header("Content-Type", "application/octet-stream");
+                return new AttachmentDownload(bytes, contentType);
+            } finally {
+                response.close();
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Result of a {@link #fetchAttachment} call.
+     */
+    public static final class AttachmentDownload {
+        public final byte[] bytes;
+        public final String contentType;
+
+        public AttachmentDownload(byte[] bytes, String contentType) {
+            this.bytes = bytes;
+            this.contentType = contentType;
+        }
+    }
+
     // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------

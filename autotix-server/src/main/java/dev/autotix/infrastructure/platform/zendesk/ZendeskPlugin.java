@@ -125,13 +125,19 @@ public class ZendeskPlugin implements TicketPlatformPlugin {
                                 .placeholder("you@yourcompany.com")
                                 .help("The email of the Zendesk agent account used for API calls"),
                         PlatformDescriptor.AuthField.of("api_token", "API Token", "password", true)
-                                .placeholder("Paste the token shown once in Zendesk Admin Center")
+                                .placeholder("Paste the token shown once in Zendesk Admin Center"),
+                        PlatformDescriptor.AuthField.of("webhook_secret", "Webhook Signing Secret", "password", false)
+                                .placeholder("Optional — paste the signing secret from Zendesk Webhook settings")
+                                .help("Enables HMAC-SHA256 signature verification for incoming webhooks. Set this after creating the channel.")
                 ),
                 true,
                 "https://support.zendesk.com/hc/en-us/articles/4408889192858",
                 "1. In Zendesk Admin Center → Apps and integrations → APIs → API tokens, click \"Add API token\".\n" +
                 "2. Set a description (e.g. \"Autotix\") and copy the generated token (shown once).\n" +
                 "3. Paste the token + your Zendesk login email + your subdomain (the xxx in xxx.zendesk.com) below.\n" +
+                "4. (Optional, recommended) Create a Zendesk Webhook (Admin → Apps and integrations → Webhooks) " +
+                "pointing at autotix's inbound URL (shown after channel creation on Edit page), with a Signing Secret. " +
+                "Paste the secret on the Edit page to enable signature verification.\n" +
                 "Docs: https://support.zendesk.com/hc/en-us/articles/4408889192858"
         );
     }

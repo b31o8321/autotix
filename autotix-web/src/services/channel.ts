@@ -64,3 +64,10 @@ export async function renameChannel(channelId: string, displayName: string) {
     params: { displayName },
   });
 }
+
+export async function setChannelSecret(channelId: string, secret: string) {
+  return request(`/api/admin/channels/${channelId}/secret`, {
+    method: 'PUT',
+    data: { secret },
+  });
+}

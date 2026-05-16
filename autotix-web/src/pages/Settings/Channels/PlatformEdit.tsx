@@ -4,7 +4,7 @@ import {
 } from 'antd';
 import { history, useParams } from 'umi';
 import {
-  listChannels, renameChannel, setAutoReply, rotateWebhook,
+  listChannels, renameChannel, setAutoReply, rotateWebhook, setChannelSecret,
   type ChannelDTO,
 } from '@/services/channel';
 
@@ -13,7 +13,9 @@ export default function PlatformEdit() {
   const [channel, setChannel] = useState<ChannelDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingSecret, setSavingSecret] = useState(false);
   const [form] = Form.useForm<{ displayName: string }>();
+  const [secretForm] = Form.useForm<{ secret: string }>();
 
   async function load() {
     if (!platform || !channelId) return;
@@ -59,13 +61,29 @@ export default function PlatformEdit() {
     } catch { message.error('Failed'); }
   }
 
+  async function handleSaveSecret() {
+    const values = await secretForm.validateFields();
+    setSavingSecret(true);
+    try {
+      await setChannelSecret(channelId!, values.secret ?? '');
+      message.success('Webhook secret saved');
+      secretForm.resetFields();
+    } catch {
+      message.error('Failed to save secret');
+    } finally {
+      setSavingSecret(false);
+    }
+  }
+
   if (loading) return <Spin />;
   if (!channel) return <Alert type="error" message="Channel not found" />;
 
   const isLivechat = channel.platform === 'LIVECHAT';
+  const isZendesk = channel.platform === 'ZENDESK';
   const host = window.location.origin;
   const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${channel.webhookToken}" async></script>`;
   const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;
+  const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;
 
   return (
     <Space direction="vertical" style={{ width: '100%', maxWidth: 720 }} size="middle">
@@ -97,6 +115,33 @@ export default function PlatformEdit() {
           <Button size="small" onClick={handleRotate}>Rotate</Button>
         </div>
       </Card>
+
+      {isZendesk && (
+        <Card title="Inbound Webhook" size="small">
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
+            Create a Zendesk Webhook (Admin → Apps and integrations → Webhooks) pointing at this URL.
+            Add a Signing Secret in Zendesk and paste it below to enable signature verification.
+          </Typography.Paragraph>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>
+              {zendeskInboundUrl}
+            </code>
+            <Button
+              size="small"
+              icon={<span>⎘</span>}
+              onClick={() => { navigator.clipboard.writeText(zendeskInboundUrl); message.success('URL copied'); }}
+            >
+              Copy
+            </Button>
+          </div>
+          <Form form={secretForm} layout="vertical">
+            <Form.Item label="Webhook Signing Secret" name="secret">
+              <Input.Password placeholder="Paste the signing secret from Zendesk Webhook settings" />
+            </Form.Item>
+            <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>
+          </Form>
+        </Card>
+      )}
 
       {isLivechat && (
         <>

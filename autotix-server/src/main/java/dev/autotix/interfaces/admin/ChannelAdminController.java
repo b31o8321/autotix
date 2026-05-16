@@ -10,6 +10,7 @@ import dev.autotix.interfaces.admin.dto.ConnectApiKeyRequest;
 import dev.autotix.interfaces.admin.dto.OAuthStartRequest;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +28,18 @@ public class ChannelAdminController {
     private final ConnectChannelUseCase connectChannel;
     private final DisconnectChannelUseCase disconnectChannel;
     private final UpdateChannelSettingsUseCase updateChannel;
+    private final UpdateChannelSecretUseCase updateChannelSecret;
 
     public ChannelAdminController(ListChannelsUseCase listChannels,
                                   ConnectChannelUseCase connectChannel,
                                   DisconnectChannelUseCase disconnectChannel,
-                                  UpdateChannelSettingsUseCase updateChannel) {
+                                  UpdateChannelSettingsUseCase updateChannel,
+                                  UpdateChannelSecretUseCase updateChannelSecret) {
         this.listChannels = listChannels;
         this.connectChannel = connectChannel;
         this.disconnectChannel = disconnectChannel;
         this.updateChannel = updateChannel;
+        this.updateChannelSecret = updateChannelSecret;
     }
 
     @GetMapping
@@ -105,6 +109,21 @@ public class ChannelAdminController {
         Map<String, String> result = new HashMap<>();
         result.put("webhookToken", newToken);
         return result;
+    }
+
+    /** Update the per-channel webhook signing secret (ZENDESK and future platforms). */
+    @PutMapping("/{channelId}/secret")
+    public void updateSecret(@PathVariable String channelId,
+                             @RequestBody UpdateSecretRequest req) {
+        updateChannelSecret.updateSecret(new ChannelId(channelId), req.secret);
+    }
+
+    // -----------------------------------------------------------------------
+    // Request DTOs (inner classes — avoid extra file for simple shapes)
+    // -----------------------------------------------------------------------
+
+    static class UpdateSecretRequest {
+        public String secret;
     }
 
     // -----------------------------------------------------------------------

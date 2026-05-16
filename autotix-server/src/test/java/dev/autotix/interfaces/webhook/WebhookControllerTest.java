@@ -106,28 +106,33 @@ class WebhookControllerTest {
                 Instant.now());
         channelRepository.save(channel);
 
-        // Build a valid Zendesk webhook payload
-        String extTicketId = "ext-" + System.currentTimeMillis();
+        // Build a valid modern Zendesk webhook payload
+        String extTicketId = String.valueOf(System.currentTimeMillis());
+        String timestamp = "1717228800";
         String rawBody = "{"
-                + "\"type\":\"ticket.created\","
-                + "\"ticket\":{"
-                + "\"id\":" + extTicketId.replace("ext-", "") + ","
+                + "\"type\":\"zen:event-type:ticket.created\","
+                + "\"timestamp\":\"2024-06-01T12:00:00Z\","
+                + "\"event\":{\"comment\":{\"id\":1,\"body\":\"Test message body\",\"public\":true,\"attachments\":[]}},"
+                + "\"detail\":{"
+                + "\"id\":\"" + extTicketId + "\","
                 + "\"subject\":\"Test subject\","
-                + "\"requester\":{\"id\":1,\"name\":\"Test User\",\"email\":\"test@example.com\"},"
-                + "\"latest_comment\":{\"body\":\"Test message body\","
-                + "\"created_at\":\"2024-01-01T00:00:00Z\"}"
+                + "\"requester_id\":\"1\","
+                + "\"requester_email\":\"test@example.com\","
+                + "\"requester_name\":\"Test User\""
                 + "}"
                 + "}";
 
-        // Compute HMAC-SHA256 signature
+        // Compute HMAC-SHA256 signature over timestamp+rawBody (modern Zendesk spec)
+        String signedData = timestamp + rawBody;
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(webhookSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
         String signature = Base64.getEncoder().encodeToString(
-                mac.doFinal(rawBody.getBytes(StandardCharsets.UTF_8)));
+                mac.doFinal(signedData.getBytes(StandardCharsets.UTF_8)));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Zendesk-Webhook-Signature", signature);
+        headers.set("X-Zendesk-Webhook-Signature-Timestamp", timestamp);
 
         ResponseEntity<String> resp = rest.exchange(
                 base() + "/v2/webhook/ZENDESK/" + webhookToken,
@@ -143,7 +148,7 @@ class WebhookControllerTest {
                 .orElseThrow(() -> new AssertionError("Channel not found"));
         Optional<Ticket> ticket = ticketRepository.findByChannelAndExternalId(
                 savedChannel.id(),
-                extTicketId.replace("ext-", ""));
+                extTicketId);
         assertTrue(ticket.isPresent(), "Ticket should have been created from webhook");
     }
 

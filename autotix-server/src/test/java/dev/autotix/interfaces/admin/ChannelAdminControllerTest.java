@@ -115,4 +115,34 @@ class ChannelAdminControllerTest {
         assertNotNull(resp.getBody());
         // Should succeed — may be empty or non-empty depending on other tests
     }
+
+    @Test
+    void putSecret_returnsOkAndUpdatesSecret() {
+        String adminToken = getAdminToken();
+
+        // Connect a CUSTOM channel to get a channel id (CUSTOM doesn't require real creds)
+        String channelId = connectCustomChannel(adminToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, String> body = new HashMap<>();
+        body.put("secret", "super-secret-value");
+
+        ResponseEntity<Void> resp = rest.exchange(
+                base() + "/api/admin/channels/" + channelId + "/secret",
+                HttpMethod.PUT,
+                new HttpEntity<>(body, headers),
+                Void.class);
+
+        assertEquals(HttpStatus.OK, resp.getStatusCode());
+
+        // Clean up
+        rest.exchange(
+                base() + "/api/admin/channels/" + channelId,
+                HttpMethod.DELETE,
+                new HttpEntity<>(headers),
+                Void.class);
+    }
 }
