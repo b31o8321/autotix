@@ -28,7 +28,7 @@ const PLATFORMS: Plat[] = [
   { label: 'CUSTOM (test / generic webhook)',  value: 'CUSTOM',           defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT', 'EMAIL'] },
   { label: 'ZENDESK',                          value: 'ZENDESK',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'ZENDESK_SUNSHINE (stub)',          value: 'ZENDESK_SUNSHINE', defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
-  { label: 'FRESHDESK (stub)',                 value: 'FRESHDESK',        defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'FRESHDESK',                         value: 'FRESHDESK',        defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'FRESHCHAT (stub)',                 value: 'FRESHCHAT',        defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'GORGIAS (stub)',                   value: 'GORGIAS',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'INTERCOM (stub)',                  value: 'INTERCOM',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },

@@ -81,11 +81,13 @@ export default function PlatformEdit() {
   const isLivechat = channel.platform === 'LIVECHAT';
   const isZendesk = channel.platform === 'ZENDESK';
   const isShopify = channel.platform === 'SHOPIFY';
+  const isFreshdesk = channel.platform === 'FRESHDESK';
   const host = window.location.origin;
   const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${channel.webhookToken}" async></script>`;
   const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;
   const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;
   const shopifyInboundUrl = `${host}/v2/webhook/SHOPIFY/${channel.webhookToken}`;
+  const freshdeskInboundUrl = `${host}/v2/webhook/FRESHDESK/${channel.webhookToken}`;
 
   return (
     <Space direction="vertical" style={{ width: '100%', maxWidth: 720 }} size="middle">
@@ -170,6 +172,36 @@ export default function PlatformEdit() {
               <Input.Password placeholder="Paste the signing secret from Shopify Webhook settings" />
             </Form.Item>
             <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>
+          </Form>
+        </Card>
+      )}
+
+      {isFreshdesk && (
+        <Card title="Inbound Webhook" size="small">
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
+            In Freshdesk Admin → Workflows → Automations, create a rule (e.g. New Ticket Created).
+            Add action <strong>Trigger Webhook</strong>, set Content Type to <strong>JSON</strong>,
+            and paste the URL below as the Request URL.
+            Optionally add a Custom Header <strong>X-Autotix-Webhook-Token</strong> with a secret value,
+            then save the same value below to enable token verification.
+          </Typography.Paragraph>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>
+              {freshdeskInboundUrl}
+            </code>
+            <Button
+              size="small"
+              icon={<span>⎘</span>}
+              onClick={() => { navigator.clipboard.writeText(freshdeskInboundUrl); message.success('URL copied'); }}
+            >
+              Copy
+            </Button>
+          </div>
+          <Form form={secretForm} layout="vertical">
+            <Form.Item label="Webhook Token" name="secret">
+              <Input.Password placeholder="(optional) value sent in X-Autotix-Webhook-Token header" />
+            </Form.Item>
+            <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Token</Button>
           </Form>
         </Card>
       )}
