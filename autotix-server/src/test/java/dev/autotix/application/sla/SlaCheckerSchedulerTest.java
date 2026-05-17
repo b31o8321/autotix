@@ -2,6 +2,7 @@ package dev.autotix.application.sla;
 
 import dev.autotix.domain.channel.ChannelId;
 import dev.autotix.domain.event.InboxEvent;
+import dev.autotix.domain.notification.NotificationEventKind;
 import dev.autotix.domain.ticket.Message;
 import dev.autotix.domain.ticket.MessageDirection;
 import dev.autotix.domain.ticket.Ticket;
@@ -12,6 +13,7 @@ import dev.autotix.domain.ticket.TicketId;
 import dev.autotix.domain.ticket.TicketRepository;
 import dev.autotix.domain.ticket.TicketStatus;
 import dev.autotix.infrastructure.inbox.InboxEventPublisher;
+import dev.autotix.infrastructure.notification.NotificationDispatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +24,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -39,12 +43,15 @@ class SlaCheckerSchedulerTest {
     private TicketActivityRepository activityRepository;
     @Mock
     private InboxEventPublisher inboxEventPublisher;
+    @Mock
+    private NotificationDispatcher notificationDispatcher;
 
     private SlaCheckerScheduler scheduler;
 
     @BeforeEach
     void setUp() {
-        scheduler = new SlaCheckerScheduler(ticketRepository, activityRepository, inboxEventPublisher);
+        scheduler = new SlaCheckerScheduler(ticketRepository, activityRepository,
+                inboxEventPublisher, notificationDispatcher, "http://localhost");
     }
 
     private Ticket makeOpenTicket(String externalId, boolean breached) {
@@ -62,7 +69,7 @@ class SlaCheckerSchedulerTest {
     }
 
     @Test
-    void overdueTicket_markedBreached_activityLogged_eventPublished() {
+    void overdueTicket_markedBreached_activityLogged_eventPublished_notificationDispatched() {
         Ticket overdue = makeOpenTicket("ext-1", false);
         when(ticketRepository.findOverdue(any())).thenReturn(Collections.singletonList(overdue));
         when(ticketRepository.save(any())).thenReturn(overdue.id());
@@ -80,6 +87,15 @@ class SlaCheckerSchedulerTest {
         ArgumentCaptor<InboxEvent> eventCaptor = ArgumentCaptor.forClass(InboxEvent.class);
         verify(inboxEventPublisher).publish(eventCaptor.capture());
         assertEquals(InboxEvent.Kind.STATUS_CHANGED, eventCaptor.getValue().kind);
+
+        // Notification dispatcher must be called with SLA_BREACHED and a context map containing ticketId
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Map<String, String>> ctxCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(notificationDispatcher).dispatch(eq(NotificationEventKind.SLA_BREACHED), ctxCaptor.capture());
+        Map<String, String> ctx = ctxCaptor.getValue();
+        assertNotNull(ctx.get("ticketId"));
+        assertNotNull(ctx.get("breachedAt"));
+        assertNotNull(ctx.get("ticketUrl"));
     }
 
     @Test
@@ -89,7 +105,7 @@ class SlaCheckerSchedulerTest {
 
         scheduler.checkOverdue();
 
-        verifyNoInteractions(activityRepository, inboxEventPublisher);
+        verifyNoInteractions(activityRepository, inboxEventPublisher, notificationDispatcher);
         verify(ticketRepository, never()).save(any());
     }
 
@@ -99,7 +115,7 @@ class SlaCheckerSchedulerTest {
 
         scheduler.checkOverdue();
 
-        verifyNoInteractions(activityRepository, inboxEventPublisher);
+        verifyNoInteractions(activityRepository, inboxEventPublisher, notificationDispatcher);
     }
 
     @Test
@@ -118,5 +134,6 @@ class SlaCheckerSchedulerTest {
         verify(ticketRepository, times(2)).save(any());
         verify(activityRepository, times(2)).save(any());
         verify(inboxEventPublisher, times(2)).publish(any());
+        verify(notificationDispatcher, times(2)).dispatch(eq(NotificationEventKind.SLA_BREACHED), any());
     }
 }

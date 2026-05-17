@@ -45,7 +45,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -58,7 +58,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 9
+        "register": 6
       },
       "enableBy": "register"
     },
@@ -75,7 +75,7 @@
             0
           ]
         },
-        "register": 3
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -136,10 +136,10 @@
       "time": {
         "hooks": {
           "modifyAppData": [
-            12
+            16
           ]
         },
-        "register": 15
+        "register": 16
       },
       "enableBy": "register"
     },
@@ -166,13 +166,13 @@
       "time": {
         "hooks": {
           "onCheckConfig": [
-            1
+            0
           ],
           "onCheck": [
-            1
+            0
           ]
         },
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1114,7 +1114,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 45
+        "register": 47
       },
       "enableBy": "register"
     },
@@ -1140,7 +1140,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 9
+        "register": 8
       },
       "enableBy": "config"
     },
@@ -1183,7 +1183,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1196,7 +1196,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 21
+        "register": 19
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa": {
@@ -1260,7 +1260,7 @@
       "time": {
         "hooks": {
           "modifyConfig": [
-            1
+            0
           ]
         },
         "register": 1
@@ -1275,7 +1275,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1314,7 +1314,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -1353,7 +1353,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -1378,7 +1378,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "config"
     },
@@ -1391,7 +1391,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1417,7 +1417,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1430,7 +1430,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -1534,7 +1534,7 @@
             0
           ]
         },
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1634,7 +1634,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1647,7 +1647,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 20
+        "register": 19
       },
       "enableBy": "register"
     },
@@ -1660,7 +1660,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 21
+        "register": 19
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help": {
@@ -1698,7 +1698,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1711,7 +1711,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1737,7 +1737,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1763,7 +1763,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1776,7 +1776,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1854,7 +1854,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1867,7 +1867,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1893,7 +1893,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1906,7 +1906,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 13
+        "register": 15
       },
       "enableBy": "register"
     },
@@ -1932,7 +1932,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1945,7 +1945,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     }
@@ -2033,6 +2033,10 @@
           {
             "path": "settings/general",
             "component": "@/pages/Settings/General"
+          },
+          {
+            "path": "settings/notifications",
+            "component": "@/pages/Settings/Notifications"
           }
         ]
       }
@@ -2150,6 +2154,10 @@
           {
             "path": "settings/general",
             "component": "@/pages/Settings/General"
+          },
+          {
+            "path": "settings/notifications",
+            "component": "@/pages/Settings/Notifications"
           }
         ]
       }
@@ -2183,7 +2191,7 @@
       "file": "@/layouts/AppLayout.tsx",
       "id": "2",
       "absPath": "/",
-      "__content": "import { useEffect } from 'react';\nimport { Outlet, history, useLocation } from 'umi';\nimport { Layout, Tooltip, Avatar, Dropdown, Typography } from 'antd';\nimport {\n  MailOutlined,\n  BarChartOutlined,\n  SettingOutlined,\n  UserOutlined,\n  LogoutOutlined,\n} from '@ant-design/icons';\nimport { clearTokens, getAccessToken, getCurrentUser } from '@/utils/auth';\n\nconst { Header, Content } = Layout;\nconst { Text } = Typography;\n\nconst PAGE_TITLES: Record<string, string> = {\n  '/inbox': 'Inbox',\n  '/reports': 'Reports',\n  '/settings': 'Settings',\n  '/settings/channels': 'Channels',\n  '/settings/ai': 'AI Configuration',\n  '/settings/users': 'Users',\n  '/settings/automation': 'Automation',\n  '/settings/sla': 'SLA Policies',\n  '/settings/tags': 'Tags',\n  '/settings/custom-fields': 'Custom Fields',\n  '/settings/general': 'General',\n  '/settings/macros': 'Macros',\n};\n\nconst NAV_ITEMS = [\n  { path: '/inbox', icon: <MailOutlined />, label: 'Inbox' },\n  { path: '/reports', icon: <BarChartOutlined />, label: 'Reports' },\n  { path: '/settings', icon: <SettingOutlined />, label: 'Settings' },\n];\n\nexport default function AppLayout() {\n  const location = useLocation();\n  const user = getCurrentUser();\n\n  useEffect(() => {\n    if (!getAccessToken()) {\n      history.replace('/login');\n    }\n  }, []);\n\n  function handleLogout() {\n    clearTokens();\n    history.push('/login');\n  }\n\n  const pageTitle = (() => {\n    if (PAGE_TITLES[location.pathname]) return PAGE_TITLES[location.pathname];\n    if (location.pathname.startsWith('/inbox')) return 'Inbox';\n    // Dynamic channel routes: /settings/channels/:platform/new or /settings/channels/:platform\n    const channelNewMatch = location.pathname.match(/^\\/settings\\/channels\\/([^/]+)\\/new$/);\n    if (channelNewMatch) return `Add ${channelNewMatch[1]} Channel`;\n    const channelMatch = location.pathname.match(/^\\/settings\\/channels\\/([^/]+)$/);\n    if (channelMatch) return `${channelMatch[1]} Channels`;\n    return 'Autotix';\n  })();\n\n  const userMenuItems = [\n    {\n      key: 'logout',\n      icon: <LogoutOutlined />,\n      label: '退出登录',\n      onClick: handleLogout,\n    },\n  ];\n\n  return (\n    <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'row' }}>\n      {/* 48px dark icon-only sidebar */}\n      <div\n        style={{\n          width: 48,\n          minHeight: '100vh',\n          background: '#0B1426',\n          display: 'flex',\n          flexDirection: 'column',\n          alignItems: 'center',\n          paddingTop: 12,\n          gap: 4,\n          flexShrink: 0,\n        }}\n      >\n        {/* Logo */}\n        <div\n          style={{\n            width: 32,\n            height: 32,\n            borderRadius: 8,\n            background: '#2962FF',\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'center',\n            color: '#fff',\n            fontWeight: 700,\n            fontSize: 14,\n            marginBottom: 16,\n            cursor: 'pointer',\n          }}\n          onClick={() => history.push('/inbox')}\n        >\n          AT\n        </div>\n        {NAV_ITEMS.map(({ path, icon, label }) => {\n          const active =\n            path === '/settings'\n              ? location.pathname.startsWith('/settings')\n              : location.pathname.startsWith(path);\n          return (\n            <Tooltip key={path} title={label} placement=\"right\">\n              <div\n                onClick={() => history.push(path)}\n                style={{\n                  width: 36,\n                  height: 36,\n                  borderRadius: 6,\n                  display: 'flex',\n                  alignItems: 'center',\n                  justifyContent: 'center',\n                  color: active ? '#FFFFFF' : 'rgba(255,255,255,0.5)',\n                  background: active ? 'rgba(41,98,255,0.25)' : 'transparent',\n                  cursor: 'pointer',\n                  fontSize: 16,\n                  transition: 'all 0.15s',\n                }}\n              >\n                {icon}\n              </div>\n            </Tooltip>\n          );\n        })}\n      </div>\n\n      {/* Main area */}\n      <Layout style={{ flex: 1, minWidth: 0 }}>\n        {/* 48px white header */}\n        <Header\n          style={{\n            height: 48,\n            lineHeight: '48px',\n            background: '#FFFFFF',\n            padding: '0 16px',\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'space-between',\n            borderBottom: '1px solid #EEF2F6',\n            boxShadow: 'none',\n          }}\n        >\n          <Text style={{ fontWeight: 600, fontSize: 14, color: '#0B1426' }}>{pageTitle}</Text>\n          <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>\n            <div\n              style={{\n                display: 'flex',\n                alignItems: 'center',\n                gap: 8,\n                cursor: 'pointer',\n                padding: '4px 8px',\n                borderRadius: 6,\n              }}\n            >\n              <Avatar size={24} icon={<UserOutlined />} style={{ background: '#2962FF' }} />\n              <Text style={{ fontSize: 12, color: '#5A6B7D' }}>\n                {user?.email || 'User'}\n              </Text>\n            </div>\n          </Dropdown>\n        </Header>\n\n        <Content\n          style={{\n            flex: 1,\n            overflow: location.pathname.startsWith('/inbox') ? 'hidden' : 'auto',\n            background: '#F7F9FB',\n            padding: location.pathname.startsWith('/inbox') ? 0 : 24,\n          }}\n        >\n          <Outlet />\n        </Content>\n      </Layout>\n    </Layout>\n  );\n}\n",
+      "__content": "import { useEffect } from 'react';\nimport { Outlet, history, useLocation } from 'umi';\nimport { Layout, Tooltip, Avatar, Dropdown, Typography } from 'antd';\nimport {\n  MailOutlined,\n  BarChartOutlined,\n  SettingOutlined,\n  UserOutlined,\n  LogoutOutlined,\n} from '@ant-design/icons';\nimport { clearTokens, getAccessToken, getCurrentUser } from '@/utils/auth';\n\nconst { Header, Content } = Layout;\nconst { Text } = Typography;\n\nconst PAGE_TITLES: Record<string, string> = {\n  '/inbox': 'Inbox',\n  '/reports': 'Reports',\n  '/settings': 'Settings',\n  '/settings/channels': 'Channels',\n  '/settings/ai': 'AI Configuration',\n  '/settings/users': 'Users',\n  '/settings/automation': 'Automation',\n  '/settings/sla': 'SLA Policies',\n  '/settings/tags': 'Tags',\n  '/settings/custom-fields': 'Custom Fields',\n  '/settings/general': 'General',\n  '/settings/macros': 'Macros',\n  '/settings/notifications': 'Notification Routes',\n};\n\nconst NAV_ITEMS = [\n  { path: '/inbox', icon: <MailOutlined />, label: 'Inbox' },\n  { path: '/reports', icon: <BarChartOutlined />, label: 'Reports' },\n  { path: '/settings', icon: <SettingOutlined />, label: 'Settings' },\n];\n\nexport default function AppLayout() {\n  const location = useLocation();\n  const user = getCurrentUser();\n\n  useEffect(() => {\n    if (!getAccessToken()) {\n      history.replace('/login');\n    }\n  }, []);\n\n  function handleLogout() {\n    clearTokens();\n    history.push('/login');\n  }\n\n  const pageTitle = (() => {\n    if (PAGE_TITLES[location.pathname]) return PAGE_TITLES[location.pathname];\n    if (location.pathname.startsWith('/inbox')) return 'Inbox';\n    // Dynamic channel routes: /settings/channels/:platform/new or /settings/channels/:platform\n    const channelNewMatch = location.pathname.match(/^\\/settings\\/channels\\/([^/]+)\\/new$/);\n    if (channelNewMatch) return `Add ${channelNewMatch[1]} Channel`;\n    const channelMatch = location.pathname.match(/^\\/settings\\/channels\\/([^/]+)$/);\n    if (channelMatch) return `${channelMatch[1]} Channels`;\n    return 'Autotix';\n  })();\n\n  const userMenuItems = [\n    {\n      key: 'logout',\n      icon: <LogoutOutlined />,\n      label: '退出登录',\n      onClick: handleLogout,\n    },\n  ];\n\n  return (\n    <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'row' }}>\n      {/* 48px dark icon-only sidebar */}\n      <div\n        style={{\n          width: 48,\n          minHeight: '100vh',\n          background: '#0B1426',\n          display: 'flex',\n          flexDirection: 'column',\n          alignItems: 'center',\n          paddingTop: 12,\n          gap: 4,\n          flexShrink: 0,\n        }}\n      >\n        {/* Logo */}\n        <div\n          style={{\n            width: 32,\n            height: 32,\n            borderRadius: 8,\n            background: '#2962FF',\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'center',\n            color: '#fff',\n            fontWeight: 700,\n            fontSize: 14,\n            marginBottom: 16,\n            cursor: 'pointer',\n          }}\n          onClick={() => history.push('/inbox')}\n        >\n          AT\n        </div>\n        {NAV_ITEMS.map(({ path, icon, label }) => {\n          const active =\n            path === '/settings'\n              ? location.pathname.startsWith('/settings')\n              : location.pathname.startsWith(path);\n          return (\n            <Tooltip key={path} title={label} placement=\"right\">\n              <div\n                onClick={() => history.push(path)}\n                style={{\n                  width: 36,\n                  height: 36,\n                  borderRadius: 6,\n                  display: 'flex',\n                  alignItems: 'center',\n                  justifyContent: 'center',\n                  color: active ? '#FFFFFF' : 'rgba(255,255,255,0.5)',\n                  background: active ? 'rgba(41,98,255,0.25)' : 'transparent',\n                  cursor: 'pointer',\n                  fontSize: 16,\n                  transition: 'all 0.15s',\n                }}\n              >\n                {icon}\n              </div>\n            </Tooltip>\n          );\n        })}\n      </div>\n\n      {/* Main area */}\n      <Layout style={{ flex: 1, minWidth: 0 }}>\n        {/* 48px white header */}\n        <Header\n          style={{\n            height: 48,\n            lineHeight: '48px',\n            background: '#FFFFFF',\n            padding: '0 16px',\n            display: 'flex',\n            alignItems: 'center',\n            justifyContent: 'space-between',\n            borderBottom: '1px solid #EEF2F6',\n            boxShadow: 'none',\n          }}\n        >\n          <Text style={{ fontWeight: 600, fontSize: 14, color: '#0B1426' }}>{pageTitle}</Text>\n          <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>\n            <div\n              style={{\n                display: 'flex',\n                alignItems: 'center',\n                gap: 8,\n                cursor: 'pointer',\n                padding: '4px 8px',\n                borderRadius: 6,\n              }}\n            >\n              <Avatar size={24} icon={<UserOutlined />} style={{ background: '#2962FF' }} />\n              <Text style={{ fontSize: 12, color: '#5A6B7D' }}>\n                {user?.email || 'User'}\n              </Text>\n            </div>\n          </Dropdown>\n        </Header>\n\n        <Content\n          style={{\n            flex: 1,\n            overflow: location.pathname.startsWith('/inbox') ? 'hidden' : 'auto',\n            background: '#F7F9FB',\n            padding: location.pathname.startsWith('/inbox') ? 0 : 24,\n          }}\n        >\n          <Outlet />\n        </Content>\n      </Layout>\n    </Layout>\n  );\n}\n",
       "__isJSFile": true,
       "__absFile": "/Users/norman/development/autotix/autotix-web/src/layouts/AppLayout.tsx"
     },
@@ -2220,7 +2228,7 @@
       "parentId": "2",
       "id": "6",
       "absPath": "/settings",
-      "__content": "import { Card, Row, Col, Typography } from 'antd';\nimport { Link } from 'umi';\nimport { hasRole } from '@/utils/auth';\n\nexport default function SettingsIndex() {\n  const isAdmin = hasRole('ADMIN');\n\n  return (\n    <div style={{ padding: 24 }}>\n      <Row gutter={[16, 16]}>\n        <Col span={8}>\n          <Link to=\"/settings/channels\">\n            <Card title=\"Channels\" hoverable>\n              Manage connected support channels\n            </Card>\n          </Link>\n        </Col>\n        <Col span={8}>\n          <Link to=\"/settings/ai\">\n            <Card title=\"AI Configuration\" hoverable>\n              Configure AI endpoint, model and prompt\n            </Card>\n          </Link>\n        </Col>\n        {isAdmin && (\n          <>\n            <Col span={8}>\n              <Link to=\"/settings/automation\">\n                <Card title=\"Automation\" hoverable>\n                  Manage automation rules and triggers\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/users\">\n                <Card title=\"Users\" hoverable>\n                  Manage agents and administrators\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/sla\">\n                <Card title=\"SLA Policies\" hoverable>\n                  Configure SLA targets per ticket priority\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/tags\">\n                <Card title=\"Tags\" hoverable>\n                  Manage tag definitions, colors and categories\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/custom-fields\">\n                <Card title=\"Custom Fields\" hoverable>\n                  Manage custom field schema for tickets and customers\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/macros\">\n                <Card title=\"Macros\" hoverable>\n                  Manage saved-reply templates for agents\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/general\">\n                <Card title=\"General\" hoverable>\n                  Global AI auto-reply toggle and system settings\n                </Card>\n              </Link>\n            </Col>\n          </>\n        )}\n      </Row>\n    </div>\n  );\n}\n",
+      "__content": "import { Card, Row, Col, Typography } from 'antd';\nimport { Link } from 'umi';\nimport { hasRole } from '@/utils/auth';\n\nexport default function SettingsIndex() {\n  const isAdmin = hasRole('ADMIN');\n\n  return (\n    <div style={{ padding: 24 }}>\n      <Row gutter={[16, 16]}>\n        <Col span={8}>\n          <Link to=\"/settings/channels\">\n            <Card title=\"Channels\" hoverable>\n              Manage connected support channels\n            </Card>\n          </Link>\n        </Col>\n        <Col span={8}>\n          <Link to=\"/settings/ai\">\n            <Card title=\"AI Configuration\" hoverable>\n              Configure AI endpoint, model and prompt\n            </Card>\n          </Link>\n        </Col>\n        {isAdmin && (\n          <>\n            <Col span={8}>\n              <Link to=\"/settings/automation\">\n                <Card title=\"Automation\" hoverable>\n                  Manage automation rules and triggers\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/users\">\n                <Card title=\"Users\" hoverable>\n                  Manage agents and administrators\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/sla\">\n                <Card title=\"SLA Policies\" hoverable>\n                  Configure SLA targets per ticket priority\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/tags\">\n                <Card title=\"Tags\" hoverable>\n                  Manage tag definitions, colors and categories\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/custom-fields\">\n                <Card title=\"Custom Fields\" hoverable>\n                  Manage custom field schema for tickets and customers\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/macros\">\n                <Card title=\"Macros\" hoverable>\n                  Manage saved-reply templates for agents\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/general\">\n                <Card title=\"General\" hoverable>\n                  Global AI auto-reply toggle and system settings\n                </Card>\n              </Link>\n            </Col>\n            <Col span={8}>\n              <Link to=\"/settings/notifications\">\n                <Card title=\"Notifications\" hoverable>\n                  Email and Slack alerts for SLA breaches and other events\n                </Card>\n              </Link>\n            </Col>\n          </>\n        )}\n      </Row>\n    </div>\n  );\n}\n",
       "__isJSFile": true,
       "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/index.tsx"
     },
@@ -2343,6 +2351,16 @@
       "__content": "import { Card, Typography } from 'antd';\n\nexport default function GeneralPage() {\n  return (\n    <div style={{ padding: 24 }}>\n      <Card>\n        <Typography.Text type=\"secondary\">Coming in slice 16 — global AI auto-reply toggle, reopen window days, and admin bootstrap info.</Typography.Text>\n      </Card>\n    </div>\n  );\n}\n",
       "__isJSFile": true,
       "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/General.tsx"
+    },
+    "19": {
+      "path": "settings/notifications",
+      "file": "@/pages/Settings/Notifications.tsx",
+      "parentId": "2",
+      "id": "19",
+      "absPath": "/settings/notifications",
+      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Table, Button, Switch, Space, Modal, Form, Input, Select, Tag,\n  message, Popconfirm, Typography,\n} from 'antd';\nimport { PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';\nimport type { ColumnsType } from 'antd/es/table';\nimport {\n  listRoutes, createRoute, updateRoute, deleteRoute, testRoute,\n  type NotificationRouteDTO, type CreateRoutePayload,\n  type NotificationChannel, type NotificationEventKind,\n} from '@/services/notification';\n\nconst { Text } = Typography;\nconst { Option } = Select;\n\ninterface RouteFormValues {\n  name: string;\n  eventKind: NotificationEventKind;\n  channel: NotificationChannel;\n  enabled: boolean;\n  // EMAIL fields\n  recipients?: string;          // comma-separated\n  subjectTemplate?: string;\n  // SLACK fields\n  webhookUrl?: string;\n  messageTemplate?: string;\n}\n\nfunction buildConfigJson(values: RouteFormValues): string {\n  if (values.channel === 'EMAIL') {\n    const to = (values.recipients || '')\n      .split(',')\n      .map((s) => s.trim())\n      .filter(Boolean);\n    return JSON.stringify({\n      to,\n      subjectTemplate: values.subjectTemplate || '[Autotix] SLA breached on ticket {ticketId}',\n    });\n  }\n  return JSON.stringify({\n    webhookUrl: values.webhookUrl || '',\n    messageTemplate: values.messageTemplate || ':warning: SLA breached on ticket {ticketId}: {subject}',\n  });\n}\n\nfunction parseConfigJson(route: NotificationRouteDTO): Partial<RouteFormValues> {\n  try {\n    const cfg = JSON.parse(route.configJson);\n    if (route.channel === 'EMAIL') {\n      return {\n        recipients: (cfg.to || []).join(', '),\n        subjectTemplate: cfg.subjectTemplate,\n      };\n    }\n    return {\n      webhookUrl: cfg.webhookUrl,\n      messageTemplate: cfg.messageTemplate,\n    };\n  } catch {\n    return {};\n  }\n}\n\nexport default function NotificationsPage() {\n  const [routes, setRoutes] = useState<NotificationRouteDTO[]>([]);\n  const [loading, setLoading] = useState(false);\n  const [modalOpen, setModalOpen] = useState(false);\n  const [editingRoute, setEditingRoute] = useState<NotificationRouteDTO | null>(null);\n  const [submitting, setSubmitting] = useState(false);\n  const [testingId, setTestingId] = useState<number | null>(null);\n  const [form] = Form.useForm<RouteFormValues>();\n  const selectedChannel = Form.useWatch('channel', form);\n\n  async function fetchRoutes() {\n    setLoading(true);\n    try {\n      const data = await listRoutes();\n      setRoutes(data);\n    } finally {\n      setLoading(false);\n    }\n  }\n\n  useEffect(() => { fetchRoutes(); }, []);\n\n  function openCreate() {\n    setEditingRoute(null);\n    form.resetFields();\n    form.setFieldsValue({ eventKind: 'SLA_BREACHED', channel: 'SLACK_WEBHOOK', enabled: true });\n    setModalOpen(true);\n  }\n\n  function openEdit(route: NotificationRouteDTO) {\n    setEditingRoute(route);\n    const extra = parseConfigJson(route);\n    form.setFieldsValue({\n      name: route.name,\n      eventKind: route.eventKind,\n      channel: route.channel,\n      enabled: route.enabled,\n      ...extra,\n    });\n    setModalOpen(true);\n  }\n\n  async function handleSubmit() {\n    const values = await form.validateFields();\n    setSubmitting(true);\n    try {\n      const payload: CreateRoutePayload = {\n        name: values.name,\n        eventKind: values.eventKind,\n        channel: values.channel,\n        configJson: buildConfigJson(values),\n        enabled: values.enabled ?? true,\n      };\n      if (editingRoute) {\n        const updated = await updateRoute(editingRoute.id, payload);\n        setRoutes((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));\n        message.success('Route updated');\n      } else {\n        const created = await createRoute(payload);\n        setRoutes((prev) => [...prev, created]);\n        message.success('Route created');\n      }\n      setModalOpen(false);\n    } catch {\n      message.error('Failed to save route');\n    } finally {\n      setSubmitting(false);\n    }\n  }\n\n  async function handleToggle(route: NotificationRouteDTO, enabled: boolean) {\n    try {\n      const updated = await updateRoute(route.id, {\n        name: route.name,\n        eventKind: route.eventKind,\n        channel: route.channel,\n        configJson: route.configJson,\n        enabled,\n      });\n      setRoutes((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));\n    } catch {\n      message.error('Failed to update route');\n    }\n  }\n\n  async function handleDelete(id: number) {\n    try {\n      await deleteRoute(id);\n      setRoutes((prev) => prev.filter((r) => r.id !== id));\n      message.success('Route deleted');\n    } catch {\n      message.error('Failed to delete route');\n    }\n  }\n\n  async function handleTest(id: number) {\n    setTestingId(id);\n    try {\n      const result = await testRoute(id);\n      if (result.success) {\n        message.success(result.message || 'Test notification sent');\n      } else {\n        message.warning(result.message || 'Test dispatched but may have failed — check server logs');\n      }\n    } catch {\n      message.error('Test failed — check server logs');\n    } finally {\n      setTestingId(null);\n    }\n  }\n\n  const columns: ColumnsType<NotificationRouteDTO> = [\n    {\n      title: 'Name',\n      dataIndex: 'name',\n      render: (name: string) => <Text strong>{name}</Text>,\n    },\n    {\n      title: 'Event',\n      dataIndex: 'eventKind',\n      render: (kind: string) => <Tag color=\"blue\">{kind}</Tag>,\n    },\n    {\n      title: 'Channel',\n      dataIndex: 'channel',\n      render: (ch: string) => (\n        <Tag color={ch === 'SLACK_WEBHOOK' ? 'purple' : 'green'}>{ch}</Tag>\n      ),\n    },\n    {\n      title: 'Enabled',\n      dataIndex: 'enabled',\n      render: (enabled: boolean, record) => (\n        <Switch\n          checked={enabled}\n          onChange={(val) => handleToggle(record, val)}\n          size=\"small\"\n        />\n      ),\n    },\n    {\n      title: 'Actions',\n      render: (_: unknown, record) => (\n        <Space size=\"small\">\n          <Button size=\"small\" onClick={() => openEdit(record)}>Edit</Button>\n          <Button\n            size=\"small\"\n            icon={<ThunderboltOutlined />}\n            loading={testingId === record.id}\n            onClick={() => handleTest(record.id)}\n          >\n            Test\n          </Button>\n          <Popconfirm\n            title=\"Delete this notification route?\"\n            onConfirm={() => handleDelete(record.id)}\n            okText=\"Delete\"\n            okButtonProps={{ danger: true }}\n          >\n            <Button size=\"small\" danger>Delete</Button>\n          </Popconfirm>\n        </Space>\n      ),\n    },\n  ];\n\n  return (\n    <div style={{ padding: 24 }}>\n      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>\n        <Typography.Title level={4} style={{ margin: 0 }}>Notification Routes</Typography.Title>\n        <Button type=\"primary\" icon={<PlusOutlined />} onClick={openCreate}>\n          Add Route\n        </Button>\n      </div>\n\n      <Table\n        rowKey=\"id\"\n        dataSource={routes}\n        columns={columns}\n        loading={loading}\n        pagination={{ pageSize: 20 }}\n        size=\"small\"\n      />\n\n      <Modal\n        title={editingRoute ? 'Edit Notification Route' : 'Add Notification Route'}\n        open={modalOpen}\n        onOk={handleSubmit}\n        onCancel={() => setModalOpen(false)}\n        okText={editingRoute ? 'Save' : 'Create'}\n        confirmLoading={submitting}\n        width={560}\n        destroyOnClose\n      >\n        <Form form={form} layout=\"vertical\" initialValues={{ eventKind: 'SLA_BREACHED', enabled: true }}>\n          <Form.Item name=\"name\" label=\"Name\" rules={[{ required: true, message: 'Name is required' }]}>\n            <Input placeholder=\"e.g. Ops Slack SLA Alert\" />\n          </Form.Item>\n\n          <Form.Item name=\"eventKind\" label=\"Event Kind\" rules={[{ required: true }]}>\n            <Select>\n              <Option value=\"SLA_BREACHED\">SLA_BREACHED</Option>\n            </Select>\n          </Form.Item>\n\n          <Form.Item name=\"channel\" label=\"Channel\" rules={[{ required: true }]}>\n            <Select>\n              <Option value=\"SLACK_WEBHOOK\">Slack Webhook</Option>\n              <Option value=\"EMAIL\">Email</Option>\n            </Select>\n          </Form.Item>\n\n          <Form.Item name=\"enabled\" label=\"Enabled\" valuePropName=\"checked\">\n            <Switch />\n          </Form.Item>\n\n          {/* EMAIL-specific fields */}\n          {selectedChannel === 'EMAIL' && (\n            <>\n              <Form.Item\n                name=\"recipients\"\n                label=\"Recipients (comma-separated)\"\n                rules={[{ required: true, message: 'At least one recipient is required' }]}\n              >\n                <Input placeholder=\"ops@company.com, alerts@company.com\" />\n              </Form.Item>\n              <Form.Item name=\"subjectTemplate\" label=\"Subject Template\">\n                <Input placeholder=\"[Autotix] SLA breached on ticket {ticketId}\" />\n              </Form.Item>\n            </>\n          )}\n\n          {/* SLACK_WEBHOOK-specific fields */}\n          {selectedChannel === 'SLACK_WEBHOOK' && (\n            <>\n              <Form.Item\n                name=\"webhookUrl\"\n                label=\"Webhook URL\"\n                rules={[{ required: true, message: 'Webhook URL is required' }]}\n              >\n                <Input placeholder=\"https://hooks.slack.com/services/...\" />\n              </Form.Item>\n              <Form.Item name=\"messageTemplate\" label=\"Message Template\">\n                <Input.TextArea\n                  rows={2}\n                  placeholder=\":warning: SLA breached on ticket {ticketId}: {subject}\"\n                />\n              </Form.Item>\n            </>\n          )}\n\n          <Typography.Text type=\"secondary\" style={{ fontSize: 12 }}>\n            Available placeholders: {'{ticketId}'}, {'{externalTicketId}'}, {'{subject}'},{' '}\n            {'{customerIdentifier}'}, {'{priority}'}, {'{status}'}, {'{breachedAt}'}, {'{ticketUrl}'}\n          </Typography.Text>\n        </Form>\n      </Modal>\n    </div>\n  );\n}\n",
+      "__isJSFile": true,
+      "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/Notifications.tsx"
     }
   },
   "apiRoutes": {},

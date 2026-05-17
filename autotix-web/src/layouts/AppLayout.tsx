@@ -26,6 +26,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/settings/custom-fields': 'Custom Fields',
   '/settings/general': 'General',
   '/settings/macros': 'Macros',
+  '/settings/notifications': 'Notification Routes',
 };
 
 const NAV_ITEMS = [

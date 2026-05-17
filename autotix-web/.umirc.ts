@@ -26,6 +26,7 @@ export default defineConfig({
         { path: 'settings/macros', component: '@/pages/Settings/Macros' },
         { path: 'settings/custom-fields', component: '@/pages/Settings/CustomFields' },
         { path: 'settings/general', component: '@/pages/Settings/General' },
+        { path: 'settings/notifications', component: '@/pages/Settings/Notifications' },
       ],
     },
   ],

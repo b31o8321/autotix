@@ -73,6 +73,13 @@ export default function SettingsIndex() {
                 </Card>
               </Link>
             </Col>
+            <Col span={8}>
+              <Link to="/settings/notifications">
+                <Card title="Notifications" hoverable>
+                  Email and Slack alerts for SLA breaches and other events
+                </Card>
+              </Link>
+            </Col>
           </>
         )}
       </Row>

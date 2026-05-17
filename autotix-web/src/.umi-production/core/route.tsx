@@ -4,7 +4,7 @@
 import React from 'react';
 
 export async function getRoutes() {
-  const routes = {"1":{"path":"/login","id":"1"},"2":{"path":"/","id":"2"},"3":{"path":"/","redirect":"/inbox","parentId":"2","id":"3"},"4":{"path":"inbox","parentId":"2","id":"4"},"5":{"path":"reports","parentId":"2","id":"5"},"6":{"path":"settings","parentId":"2","id":"6"},"7":{"path":"settings/channels","parentId":"2","id":"7"},"8":{"path":"settings/channels/:platform","parentId":"2","id":"8"},"9":{"path":"settings/channels/:platform/new","parentId":"2","id":"9"},"10":{"path":"settings/channels/:platform/:channelId/edit","parentId":"2","id":"10"},"11":{"path":"settings/ai","parentId":"2","id":"11"},"12":{"path":"settings/users","parentId":"2","id":"12"},"13":{"path":"settings/automation","parentId":"2","id":"13"},"14":{"path":"settings/sla","parentId":"2","id":"14"},"15":{"path":"settings/tags","parentId":"2","id":"15"},"16":{"path":"settings/macros","parentId":"2","id":"16"},"17":{"path":"settings/custom-fields","parentId":"2","id":"17"},"18":{"path":"settings/general","parentId":"2","id":"18"}} as const;
+  const routes = {"1":{"path":"/login","id":"1"},"2":{"path":"/","id":"2"},"3":{"path":"/","redirect":"/inbox","parentId":"2","id":"3"},"4":{"path":"inbox","parentId":"2","id":"4"},"5":{"path":"reports","parentId":"2","id":"5"},"6":{"path":"settings","parentId":"2","id":"6"},"7":{"path":"settings/channels","parentId":"2","id":"7"},"8":{"path":"settings/channels/:platform","parentId":"2","id":"8"},"9":{"path":"settings/channels/:platform/new","parentId":"2","id":"9"},"10":{"path":"settings/channels/:platform/:channelId/edit","parentId":"2","id":"10"},"11":{"path":"settings/ai","parentId":"2","id":"11"},"12":{"path":"settings/users","parentId":"2","id":"12"},"13":{"path":"settings/automation","parentId":"2","id":"13"},"14":{"path":"settings/sla","parentId":"2","id":"14"},"15":{"path":"settings/tags","parentId":"2","id":"15"},"16":{"path":"settings/macros","parentId":"2","id":"16"},"17":{"path":"settings/custom-fields","parentId":"2","id":"17"},"18":{"path":"settings/general","parentId":"2","id":"18"},"19":{"path":"settings/notifications","parentId":"2","id":"19"}} as const;
   return {
     routes,
     routeComponents: {
@@ -26,6 +26,7 @@ export async function getRoutes() {
 '16': React.lazy(() => import(/* webpackChunkName: "p__Settings__Macros" */'@/pages/Settings/Macros.tsx')),
 '17': React.lazy(() => import(/* webpackChunkName: "p__Settings__CustomFields" */'@/pages/Settings/CustomFields.tsx')),
 '18': React.lazy(() => import(/* webpackChunkName: "p__Settings__General" */'@/pages/Settings/General.tsx')),
+'19': React.lazy(() => import(/* webpackChunkName: "p__Settings__Notifications" */'@/pages/Settings/Notifications.tsx')),
 },
   };
 }

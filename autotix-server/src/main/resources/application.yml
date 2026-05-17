@@ -52,6 +52,16 @@ autotix:
     # (docker-compose sets 15s for dev/e2e; production 60s is fine).
     poll-interval-ms: ${AUTOTIX_EMAIL_POLL_INTERVAL_MS:60000}
 
+  notification:
+    ui-base-url: ${AUTOTIX_UI_BASE_URL:http://localhost}
+    email:
+      host: ${AUTOTIX_NOTIFY_SMTP_HOST:}
+      port: ${AUTOTIX_NOTIFY_SMTP_PORT:25}
+      user: ${AUTOTIX_NOTIFY_SMTP_USER:}
+      password: ${AUTOTIX_NOTIFY_SMTP_PASSWORD:}
+      from: ${AUTOTIX_NOTIFY_SMTP_FROM:alerts@autotix.local}
+      use-tls: ${AUTOTIX_NOTIFY_SMTP_USE_TLS:false}
+
   storage:
     driver: local       # local | s3 | oss
     max-upload-bytes: 10485760   # 10 MB

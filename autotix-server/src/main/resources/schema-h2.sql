@@ -196,3 +196,16 @@ CREATE TABLE IF NOT EXISTS attachment (
     uploaded_at TIMESTAMP NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_attachment_ticket ON attachment(ticket_id, uploaded_at);
+
+-- Notification routes: admin-configured destinations for system event alerts
+CREATE TABLE IF NOT EXISTS notification_route (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    event_kind VARCHAR(32) NOT NULL,
+    channel VARCHAR(16) NOT NULL,
+    config_json CLOB NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_notif_route_kind_enabled ON notification_route(event_kind, enabled);
