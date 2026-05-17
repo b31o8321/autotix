@@ -18,6 +18,7 @@
       "antd": "^5.16.0",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
+      "recharts": "^3.8.1",
       "umi": "^4.1.0",
       "umi-request": "^1.4.0"
     },
@@ -58,7 +59,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 11
+        "register": 13
       },
       "enableBy": "register"
     },
@@ -75,7 +76,7 @@
             0
           ]
         },
-        "register": 1
+        "register": 5
       },
       "enableBy": "register"
     },
@@ -89,10 +90,10 @@
       "time": {
         "hooks": {
           "onStart": [
-            1
+            2
           ]
         },
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -109,7 +110,7 @@
             0
           ]
         },
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -122,7 +123,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -136,10 +137,10 @@
       "time": {
         "hooks": {
           "modifyAppData": [
-            17
+            24
           ]
         },
-        "register": 13
+        "register": 32
       },
       "enableBy": "register"
     },
@@ -152,7 +153,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -172,7 +173,7 @@
             1
           ]
         },
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -189,7 +190,7 @@
             0
           ]
         },
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -202,7 +203,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -219,7 +220,7 @@
             0
           ]
         },
-        "register": 5
+        "register": 12
       },
       "enableBy": "register"
     },
@@ -1085,7 +1086,7 @@
       "time": {
         "hooks": {
           "onStart": [
-            0
+            1
           ]
         },
         "register": 0
@@ -1101,7 +1102,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1114,7 +1115,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 45
+        "register": 94
       },
       "enableBy": "register"
     },
@@ -1127,7 +1128,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 28
+        "register": 43
       },
       "enableBy": "config"
     },
@@ -1140,7 +1141,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 11
+        "register": 16
       },
       "enableBy": "config"
     },
@@ -1157,7 +1158,7 @@
             0
           ]
         },
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1170,7 +1171,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1183,7 +1184,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "config"
     },
@@ -1196,7 +1197,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 20
+        "register": 39
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa": {
@@ -1208,7 +1209,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1221,7 +1222,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/overrides/overrides": {
@@ -1233,7 +1234,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1246,7 +1247,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1260,7 +1261,7 @@
       "time": {
         "hooks": {
           "modifyConfig": [
-            1
+            2
           ]
         },
         "register": 2
@@ -1288,7 +1289,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1301,7 +1302,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1314,7 +1315,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1327,7 +1328,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1340,7 +1341,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 5
       },
       "enableBy": "register"
     },
@@ -1353,7 +1354,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "config"
     },
@@ -1366,7 +1367,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/ssr/ssr": {
@@ -1378,7 +1379,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       },
       "enableBy": "config"
     },
@@ -1391,7 +1392,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 6
       },
       "enableBy": "register"
     },
@@ -1404,7 +1405,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1417,7 +1418,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 4
       },
       "enableBy": "config"
     },
@@ -1430,7 +1431,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1443,7 +1444,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 8
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/monorepo/redirect": {
@@ -1455,7 +1456,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 13
+        "register": 27
       },
       "enableBy": "config"
     },
@@ -1480,7 +1481,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/legacy/legacy": {
@@ -1505,7 +1506,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1547,7 +1548,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mako/mako": {
@@ -1572,7 +1573,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/hmrGuardian/hmrGuardian": {
@@ -1596,7 +1597,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 16
+        "register": 39
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/forget/forget": {
@@ -1608,7 +1609,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "config"
     },
@@ -1634,7 +1635,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 4
       },
       "enableBy": "register"
     },
@@ -1647,7 +1648,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 20
+        "register": 45
       },
       "enableBy": "register"
     },
@@ -1660,7 +1661,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 22
+        "register": 46
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help": {
@@ -1672,7 +1673,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1685,7 +1686,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1711,7 +1712,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1724,7 +1725,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1737,7 +1738,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1776,7 +1777,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 6
       },
       "enableBy": "register"
     },
@@ -1789,7 +1790,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1841,7 +1842,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1854,7 +1855,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1867,7 +1868,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1906,7 +1907,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 13
+        "register": 28
       },
       "enableBy": "register"
     },
@@ -1932,7 +1933,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -2218,7 +2219,7 @@
       "parentId": "2",
       "id": "5",
       "absPath": "/reports",
-      "__content": "import { Card, Col, Row, Statistic, Typography } from 'antd';\n\n// TODO: Backend does not yet have a /api/reports endpoint (planned for Slice 7).\n// These statistics are placeholder zeros until that endpoint is implemented.\n\nexport default function ReportsPage() {\n  return (\n    <div>\n      <Row gutter={[16, 16]}>\n        <Col span={8}>\n          <Card>\n            <Statistic\n              title=\"Open Tickets\"\n              value={0}\n            />\n          </Card>\n        </Col>\n        <Col span={8}>\n          <Card>\n            <Statistic\n              title=\"Tickets Today\"\n              value={0}\n            />\n          </Card>\n        </Col>\n        <Col span={8}>\n          <Card>\n            <Statistic\n              title=\"AI Auto-Resolved (24h)\"\n              value={0}\n            />\n          </Card>\n        </Col>\n      </Row>\n    </div>\n  );\n}\n",
+      "__content": "import React, { useCallback, useEffect, useState } from 'react';\nimport { Button, Card, Col, Result, Row, Spin, Statistic, Typography } from 'antd';\nimport {\n  Bar,\n  BarChart,\n  CartesianGrid,\n  Cell,\n  Legend,\n  Line,\n  LineChart,\n  ResponsiveContainer,\n  Tooltip,\n  XAxis,\n  YAxis,\n} from 'recharts';\nimport { getReportsSummary, ReportsSummaryDTO } from '@/services/reports';\n\nconst { Title } = Typography;\n\n// ── Platform colour palette ───────────────────────────────────────────────────\nconst PLATFORM_COLORS: Record<string, string> = {\n  ZENDESK: '#03363d',\n  SHOPIFY: '#96bf48',\n  AMAZON: '#ff9900',\n  FRESHDESK: '#25c16f',\n  CUSTOM: '#6366f1',\n  DEFAULT: '#8884d8',\n};\n\nfunction platformColor(platform?: string): string {\n  return PLATFORM_COLORS[platform ?? ''] ?? PLATFORM_COLORS.DEFAULT;\n}\n\n// ── Formatters ────────────────────────────────────────────────────────────────\n\nfunction formatFRT(seconds: number | null): string {\n  if (seconds == null) return '—';\n  const m = Math.floor(seconds / 60);\n  const s = seconds % 60;\n  if (m === 0) return `${s}s`;\n  return `${m}m ${s}s`;\n}\n\nfunction formatSlaRate(pct: number): string {\n  return `${pct.toFixed(1)}%`;\n}\n\nfunction mmdd(dateStr: string): string {\n  // \"2024-01-15\" → \"01-15\"\n  return dateStr.length >= 10 ? dateStr.slice(5) : dateStr;\n}\n\n// ── Empty state ───────────────────────────────────────────────────────────────\nfunction EmptyChart() {\n  return (\n    <div style={{ textAlign: 'center', padding: 32, color: '#999' }}>\n      No data yet\n    </div>\n  );\n}\n\n// ── Main component ────────────────────────────────────────────────────────────\nexport default function ReportsPage() {\n  const [data, setData] = useState<ReportsSummaryDTO | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n\n  const load = useCallback(() => {\n    setLoading(true);\n    setError(null);\n    getReportsSummary()\n      .then(setData)\n      .catch((e: Error) => setError(e?.message ?? 'Unknown error'))\n      .finally(() => setLoading(false));\n  }, []);\n\n  useEffect(() => {\n    load();\n  }, [load]);\n\n  if (loading) {\n    return (\n      <div style={{ textAlign: 'center', padding: 80 }}>\n        <Spin size=\"large\" />\n      </div>\n    );\n  }\n\n  if (error || !data) {\n    return (\n      <Result\n        status=\"error\"\n        title=\"Failed to load reports\"\n        subTitle={error ?? 'Unexpected error'}\n        extra={\n          <Button type=\"primary\" onClick={load}>\n            Retry\n          </Button>\n        }\n      />\n    );\n  }\n\n  // ── Derived ─────────────────────────────────────────────────────────────────\n  const createdSeries = data.createdSeries.map((d) => ({ ...d, label: mmdd(d.date) }));\n  const solvedSeries = data.solvedSeries.map((d) => ({ ...d, label: mmdd(d.date) }));\n  const byChannel = data.byChannel.map((c) => ({\n    name: c.displayName ?? c.channelId,\n    count: c.openCount,\n    platform: c.platform,\n  }));\n  const byAgent = data.byAgent.map((a) => ({\n    name: a.displayName ?? a.agentId,\n    count: a.solvedCount,\n  }));\n\n  return (\n    <div style={{ padding: 24 }}>\n      <Title level={4} style={{ marginBottom: 24 }}>\n        Reports\n      </Title>\n\n      {/* ── Row 1: KPI cards ───────────────────────────────────────────────── */}\n      <Row gutter={[16, 16]}>\n        <Col xs={24} sm={12} lg={6}>\n          <Card>\n            <Statistic title=\"Open Tickets\" value={data.openTickets} />\n          </Card>\n        </Col>\n        <Col xs={24} sm={12} lg={6}>\n          <Card>\n            <Statistic title=\"Solved Today\" value={data.solvedToday} />\n          </Card>\n        </Col>\n        <Col xs={24} sm={12} lg={6}>\n          <Card>\n            <Statistic\n              title=\"Median First Response\"\n              value={formatFRT(data.medianFirstResponseSeconds)}\n              valueStyle={{ fontSize: 24 }}\n            />\n          </Card>\n        </Col>\n        <Col xs={24} sm={12} lg={6}>\n          <Card>\n            <Statistic\n              title=\"SLA Breach Rate\"\n              value={formatSlaRate(data.slaBreachRatePct)}\n              valueStyle={{ fontSize: 24 }}\n            />\n          </Card>\n        </Col>\n      </Row>\n\n      {/* ── Row 2: Line charts ─────────────────────────────────────────────── */}\n      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>\n        <Col xs={24} lg={12}>\n          <Card title=\"Tickets Created (last 14 days)\">\n            {createdSeries.every((d) => d.count === 0) ? (\n              <EmptyChart />\n            ) : (\n              <ResponsiveContainer width=\"100%\" height={220}>\n                <LineChart data={createdSeries}>\n                  <CartesianGrid strokeDasharray=\"3 3\" />\n                  <XAxis dataKey=\"label\" tick={{ fontSize: 11 }} />\n                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />\n                  <Tooltip />\n                  <Line\n                    type=\"monotone\"\n                    dataKey=\"count\"\n                    name=\"Created\"\n                    stroke=\"#6366f1\"\n                    dot={false}\n                    strokeWidth={2}\n                  />\n                </LineChart>\n              </ResponsiveContainer>\n            )}\n          </Card>\n        </Col>\n        <Col xs={24} lg={12}>\n          <Card title=\"Tickets Solved (last 14 days)\">\n            {solvedSeries.every((d) => d.count === 0) ? (\n              <EmptyChart />\n            ) : (\n              <ResponsiveContainer width=\"100%\" height={220}>\n                <LineChart data={solvedSeries}>\n                  <CartesianGrid strokeDasharray=\"3 3\" />\n                  <XAxis dataKey=\"label\" tick={{ fontSize: 11 }} />\n                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />\n                  <Tooltip />\n                  <Line\n                    type=\"monotone\"\n                    dataKey=\"count\"\n                    name=\"Solved\"\n                    stroke=\"#22c55e\"\n                    dot={false}\n                    strokeWidth={2}\n                  />\n                </LineChart>\n              </ResponsiveContainer>\n            )}\n          </Card>\n        </Col>\n      </Row>\n\n      {/* ── Row 3: Bar charts ──────────────────────────────────────────────── */}\n      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>\n        <Col xs={24} lg={12}>\n          <Card title=\"Open Tickets by Channel\">\n            {byChannel.length === 0 ? (\n              <EmptyChart />\n            ) : (\n              <ResponsiveContainer width=\"100%\" height={220}>\n                <BarChart data={byChannel}>\n                  <CartesianGrid strokeDasharray=\"3 3\" />\n                  <XAxis dataKey=\"name\" tick={{ fontSize: 11 }} />\n                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />\n                  <Tooltip />\n                  <Bar dataKey=\"count\" name=\"Open\">\n                    {byChannel.map((entry, index) => (\n                      <Cell key={`cell-${index}`} fill={platformColor(entry.platform)} />\n                    ))}\n                  </Bar>\n                </BarChart>\n              </ResponsiveContainer>\n            )}\n          </Card>\n        </Col>\n        <Col xs={24} lg={12}>\n          <Card title=\"Solved by Agent (last 30 days, top 10)\">\n            {byAgent.length === 0 ? (\n              <EmptyChart />\n            ) : (\n              <ResponsiveContainer width=\"100%\" height={220}>\n                <BarChart data={byAgent} layout=\"vertical\">\n                  <CartesianGrid strokeDasharray=\"3 3\" />\n                  <XAxis type=\"number\" allowDecimals={false} tick={{ fontSize: 11 }} />\n                  <YAxis type=\"category\" dataKey=\"name\" tick={{ fontSize: 11 }} width={100} />\n                  <Tooltip />\n                  <Bar dataKey=\"count\" name=\"Solved\" fill=\"#6366f1\" />\n                </BarChart>\n              </ResponsiveContainer>\n            )}\n          </Card>\n        </Col>\n      </Row>\n    </div>\n  );\n}\n",
       "__isJSFile": true,
       "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Reports/index.tsx"
     },
