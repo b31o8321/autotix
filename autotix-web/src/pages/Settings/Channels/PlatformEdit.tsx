@@ -82,12 +82,16 @@ export default function PlatformEdit() {
   const isZendesk = channel.platform === 'ZENDESK';
   const isShopify = channel.platform === 'SHOPIFY';
   const isFreshdesk = channel.platform === 'FRESHDESK';
+  const isLine = channel.platform === 'LINE';
+  const isTelegram = channel.platform === 'TELEGRAM';
   const host = window.location.origin;
   const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${channel.webhookToken}" async></script>`;
   const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;
   const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;
   const shopifyInboundUrl = `${host}/v2/webhook/SHOPIFY/${channel.webhookToken}`;
   const freshdeskInboundUrl = `${host}/v2/webhook/FRESHDESK/${channel.webhookToken}`;
+  const lineInboundUrl = `${host}/v2/webhook/LINE/${channel.webhookToken}`;
+  const telegramInboundUrl = `${host}/v2/webhook/TELEGRAM/${channel.webhookToken}`;
 
   return (
     <Space direction="vertical" style={{ width: '100%', maxWidth: 720 }} size="middle">
@@ -203,6 +207,85 @@ export default function PlatformEdit() {
             </Form.Item>
             <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Token</Button>
           </Form>
+        </Card>
+      )}
+
+      {isLine && (
+        <Card title="Inbound Webhook" size="small">
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
+            In LINE Developer Console → your Messaging API channel → Webhook settings,
+            paste the URL below as the <strong>Webhook URL</strong>.
+            Enable <strong>Use webhook</strong> and disable <strong>Auto-reply messages</strong>
+            under Response settings (to prevent LINE's default bot from replying alongside Autotix).
+            Signature verification is automatic — the channel_secret stored in your credentials is used.
+          </Typography.Paragraph>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>
+              {lineInboundUrl}
+            </code>
+            <Button
+              size="small"
+              icon={<span>⎘</span>}
+              onClick={() => { navigator.clipboard.writeText(lineInboundUrl); message.success('URL copied'); }}
+            >
+              Copy
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {isTelegram && (
+        <Card title="Telegram Webhook Setup" size="small">
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
+            1. Talk to <strong>@BotFather</strong> in Telegram → <code>/newbot</code> → follow prompts → copy the token into the channel credentials.
+            <br />
+            2. Copy the Inbound URL below — this is where Telegram will POST message updates.
+            <br />
+            3. Register the webhook by running the curl command below (replace placeholders with your actual values).
+            <br />
+            4. (Optional) Set a Webhook Secret Token in credentials and include it in the curl command; Autotix will verify it on every inbound call.
+          </Typography.Paragraph>
+          <div style={{ marginBottom: 8 }}>
+            <strong style={{ fontSize: 12 }}>Inbound URL</strong>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>
+              {telegramInboundUrl}
+            </code>
+            <Button
+              size="small"
+              icon={<span>⎘</span>}
+              onClick={() => { navigator.clipboard.writeText(telegramInboundUrl); message.success('URL copied'); }}
+            >
+              Copy
+            </Button>
+          </div>
+          <div style={{ marginBottom: 4 }}>
+            <strong style={{ fontSize: 12 }}>Register webhook (run once after channel creation)</strong>
+          </div>
+          <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 11, overflow: 'auto', margin: 0, marginBottom: 8 }}>
+{`curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \\
+  -H "Content-Type: application/json" \\
+  -d '{"url":"${telegramInboundUrl}","secret_token":"<OPTIONAL_SECRET>"}'`}
+          </pre>
+          <Button
+            size="small"
+            onClick={() => {
+              const cmd = `curl -X POST "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" \\\n  -H "Content-Type: application/json" \\\n  -d '{"url":"${telegramInboundUrl}","secret_token":"<OPTIONAL_SECRET>"}'`;
+              navigator.clipboard.writeText(cmd);
+              message.success('curl command copied');
+            }}
+          >
+            Copy curl command
+          </Button>
+          <div style={{ marginTop: 16 }}>
+            <Form form={secretForm} layout="vertical">
+              <Form.Item label="Webhook Secret Token" name="secret" extra="(optional) set here and pass as secret_token in the curl command above — Autotix will verify it on every inbound update.">
+                <Input.Password placeholder="1-256 chars A-Za-z0-9_-" />
+              </Form.Item>
+              <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Secret Token</Button>
+            </Form>
+          </div>
         </Card>
       )}
 

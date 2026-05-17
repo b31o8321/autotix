@@ -21,6 +21,7 @@ public enum PlatformType {
     GMAIL,
     OUTLOOK,
     LINE,
+    TELEGRAM,
     WHATSAPP,
     WECOM,
     WECHAT,
