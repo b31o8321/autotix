@@ -63,8 +63,11 @@ public class WebhookController {
         }
         Channel channel = channelOpt.get();
 
-        // 3. Extract headers
+        // 3. Extract headers (+ inject WeCom query params as pseudo-headers for WECOM platform)
         Map<String, String> headers = extractHeaders(request);
+        if (platformType == PlatformType.WECOM) {
+            injectWecomQueryParams(headers, request);
+        }
 
         // 4. Parse webhook (also verifies signature inside plugin)
         TicketEvent event;
@@ -99,5 +102,18 @@ public class WebhookController {
             headers.put(name.toLowerCase(), request.getHeader(name));
         }
         return headers;
+    }
+
+    /**
+     * WeCom sends signature params as query parameters, not HTTP headers.
+     * Inject them as pseudo-headers so WeComPlugin.parseWebhook can consume them uniformly.
+     */
+    private void injectWecomQueryParams(Map<String, String> headers, HttpServletRequest request) {
+        String sig = request.getParameter("msg_signature");
+        String ts  = request.getParameter("timestamp");
+        String nc  = request.getParameter("nonce");
+        if (sig != null) headers.put("x-wecom-msg-signature", sig);
+        if (ts  != null) headers.put("x-wecom-timestamp", ts);
+        if (nc  != null) headers.put("x-wecom-nonce", nc);
     }
 }

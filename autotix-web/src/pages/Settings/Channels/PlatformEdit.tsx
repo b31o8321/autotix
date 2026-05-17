@@ -84,6 +84,7 @@ export default function PlatformEdit() {
   const isFreshdesk = channel.platform === 'FRESHDESK';
   const isLine = channel.platform === 'LINE';
   const isTelegram = channel.platform === 'TELEGRAM';
+  const isWecom = channel.platform === 'WECOM';
   const host = window.location.origin;
   const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${channel.webhookToken}" async></script>`;
   const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;
@@ -92,6 +93,7 @@ export default function PlatformEdit() {
   const freshdeskInboundUrl = `${host}/v2/webhook/FRESHDESK/${channel.webhookToken}`;
   const lineInboundUrl = `${host}/v2/webhook/LINE/${channel.webhookToken}`;
   const telegramInboundUrl = `${host}/v2/webhook/TELEGRAM/${channel.webhookToken}`;
+  const wecomInboundUrl = `${host}/v2/webhook/WECOM/${channel.webhookToken}`;
 
   return (
     <Space direction="vertical" style={{ width: '100%', maxWidth: 720 }} size="middle">
@@ -286,6 +288,31 @@ export default function PlatformEdit() {
               <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Secret Token</Button>
             </Form>
           </div>
+        </Card>
+      )}
+
+      {isWecom && (
+        <Card title="WeCom 微信客服 — Inbound Webhook" size="small">
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
+            在企业微信管理后台 → 应用管理 → 微信客服 → API 接收消息配置 → URL，粘贴下方地址。
+            Token 和 EncodingAESKey 已在频道凭证中保存，无需单独填写 Webhook Secret。
+            保存后 WeCom 会立即发送 GET 验证请求，Autotix 将自动通过。
+          </Typography.Paragraph>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>
+              {wecomInboundUrl}
+            </code>
+            <Button
+              size="small"
+              icon={<span>⎘</span>}
+              onClick={() => { navigator.clipboard.writeText(wecomInboundUrl); message.success('URL copied'); }}
+            >
+              Copy
+            </Button>
+          </div>
+          <Typography.Paragraph type="secondary" style={{ fontSize: 12, marginBottom: 0 }}>
+            每次消息事件到达时，Autotix 自动调用 kf/sync_msg 拉取消息，并通过 kf/send_msg 发送回复。
+          </Typography.Paragraph>
         </Card>
       )}
 

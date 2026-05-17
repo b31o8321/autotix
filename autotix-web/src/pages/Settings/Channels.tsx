@@ -40,7 +40,7 @@ const PLATFORMS: Plat[] = [
   { label: 'LINE',                              value: 'LINE',             defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'TELEGRAM',                         value: 'TELEGRAM',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'WHATSAPP (stub)',                  value: 'WHATSAPP',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
-  { label: 'WECOM (stub)',                     value: 'WECOM',            defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
+  { label: 'WECOM 微信客服',                   value: 'WECOM',            defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'WECHAT (stub)',                    value: 'WECHAT',           defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'TIKTOK (stub)',                    value: 'TIKTOK',           defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
 ];

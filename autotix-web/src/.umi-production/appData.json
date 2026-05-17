@@ -59,7 +59,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 3
+        "register": 10
       },
       "enableBy": "register"
     },
@@ -76,7 +76,7 @@
             0
           ]
         },
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -90,10 +90,10 @@
       "time": {
         "hooks": {
           "onStart": [
-            1
+            13
           ]
         },
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -123,7 +123,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -137,10 +137,10 @@
       "time": {
         "hooks": {
           "modifyAppData": [
-            16
+            23
           ]
         },
-        "register": 10
+        "register": 20
       },
       "enableBy": "register"
     },
@@ -170,7 +170,7 @@
             0
           ],
           "onCheck": [
-            1
+            0
           ]
         },
         "register": 1
@@ -203,7 +203,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -220,7 +220,7 @@
             0
           ]
         },
-        "register": 4
+        "register": 6
       },
       "enableBy": "register"
     },
@@ -1072,7 +1072,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1115,7 +1115,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 39
+        "register": 66
       },
       "enableBy": "register"
     },
@@ -1128,7 +1128,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 18
+        "register": 31
       },
       "enableBy": "config"
     },
@@ -1141,7 +1141,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 6
+        "register": 10
       },
       "enableBy": "config"
     },
@@ -1197,7 +1197,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 16
+        "register": 27
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/mpa/mpa": {
@@ -1222,7 +1222,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/overrides/overrides": {
@@ -1247,7 +1247,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1261,7 +1261,7 @@
       "time": {
         "hooks": {
           "modifyConfig": [
-            0
+            1
           ]
         },
         "register": 1
@@ -1276,7 +1276,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1289,7 +1289,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1341,7 +1341,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1354,7 +1354,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1392,7 +1392,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1405,7 +1405,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -1418,7 +1418,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "config"
     },
@@ -1431,7 +1431,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "config"
     },
@@ -1444,7 +1444,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 4
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/monorepo/redirect": {
@@ -1456,7 +1456,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 11
+        "register": 20
       },
       "enableBy": "config"
     },
@@ -1506,7 +1506,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1535,7 +1535,7 @@
             0
           ]
         },
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1560,7 +1560,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "config"
     },
@@ -1597,7 +1597,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 12
+        "register": 20
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/features/forget/forget": {
@@ -1609,7 +1609,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 3
       },
       "enableBy": "config"
     },
@@ -1635,7 +1635,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 2
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1648,7 +1648,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 16
+        "register": 24
       },
       "enableBy": "register"
     },
@@ -1661,7 +1661,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 13
+        "register": 23
       }
     },
     "./node_modules/.pnpm/@umijs+preset-umi@4.6.53_@types+node@25.7.0_@types+react@18.3.28_lightningcss@1.22.1_ro_a4587ee3121f8e0c58ed6532a873a054/node_modules/@umijs/preset-umi/dist/commands/help": {
@@ -1699,7 +1699,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1712,7 +1712,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1751,7 +1751,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1764,7 +1764,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1790,7 +1790,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1816,7 +1816,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1829,7 +1829,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1855,7 +1855,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 1
       },
       "enableBy": "register"
     },
@@ -1881,7 +1881,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 0
       },
       "enableBy": "register"
     },
@@ -1894,7 +1894,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 0
+        "register": 3
       },
       "enableBy": "register"
     },
@@ -1907,7 +1907,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 13
+        "register": 17
       },
       "enableBy": "register"
     },
@@ -1933,7 +1933,7 @@
       "config": {},
       "time": {
         "hooks": {},
-        "register": 1
+        "register": 2
       },
       "enableBy": "register"
     },
@@ -2269,7 +2269,7 @@
       "parentId": "2",
       "id": "10",
       "absPath": "/settings/channels/:platform/:channelId/edit",
-      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Alert, Breadcrumb, Button, Card, Form, Input, Space, Spin, Switch, Typography, message,\n} from 'antd';\nimport { history, useParams } from 'umi';\nimport {\n  listChannels, renameChannel, setAutoReply, rotateWebhook, setChannelSecret,\n  type ChannelDTO,\n} from '@/services/channel';\n\nexport default function PlatformEdit() {\n  const { platform, channelId } = useParams<{ platform: string; channelId: string }>();\n  const [channel, setChannel] = useState<ChannelDTO | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [saving, setSaving] = useState(false);\n  const [savingSecret, setSavingSecret] = useState(false);\n  const [form] = Form.useForm<{ displayName: string }>();\n  const [secretForm] = Form.useForm<{ secret: string }>();\n\n  async function load() {\n    if (!platform || !channelId) return;\n    setLoading(true);\n    const all = await listChannels(platform);\n    const found = all.find((c) => c.id === channelId);\n    setChannel(found ?? null);\n    if (found) form.setFieldsValue({ displayName: found.displayName });\n    setLoading(false);\n  }\n\n  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [channelId, platform]);\n\n  async function handleSave() {\n    const values = await form.validateFields();\n    setSaving(true);\n    try {\n      await renameChannel(channelId!, values.displayName);\n      message.success('Saved');\n      await load();\n    } catch {\n      message.error('Save failed');\n    } finally {\n      setSaving(false);\n    }\n  }\n\n  async function handleToggleAutoReply(v: boolean) {\n    if (!channel) return;\n    try {\n      await setAutoReply(channel.id, v);\n      message.success(v ? 'Auto-reply ON' : 'Auto-reply OFF');\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleRotate() {\n    if (!channel) return;\n    try {\n      const r = await rotateWebhook(channel.id) as { webhookToken?: string };\n      message.success(`Token rotated${r?.webhookToken ? `: ${r.webhookToken.slice(0, 8)}…` : ''}`);\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleSaveSecret() {\n    const values = await secretForm.validateFields();\n    setSavingSecret(true);\n    try {\n      await setChannelSecret(channelId!, values.secret ?? '');\n      message.success('Webhook secret saved');\n      secretForm.resetFields();\n    } catch {\n      message.error('Failed to save secret');\n    } finally {\n      setSavingSecret(false);\n    }\n  }\n\n  if (loading) return <Spin />;\n  if (!channel) return <Alert type=\"error\" message=\"Channel not found\" />;\n\n  const isLivechat = channel.platform === 'LIVECHAT';\n  const isZendesk = channel.platform === 'ZENDESK';\n  const isShopify = channel.platform === 'SHOPIFY';\n  const isFreshdesk = channel.platform === 'FRESHDESK';\n  const isLine = channel.platform === 'LINE';\n  const isTelegram = channel.platform === 'TELEGRAM';\n  const host = window.location.origin;\n  const snippet = `<script src=\"${host}/widget/autotix-widget.js\" data-channel-token=\"${channel.webhookToken}\" async></script>`;\n  const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;\n  const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;\n  const shopifyInboundUrl = `${host}/v2/webhook/SHOPIFY/${channel.webhookToken}`;\n  const freshdeskInboundUrl = `${host}/v2/webhook/FRESHDESK/${channel.webhookToken}`;\n  const lineInboundUrl = `${host}/v2/webhook/LINE/${channel.webhookToken}`;\n  const telegramInboundUrl = `${host}/v2/webhook/TELEGRAM/${channel.webhookToken}`;\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%', maxWidth: 720 }} size=\"middle\">\n      <Breadcrumb\n        items={[\n          { title: <a onClick={() => history.push('/settings/channels')}>Channels</a> },\n          { title: <a onClick={() => history.push(`/settings/channels/${platform}`)}>{platform}</a> },\n          { title: 'Edit' },\n        ]}\n      />\n      <Typography.Title level={4} style={{ margin: 0 }}>Edit Channel</Typography.Title>\n\n      <Card title=\"Basic\" size=\"small\">\n        <Form form={form} layout=\"vertical\">\n          <Form.Item label=\"Display name\" name=\"displayName\" rules={[{ required: true }]}>\n            <Input />\n          </Form.Item>\n          <Space>\n            <Button type=\"primary\" loading={saving} onClick={handleSave}>Save</Button>\n            <Button onClick={() => history.push(`/settings/channels/${platform}`)}>Back</Button>\n          </Space>\n        </Form>\n        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>\n          <span>Auto reply</span>\n          <Switch checked={channel.autoReplyEnabled} onChange={handleToggleAutoReply} />\n        </div>\n        <div style={{ marginTop: 8, fontSize: 12, color: '#5A6B7D' }}>\n          Webhook token: <code>{channel.webhookToken}</code>{' '}\n          <Button size=\"small\" onClick={handleRotate}>Rotate</Button>\n        </div>\n      </Card>\n\n      {isZendesk && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            Create a Zendesk Webhook (Admin → Apps and integrations → Webhooks) pointing at this URL.\n            Add a Signing Secret in Zendesk and paste it below to enable signature verification.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {zendeskInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(zendeskInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Signing Secret\" name=\"secret\">\n              <Input.Password placeholder=\"Paste the signing secret from Zendesk Webhook settings\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isShopify && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            In Shopify Admin → Settings → Notifications → Webhooks → Create webhook.\n            Set Event to <strong>Order creation</strong> (and optionally Order cancellation, Customer creation),\n            Format to <strong>JSON</strong>, and paste the URL below as the destination.\n            After saving, copy the signing secret Shopify shows and paste it below.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {shopifyInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(shopifyInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Shared Secret\" name=\"secret\">\n              <Input.Password placeholder=\"Paste the signing secret from Shopify Webhook settings\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isFreshdesk && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            In Freshdesk Admin → Workflows → Automations, create a rule (e.g. New Ticket Created).\n            Add action <strong>Trigger Webhook</strong>, set Content Type to <strong>JSON</strong>,\n            and paste the URL below as the Request URL.\n            Optionally add a Custom Header <strong>X-Autotix-Webhook-Token</strong> with a secret value,\n            then save the same value below to enable token verification.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {freshdeskInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(freshdeskInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Token\" name=\"secret\">\n              <Input.Password placeholder=\"(optional) value sent in X-Autotix-Webhook-Token header\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Token</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isLine && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            In LINE Developer Console → your Messaging API channel → Webhook settings,\n            paste the URL below as the <strong>Webhook URL</strong>.\n            Enable <strong>Use webhook</strong> and disable <strong>Auto-reply messages</strong>\n            under Response settings (to prevent LINE's default bot from replying alongside Autotix).\n            Signature verification is automatic — the channel_secret stored in your credentials is used.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {lineInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(lineInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n        </Card>\n      )}\n\n      {isTelegram && (\n        <Card title=\"Telegram Webhook Setup\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            1. Talk to <strong>@BotFather</strong> in Telegram → <code>/newbot</code> → follow prompts → copy the token into the channel credentials.\n            <br />\n            2. Copy the Inbound URL below — this is where Telegram will POST message updates.\n            <br />\n            3. Register the webhook by running the curl command below (replace placeholders with your actual values).\n            <br />\n            4. (Optional) Set a Webhook Secret Token in credentials and include it in the curl command; Autotix will verify it on every inbound call.\n          </Typography.Paragraph>\n          <div style={{ marginBottom: 8 }}>\n            <strong style={{ fontSize: 12 }}>Inbound URL</strong>\n          </div>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {telegramInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(telegramInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <div style={{ marginBottom: 4 }}>\n            <strong style={{ fontSize: 12 }}>Register webhook (run once after channel creation)</strong>\n          </div>\n          <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 11, overflow: 'auto', margin: 0, marginBottom: 8 }}>\n{`curl -X POST \"https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"url\":\"${telegramInboundUrl}\",\"secret_token\":\"<OPTIONAL_SECRET>\"}'`}\n          </pre>\n          <Button\n            size=\"small\"\n            onClick={() => {\n              const cmd = `curl -X POST \"https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook\" \\\\\\n  -H \"Content-Type: application/json\" \\\\\\n  -d '{\"url\":\"${telegramInboundUrl}\",\"secret_token\":\"<OPTIONAL_SECRET>\"}'`;\n              navigator.clipboard.writeText(cmd);\n              message.success('curl command copied');\n            }}\n          >\n            Copy curl command\n          </Button>\n          <div style={{ marginTop: 16 }}>\n            <Form form={secretForm} layout=\"vertical\">\n              <Form.Item label=\"Webhook Secret Token\" name=\"secret\" extra=\"(optional) set here and pass as secret_token in the curl command above — Autotix will verify it on every inbound update.\">\n                <Input.Password placeholder=\"1-256 chars A-Za-z0-9_-\" />\n              </Form.Item>\n              <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret Token</Button>\n            </Form>\n          </div>\n        </Card>\n      )}\n\n      {isLivechat && (\n        <>\n          <Card title=\"Embed snippet\" size=\"small\">\n            <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 12, overflow: 'auto', margin: 0 }}>{snippet}</pre>\n            <Space style={{ marginTop: 8 }}>\n              <Button onClick={() => { navigator.clipboard.writeText(snippet); message.success('Copied'); }}>Copy</Button>\n              <Button type=\"primary\" onClick={() => window.open(testUrl, '_blank')}>Test in new tab</Button>\n            </Space>\n            <Typography.Paragraph type=\"secondary\" style={{ fontSize: 12, marginTop: 8, marginBottom: 0 }}>\n              Paste the snippet into any HTML page. The widget loads automatically and connects via WebSocket.\n            </Typography.Paragraph>\n          </Card>\n          <Card title=\"Live test (embedded)\" size=\"small\" bodyStyle={{ padding: 0 }}>\n            <iframe src={testUrl} title=\"LiveChat demo\" style={{ width: '100%', height: 600, border: 0, display: 'block' }} />\n          </Card>\n        </>\n      )}\n    </Space>\n  );\n}\n",
+      "__content": "import { useEffect, useState } from 'react';\nimport {\n  Alert, Breadcrumb, Button, Card, Form, Input, Space, Spin, Switch, Typography, message,\n} from 'antd';\nimport { history, useParams } from 'umi';\nimport {\n  listChannels, renameChannel, setAutoReply, rotateWebhook, setChannelSecret,\n  type ChannelDTO,\n} from '@/services/channel';\n\nexport default function PlatformEdit() {\n  const { platform, channelId } = useParams<{ platform: string; channelId: string }>();\n  const [channel, setChannel] = useState<ChannelDTO | null>(null);\n  const [loading, setLoading] = useState(true);\n  const [saving, setSaving] = useState(false);\n  const [savingSecret, setSavingSecret] = useState(false);\n  const [form] = Form.useForm<{ displayName: string }>();\n  const [secretForm] = Form.useForm<{ secret: string }>();\n\n  async function load() {\n    if (!platform || !channelId) return;\n    setLoading(true);\n    const all = await listChannels(platform);\n    const found = all.find((c) => c.id === channelId);\n    setChannel(found ?? null);\n    if (found) form.setFieldsValue({ displayName: found.displayName });\n    setLoading(false);\n  }\n\n  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [channelId, platform]);\n\n  async function handleSave() {\n    const values = await form.validateFields();\n    setSaving(true);\n    try {\n      await renameChannel(channelId!, values.displayName);\n      message.success('Saved');\n      await load();\n    } catch {\n      message.error('Save failed');\n    } finally {\n      setSaving(false);\n    }\n  }\n\n  async function handleToggleAutoReply(v: boolean) {\n    if (!channel) return;\n    try {\n      await setAutoReply(channel.id, v);\n      message.success(v ? 'Auto-reply ON' : 'Auto-reply OFF');\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleRotate() {\n    if (!channel) return;\n    try {\n      const r = await rotateWebhook(channel.id) as { webhookToken?: string };\n      message.success(`Token rotated${r?.webhookToken ? `: ${r.webhookToken.slice(0, 8)}…` : ''}`);\n      await load();\n    } catch { message.error('Failed'); }\n  }\n\n  async function handleSaveSecret() {\n    const values = await secretForm.validateFields();\n    setSavingSecret(true);\n    try {\n      await setChannelSecret(channelId!, values.secret ?? '');\n      message.success('Webhook secret saved');\n      secretForm.resetFields();\n    } catch {\n      message.error('Failed to save secret');\n    } finally {\n      setSavingSecret(false);\n    }\n  }\n\n  if (loading) return <Spin />;\n  if (!channel) return <Alert type=\"error\" message=\"Channel not found\" />;\n\n  const isLivechat = channel.platform === 'LIVECHAT';\n  const isZendesk = channel.platform === 'ZENDESK';\n  const isShopify = channel.platform === 'SHOPIFY';\n  const isFreshdesk = channel.platform === 'FRESHDESK';\n  const isLine = channel.platform === 'LINE';\n  const isTelegram = channel.platform === 'TELEGRAM';\n  const isWecom = channel.platform === 'WECOM';\n  const host = window.location.origin;\n  const snippet = `<script src=\"${host}/widget/autotix-widget.js\" data-channel-token=\"${channel.webhookToken}\" async></script>`;\n  const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;\n  const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;\n  const shopifyInboundUrl = `${host}/v2/webhook/SHOPIFY/${channel.webhookToken}`;\n  const freshdeskInboundUrl = `${host}/v2/webhook/FRESHDESK/${channel.webhookToken}`;\n  const lineInboundUrl = `${host}/v2/webhook/LINE/${channel.webhookToken}`;\n  const telegramInboundUrl = `${host}/v2/webhook/TELEGRAM/${channel.webhookToken}`;\n  const wecomInboundUrl = `${host}/v2/webhook/WECOM/${channel.webhookToken}`;\n\n  return (\n    <Space direction=\"vertical\" style={{ width: '100%', maxWidth: 720 }} size=\"middle\">\n      <Breadcrumb\n        items={[\n          { title: <a onClick={() => history.push('/settings/channels')}>Channels</a> },\n          { title: <a onClick={() => history.push(`/settings/channels/${platform}`)}>{platform}</a> },\n          { title: 'Edit' },\n        ]}\n      />\n      <Typography.Title level={4} style={{ margin: 0 }}>Edit Channel</Typography.Title>\n\n      <Card title=\"Basic\" size=\"small\">\n        <Form form={form} layout=\"vertical\">\n          <Form.Item label=\"Display name\" name=\"displayName\" rules={[{ required: true }]}>\n            <Input />\n          </Form.Item>\n          <Space>\n            <Button type=\"primary\" loading={saving} onClick={handleSave}>Save</Button>\n            <Button onClick={() => history.push(`/settings/channels/${platform}`)}>Back</Button>\n          </Space>\n        </Form>\n        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12 }}>\n          <span>Auto reply</span>\n          <Switch checked={channel.autoReplyEnabled} onChange={handleToggleAutoReply} />\n        </div>\n        <div style={{ marginTop: 8, fontSize: 12, color: '#5A6B7D' }}>\n          Webhook token: <code>{channel.webhookToken}</code>{' '}\n          <Button size=\"small\" onClick={handleRotate}>Rotate</Button>\n        </div>\n      </Card>\n\n      {isZendesk && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            Create a Zendesk Webhook (Admin → Apps and integrations → Webhooks) pointing at this URL.\n            Add a Signing Secret in Zendesk and paste it below to enable signature verification.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {zendeskInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(zendeskInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Signing Secret\" name=\"secret\">\n              <Input.Password placeholder=\"Paste the signing secret from Zendesk Webhook settings\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isShopify && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            In Shopify Admin → Settings → Notifications → Webhooks → Create webhook.\n            Set Event to <strong>Order creation</strong> (and optionally Order cancellation, Customer creation),\n            Format to <strong>JSON</strong>, and paste the URL below as the destination.\n            After saving, copy the signing secret Shopify shows and paste it below.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {shopifyInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(shopifyInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Shared Secret\" name=\"secret\">\n              <Input.Password placeholder=\"Paste the signing secret from Shopify Webhook settings\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isFreshdesk && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            In Freshdesk Admin → Workflows → Automations, create a rule (e.g. New Ticket Created).\n            Add action <strong>Trigger Webhook</strong>, set Content Type to <strong>JSON</strong>,\n            and paste the URL below as the Request URL.\n            Optionally add a Custom Header <strong>X-Autotix-Webhook-Token</strong> with a secret value,\n            then save the same value below to enable token verification.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {freshdeskInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(freshdeskInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Form form={secretForm} layout=\"vertical\">\n            <Form.Item label=\"Webhook Token\" name=\"secret\">\n              <Input.Password placeholder=\"(optional) value sent in X-Autotix-Webhook-Token header\" />\n            </Form.Item>\n            <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Token</Button>\n          </Form>\n        </Card>\n      )}\n\n      {isLine && (\n        <Card title=\"Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            In LINE Developer Console → your Messaging API channel → Webhook settings,\n            paste the URL below as the <strong>Webhook URL</strong>.\n            Enable <strong>Use webhook</strong> and disable <strong>Auto-reply messages</strong>\n            under Response settings (to prevent LINE's default bot from replying alongside Autotix).\n            Signature verification is automatic — the channel_secret stored in your credentials is used.\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {lineInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(lineInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n        </Card>\n      )}\n\n      {isTelegram && (\n        <Card title=\"Telegram Webhook Setup\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            1. Talk to <strong>@BotFather</strong> in Telegram → <code>/newbot</code> → follow prompts → copy the token into the channel credentials.\n            <br />\n            2. Copy the Inbound URL below — this is where Telegram will POST message updates.\n            <br />\n            3. Register the webhook by running the curl command below (replace placeholders with your actual values).\n            <br />\n            4. (Optional) Set a Webhook Secret Token in credentials and include it in the curl command; Autotix will verify it on every inbound call.\n          </Typography.Paragraph>\n          <div style={{ marginBottom: 8 }}>\n            <strong style={{ fontSize: 12 }}>Inbound URL</strong>\n          </div>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {telegramInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(telegramInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <div style={{ marginBottom: 4 }}>\n            <strong style={{ fontSize: 12 }}>Register webhook (run once after channel creation)</strong>\n          </div>\n          <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 11, overflow: 'auto', margin: 0, marginBottom: 8 }}>\n{`curl -X POST \"https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook\" \\\\\n  -H \"Content-Type: application/json\" \\\\\n  -d '{\"url\":\"${telegramInboundUrl}\",\"secret_token\":\"<OPTIONAL_SECRET>\"}'`}\n          </pre>\n          <Button\n            size=\"small\"\n            onClick={() => {\n              const cmd = `curl -X POST \"https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook\" \\\\\\n  -H \"Content-Type: application/json\" \\\\\\n  -d '{\"url\":\"${telegramInboundUrl}\",\"secret_token\":\"<OPTIONAL_SECRET>\"}'`;\n              navigator.clipboard.writeText(cmd);\n              message.success('curl command copied');\n            }}\n          >\n            Copy curl command\n          </Button>\n          <div style={{ marginTop: 16 }}>\n            <Form form={secretForm} layout=\"vertical\">\n              <Form.Item label=\"Webhook Secret Token\" name=\"secret\" extra=\"(optional) set here and pass as secret_token in the curl command above — Autotix will verify it on every inbound update.\">\n                <Input.Password placeholder=\"1-256 chars A-Za-z0-9_-\" />\n              </Form.Item>\n              <Button type=\"primary\" loading={savingSecret} onClick={handleSaveSecret}>Save Secret Token</Button>\n            </Form>\n          </div>\n        </Card>\n      )}\n\n      {isWecom && (\n        <Card title=\"WeCom 微信客服 — Inbound Webhook\" size=\"small\">\n          <Typography.Paragraph type=\"secondary\" style={{ marginBottom: 8 }}>\n            在企业微信管理后台 → 应用管理 → 微信客服 → API 接收消息配置 → URL，粘贴下方地址。\n            Token 和 EncodingAESKey 已在频道凭证中保存，无需单独填写 Webhook Secret。\n            保存后 WeCom 会立即发送 GET 验证请求，Autotix 将自动通过。\n          </Typography.Paragraph>\n          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>\n            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>\n              {wecomInboundUrl}\n            </code>\n            <Button\n              size=\"small\"\n              icon={<span>⎘</span>}\n              onClick={() => { navigator.clipboard.writeText(wecomInboundUrl); message.success('URL copied'); }}\n            >\n              Copy\n            </Button>\n          </div>\n          <Typography.Paragraph type=\"secondary\" style={{ fontSize: 12, marginBottom: 0 }}>\n            每次消息事件到达时，Autotix 自动调用 kf/sync_msg 拉取消息，并通过 kf/send_msg 发送回复。\n          </Typography.Paragraph>\n        </Card>\n      )}\n\n      {isLivechat && (\n        <>\n          <Card title=\"Embed snippet\" size=\"small\">\n            <pre style={{ background: '#F7F9FB', padding: 12, borderRadius: 6, fontSize: 12, overflow: 'auto', margin: 0 }}>{snippet}</pre>\n            <Space style={{ marginTop: 8 }}>\n              <Button onClick={() => { navigator.clipboard.writeText(snippet); message.success('Copied'); }}>Copy</Button>\n              <Button type=\"primary\" onClick={() => window.open(testUrl, '_blank')}>Test in new tab</Button>\n            </Space>\n            <Typography.Paragraph type=\"secondary\" style={{ fontSize: 12, marginTop: 8, marginBottom: 0 }}>\n              Paste the snippet into any HTML page. The widget loads automatically and connects via WebSocket.\n            </Typography.Paragraph>\n          </Card>\n          <Card title=\"Live test (embedded)\" size=\"small\" bodyStyle={{ padding: 0 }}>\n            <iframe src={testUrl} title=\"LiveChat demo\" style={{ width: '100%', height: 600, border: 0, display: 'block' }} />\n          </Card>\n        </>\n      )}\n    </Space>\n  );\n}\n",
       "__isJSFile": true,
       "__absFile": "/Users/norman/development/autotix/autotix-web/src/pages/Settings/Channels/PlatformEdit.tsx"
     },
