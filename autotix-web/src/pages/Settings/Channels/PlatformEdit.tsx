@@ -80,10 +80,12 @@ export default function PlatformEdit() {
 
   const isLivechat = channel.platform === 'LIVECHAT';
   const isZendesk = channel.platform === 'ZENDESK';
+  const isShopify = channel.platform === 'SHOPIFY';
   const host = window.location.origin;
   const snippet = `<script src="${host}/widget/autotix-widget.js" data-channel-token="${channel.webhookToken}" async></script>`;
   const testUrl = `/demo/livechat.html?token=${channel.webhookToken}`;
   const zendeskInboundUrl = `${host}/v2/webhook/ZENDESK/${channel.webhookToken}`;
+  const shopifyInboundUrl = `${host}/v2/webhook/SHOPIFY/${channel.webhookToken}`;
 
   return (
     <Space direction="vertical" style={{ width: '100%', maxWidth: 720 }} size="middle">
@@ -137,6 +139,35 @@ export default function PlatformEdit() {
           <Form form={secretForm} layout="vertical">
             <Form.Item label="Webhook Signing Secret" name="secret">
               <Input.Password placeholder="Paste the signing secret from Zendesk Webhook settings" />
+            </Form.Item>
+            <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>
+          </Form>
+        </Card>
+      )}
+
+      {isShopify && (
+        <Card title="Inbound Webhook" size="small">
+          <Typography.Paragraph type="secondary" style={{ marginBottom: 8 }}>
+            In Shopify Admin → Settings → Notifications → Webhooks → Create webhook.
+            Set Event to <strong>Order creation</strong> (and optionally Order cancellation, Customer creation),
+            Format to <strong>JSON</strong>, and paste the URL below as the destination.
+            After saving, copy the signing secret Shopify shows and paste it below.
+          </Typography.Paragraph>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <code style={{ background: '#F7F9FB', padding: '4px 8px', borderRadius: 4, fontSize: 12, flex: 1, wordBreak: 'break-all' }}>
+              {shopifyInboundUrl}
+            </code>
+            <Button
+              size="small"
+              icon={<span>⎘</span>}
+              onClick={() => { navigator.clipboard.writeText(shopifyInboundUrl); message.success('URL copied'); }}
+            >
+              Copy
+            </Button>
+          </div>
+          <Form form={secretForm} layout="vertical">
+            <Form.Item label="Webhook Shared Secret" name="secret">
+              <Input.Password placeholder="Paste the signing secret from Shopify Webhook settings" />
             </Form.Item>
             <Button type="primary" loading={savingSecret} onClick={handleSaveSecret}>Save Secret</Button>
           </Form>

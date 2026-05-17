@@ -33,7 +33,7 @@ const PLATFORMS: Plat[] = [
   { label: 'GORGIAS (stub)',                   value: 'GORGIAS',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'INTERCOM (stub)',                  value: 'INTERCOM',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
   { label: 'LIVECHAT (native widget)',          value: 'LIVECHAT',         defaultChannelType: 'CHAT',  allowedChannelTypes: ['CHAT'] },
-  { label: 'SHOPIFY (stub)',                   value: 'SHOPIFY',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
+  { label: 'SHOPIFY',                           value: 'SHOPIFY',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'AMAZON (stub)',                    value: 'AMAZON',           defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'GMAIL (stub)',                     value: 'GMAIL',            defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
   { label: 'OUTLOOK (stub)',                   value: 'OUTLOOK',          defaultChannelType: 'EMAIL', allowedChannelTypes: ['EMAIL'] },
