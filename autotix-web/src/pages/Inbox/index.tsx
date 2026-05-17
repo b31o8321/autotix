@@ -37,10 +37,11 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { history } from 'umi';
-import type { TicketDTO, AttachmentDTO, TicketActivity } from '@/services/ticket';
+import type { TicketDTO, AttachmentDTO, TicketActivity, BulkActionType } from '@/services/ticket';
 import { listTicketActivity } from '@/services/ticket';
 import {
   assignTicket,
+  bulkTicketAction,
   closeTicket,
   escalateTicket,
   getTicket,
@@ -180,9 +181,12 @@ interface TicketRowProps {
   unread: boolean;
   tagColorMap: Record<string, string>;
   onClick: () => void;
+  bulkChecked?: boolean;
+  onBulkCheck?: (e: React.MouseEvent) => void;
+  bulkMode?: boolean;
 }
 
-function TicketRow({ ticket, selected, unread, tagColorMap, onClick }: TicketRowProps) {
+function TicketRow({ ticket, selected, unread, tagColorMap, onClick, bulkChecked, onBulkCheck, bulkMode }: TicketRowProps) {
   return (
     <div
       onClick={onClick}
@@ -191,15 +195,30 @@ function TicketRow({ ticket, selected, unread, tagColorMap, onClick }: TicketRow
         padding: '10px 12px',
         cursor: 'pointer',
         borderBottom: '1px solid #EEF2F6',
-        background: selected ? '#F7F9FB' : '#FFFFFF',
-        borderLeft: selected ? '3px solid #2962FF' : '3px solid transparent',
+        background: selected ? '#F7F9FB' : bulkChecked ? '#EFF6FF' : '#FFFFFF',
+        borderLeft: selected ? '3px solid #2962FF' : bulkChecked ? '3px solid #93C5FD' : '3px solid transparent',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        gap: 4,
+        flexDirection: 'row',
+        alignItems: 'stretch',
+        gap: 0,
         boxSizing: 'border-box',
       }}
     >
+      {/* Checkbox column */}
+      <div
+        style={{ display: 'flex', alignItems: 'center', paddingRight: 8, flexShrink: 0 }}
+        onClick={(e) => { e.stopPropagation(); onBulkCheck?.(e); }}
+      >
+        <input
+          type="checkbox"
+          checked={!!bulkChecked}
+          onChange={() => {}}
+          onClick={(e) => { e.stopPropagation(); onBulkCheck?.(e); }}
+          style={{ cursor: 'pointer', width: 14, height: 14, accentColor: '#2962FF' }}
+        />
+      </div>
+      {/* Content column */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, minWidth: 0 }}>
       {/* Row 1: unread dot + subject + time */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <span
@@ -266,6 +285,7 @@ function TicketRow({ ticket, selected, unread, tagColorMap, onClick }: TicketRow
           </Tag>
         )}
       </div>
+      </div>
     </div>
   );
 }
@@ -288,6 +308,11 @@ export default function InboxPage() {
   const [currentTicket, setCurrentTicket] = useState<TicketDTO | null>(null);
   const [loadingTicket, setLoadingTicket] = useState(false);
   const [viewedTicketIds] = useState<Set<string>>(new Set());
+
+  // ── Bulk selection state ──────────────────────
+  const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [bulkTagInput, setBulkTagInput] = useState('');
 
   // ── Right panel state ─────────────────────────
   type RailPane = 'properties' | 'ai' | 'activity' | null;
@@ -442,6 +467,11 @@ export default function InboxPage() {
       if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
     };
   }, [fetchTickets, fetchTicketDetail, selectedTicketId]);
+
+  // Clear bulk selection when smart view changes
+  useEffect(() => {
+    setBulkSelected(new Set());
+  }, [currentView, statusFilter]);
 
   // ──────────────────────────────────────────────
   // Derived: filtered ticket list
@@ -657,6 +687,57 @@ export default function InboxPage() {
   }
 
   // ──────────────────────────────────────────────
+  // Bulk actions
+  // ──────────────────────────────────────────────
+  function toggleBulkSelect(ticketId: string) {
+    setBulkSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(ticketId)) {
+        next.delete(ticketId);
+      } else {
+        next.add(ticketId);
+      }
+      return next;
+    });
+  }
+
+  function selectAllVisible() {
+    setBulkSelected(new Set(displayedTickets.map((t) => t.id)));
+  }
+
+  function clearBulkSelection() {
+    setBulkSelected(new Set());
+    setBulkTagInput('');
+  }
+
+  async function executeBulkAction(action: BulkActionType, payload: Record<string, string> = {}) {
+    if (bulkSelected.size === 0 || bulkLoading) return;
+    setBulkLoading(true);
+    try {
+      const result = await bulkTicketAction({
+        ticketIds: Array.from(bulkSelected),
+        action,
+        payload,
+      });
+      if (result.failures.length === 0) {
+        message.success(`${result.successCount} ticket${result.successCount !== 1 ? 's' : ''} updated`);
+      } else {
+        const firstFailures = result.failures.slice(0, 3).map((f) => f.reason).join('; ');
+        message.warning(
+          `${result.successCount} updated, ${result.failures.length} failed: ${firstFailures}`,
+          6,
+        );
+      }
+      clearBulkSelection();
+      await fetchTickets();
+    } catch {
+      message.error('Bulk action failed');
+    } finally {
+      setBulkLoading(false);
+    }
+  }
+
+  // ──────────────────────────────────────────────
   // Custom field editing
   // ──────────────────────────────────────────────
   async function handleSaveCustomField(key: string, value: string | null) {
@@ -795,44 +876,144 @@ export default function InboxPage() {
           overflow: 'hidden',
         }}
       >
-        {/* Smart view selector (dropdown) */}
-        <div
-          style={{
-            padding: '8px 12px',
-            borderBottom: '1px solid #EEF2F6',
-          }}
-        >
-          <Select
-            value={currentView}
-            onChange={(v) => setCurrentView(v as SmartView)}
-            style={{ width: '100%' }}
-            size="middle"
-            options={([
-              { key: 'mine',        label: 'Mine',        count: tabCounts.mine },
-              { key: 'unassigned',  label: 'Unassigned',  count: tabCounts.unassigned },
-              { key: 'open',        label: 'Open',        count: tabCounts.open },
-              { key: 'needs_human', label: 'Needs human', count: tabCounts.needs_human },
-              { key: 'all',         label: 'All',         count: tabCounts.all },
-            ] as Array<{ key: SmartView; label: string; count: number }>).map((v) => ({
-              value: v.key,
-              label: (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>{v.label}</span>
-                  {v.count > 0 && (
-                    <Badge
-                      count={v.count}
-                      size="small"
-                      style={{
-                        background: currentView === v.key ? '#2962FF' : '#9BAAB8',
-                        boxShadow: 'none',
-                      }}
-                    />
-                  )}
-                </div>
-              ),
-            }))}
-          />
-        </div>
+        {/* Smart view selector OR bulk toolbar */}
+        {bulkSelected.size > 0 ? (
+          /* ── Bulk action toolbar ── */
+          <div
+            style={{
+              padding: '8px 10px',
+              borderBottom: '1px solid #EEF2F6',
+              background: '#EFF6FF',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 6,
+            }}
+          >
+            {/* Row 1: N selected + Clear */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Text style={{ fontSize: 12, fontWeight: 600, color: '#2962FF', flex: 1 }}>
+                {bulkSelected.size} selected
+              </Text>
+              <Button size="small" type="text" onClick={clearBulkSelection} disabled={bulkLoading}>
+                Clear
+              </Button>
+              <Button size="small" type="text" onClick={selectAllVisible} disabled={bulkLoading}>
+                All {displayedTickets.length}
+              </Button>
+            </div>
+            {/* Row 2: action buttons */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {/* Status change */}
+              <Select
+                size="small"
+                placeholder="Set status"
+                style={{ width: 110 }}
+                disabled={bulkLoading}
+                onChange={(v) => { if (v) executeBulkAction('STATUS_CHANGE', { status: String(v) }); }}
+                value={undefined}
+                options={[
+                  { value: 'OPEN', label: 'Open' },
+                  { value: 'WAITING_ON_CUSTOMER', label: 'Waiting customer' },
+                  { value: 'WAITING_ON_INTERNAL', label: 'Waiting internal' },
+                ]}
+              />
+              {/* Assign to me */}
+              <Button
+                size="small"
+                disabled={bulkLoading || !currentUser?.id}
+                onClick={() => executeBulkAction('ASSIGN', { assigneeId: currentUser!.id })}
+              >
+                Assign me
+              </Button>
+              {/* Add tag */}
+              <AutoComplete
+                size="small"
+                style={{ width: 100 }}
+                placeholder="Add tag"
+                options={tagDefs.map((t) => ({ value: t.name, label: t.name }))}
+                value={bulkTagInput}
+                onChange={setBulkTagInput}
+                onSelect={(v) => {
+                  executeBulkAction('ADD_TAG', { tag: v });
+                  setBulkTagInput('');
+                }}
+                disabled={bulkLoading}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && bulkTagInput.trim()) {
+                    executeBulkAction('ADD_TAG', { tag: bulkTagInput.trim() });
+                    setBulkTagInput('');
+                  }
+                }}
+              />
+              {/* More: Solve / Spam / Unassign */}
+              <Dropdown
+                disabled={bulkLoading}
+                menu={{
+                  items: [
+                    {
+                      key: 'solve',
+                      label: 'Solve',
+                      onClick: () => executeBulkAction('SOLVE'),
+                    },
+                    {
+                      key: 'spam',
+                      label: 'Mark spam',
+                      onClick: () => executeBulkAction('MARK_SPAM'),
+                    },
+                    {
+                      key: 'unassign',
+                      label: 'Unassign',
+                      onClick: () => executeBulkAction('UNASSIGN'),
+                    },
+                  ],
+                }}
+              >
+                <Button size="small" disabled={bulkLoading}>
+                  More <EllipsisOutlined />
+                </Button>
+              </Dropdown>
+            </div>
+          </div>
+        ) : (
+          /* ── Normal smart view selector ── */
+          <div
+            style={{
+              padding: '8px 12px',
+              borderBottom: '1px solid #EEF2F6',
+            }}
+          >
+            <Select
+              value={currentView}
+              onChange={(v) => setCurrentView(v as SmartView)}
+              style={{ width: '100%' }}
+              size="middle"
+              options={([
+                { key: 'mine',        label: 'Mine',        count: tabCounts.mine },
+                { key: 'unassigned',  label: 'Unassigned',  count: tabCounts.unassigned },
+                { key: 'open',        label: 'Open',        count: tabCounts.open },
+                { key: 'needs_human', label: 'Needs human', count: tabCounts.needs_human },
+                { key: 'all',         label: 'All',         count: tabCounts.all },
+              ] as Array<{ key: SmartView; label: string; count: number }>).map((v) => ({
+                value: v.key,
+                label: (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>{v.label}</span>
+                    {v.count > 0 && (
+                      <Badge
+                        count={v.count}
+                        size="small"
+                        style={{
+                          background: currentView === v.key ? '#2962FF' : '#9BAAB8',
+                          boxShadow: 'none',
+                        }}
+                      />
+                    )}
+                  </div>
+                ),
+              }))}
+            />
+          </div>
+        )}
 
         {/* Secondary status filter */}
         <div style={{ padding: '8px 12px', borderBottom: '1px solid #EEF2F6' }}>
@@ -872,6 +1053,9 @@ export default function InboxPage() {
               unread={!viewedTicketIds.has(ticket.id)}
               tagColorMap={tagColorMap}
               onClick={() => handleSelectTicket(ticket.id)}
+              bulkChecked={bulkSelected.has(ticket.id)}
+              onBulkCheck={() => toggleBulkSelect(ticket.id)}
+              bulkMode={bulkSelected.size > 0}
             />
           ))}
         </div>

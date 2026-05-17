@@ -53,4 +53,29 @@ public class AssignTicketUseCase {
                 "{\"assignee\":\"" + agentId + "\"}",
                 now));
     }
+
+    /**
+     * Clear the assignee from the ticket (unassign).
+     */
+    public void unassign(TicketId ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new AutotixException.NotFoundException(
+                        "Ticket not found: " + ticketId.value()));
+        ticket.clearAssignee();
+        ticketRepository.save(ticket);
+
+        Instant now = Instant.now();
+        inboxEventPublisher.publish(new InboxEvent(
+                InboxEvent.Kind.ASSIGNED,
+                ticketId.value(),
+                ticket.channelId().value(),
+                "unassigned",
+                now));
+
+        activityRepository.save(new TicketActivity(
+                ticketId, "system",
+                TicketActivityAction.UNASSIGNED,
+                null,
+                now));
+    }
 }

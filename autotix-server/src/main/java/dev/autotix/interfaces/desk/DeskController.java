@@ -24,6 +24,8 @@ import dev.autotix.domain.ticket.TicketType;
 import dev.autotix.interfaces.admin.dto.CustomerDetailDTO;
 import dev.autotix.interfaces.admin.dto.CustomerIdentifierDTO;
 import dev.autotix.interfaces.desk.dto.AttachmentDTO;
+import dev.autotix.interfaces.desk.dto.BulkTicketActionRequest;
+import dev.autotix.interfaces.desk.dto.BulkTicketActionResponse;
 import dev.autotix.interfaces.desk.dto.MessageDTO;
 import dev.autotix.interfaces.desk.dto.ReplyRequest;
 import dev.autotix.interfaces.desk.dto.TicketActivityDTO;
@@ -76,6 +78,8 @@ public class DeskController {
     private final UpdateTicketCustomFieldUseCase updateCustomFieldUseCase;
     private final MarkSpamUseCase markSpamUseCase;
     private final CustomerRepository customerRepository;
+    // Bulk actions
+    private final BulkTicketActionUseCase bulkTicketAction;
 
     public DeskController(ListTicketsUseCase listTickets,
                           ReplyTicketUseCase replyTicket,
@@ -95,7 +99,8 @@ public class DeskController {
                           UpdateTagsUseCase updateTags,
                           UpdateTicketCustomFieldUseCase updateCustomField,
                           MarkSpamUseCase markSpam,
-                          CustomerRepository customerRepository) {
+                          CustomerRepository customerRepository,
+                          BulkTicketActionUseCase bulkTicketAction) {
         this.listTickets = listTickets;
         this.replyTicket = replyTicket;
         this.assignTicket = assignTicket;
@@ -115,6 +120,7 @@ public class DeskController {
         this.updateCustomFieldUseCase = updateCustomField;
         this.markSpamUseCase = markSpam;
         this.customerRepository = customerRepository;
+        this.bulkTicketAction = bulkTicketAction;
     }
 
     @GetMapping
@@ -313,6 +319,22 @@ public class DeskController {
     public void markSpam(@PathVariable String ticketId) {
         String actorId = "agent:" + currentUser.id().value();
         markSpamUseCase.mark(new TicketId(ticketId), actorId);
+    }
+
+    /**
+     * Bulk action endpoint.
+     * POST /api/desk/tickets/bulk
+     */
+    @PostMapping("/bulk")
+    public BulkTicketActionResponse bulk(@RequestBody BulkTicketActionRequest req) {
+        if (req.ticketIds == null || req.ticketIds.isEmpty()) {
+            throw new AutotixException.ValidationException("ticketIds must not be empty");
+        }
+        if (req.action == null || req.action.trim().isEmpty()) {
+            throw new AutotixException.ValidationException("action must not be empty");
+        }
+        String actorId = "agent:" + currentUser.id().value();
+        return bulkTicketAction.execute(req, actorId);
     }
 
     @GetMapping("/{ticketId}/activity")

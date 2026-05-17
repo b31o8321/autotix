@@ -202,3 +202,39 @@ export async function updateTicketCustomField(ticketId: string, key: string, val
 export async function markSpam(ticketId: string) {
   return request(`/api/desk/tickets/${ticketId}/mark-spam`, { method: 'POST' });
 }
+
+// ── Bulk actions ────────────────────────────────────────────────────────────
+
+export type BulkActionType =
+  | 'STATUS_CHANGE'
+  | 'ASSIGN'
+  | 'UNASSIGN'
+  | 'ADD_TAG'
+  | 'REMOVE_TAG'
+  | 'SOLVE'
+  | 'MARK_SPAM';
+
+export interface BulkTicketActionRequest {
+  ticketIds: string[];
+  action: BulkActionType;
+  payload: Record<string, string>;
+}
+
+export interface BulkTicketActionFailure {
+  ticketId: string;
+  reason: string;
+}
+
+export interface BulkTicketActionResponse {
+  successCount: number;
+  failures: BulkTicketActionFailure[];
+}
+
+export async function bulkTicketAction(
+  req: BulkTicketActionRequest,
+): Promise<BulkTicketActionResponse> {
+  return request('/api/desk/tickets/bulk', {
+    method: 'POST',
+    data: req,
+  });
+}

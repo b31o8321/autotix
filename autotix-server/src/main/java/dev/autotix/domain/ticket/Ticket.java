@@ -395,6 +395,14 @@ public class Ticket {
     }
 
     /**
+     * Clear the assignee (unassign). Does NOT change ticket status.
+     */
+    public void clearAssignee() {
+        this.assigneeId = null;
+        updatedAt = Instant.now();
+    }
+
+    /**
      * Generic status setter — kept for backward compatibility with automation rules.
      * Enforces: cannot change status of CLOSED or SPAM ticket.
      */
